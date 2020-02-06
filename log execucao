@@ -1,0 +1,22 @@
+>preciso testar a versão myers_minimized, para verificar se ainda deixa adaptadores nas extremidades finais
+    -> SE resultado for positivo eu altero a versão do shiftand para cortar apenas o primeiro adaptador encontrado, finalizando a leitura da sequencia
+    ....
+
+
+
+>preciso testar o shiftand aprox com k = 5 para verificar o tempo e compará-lo com a versão de myers
+    objetivo: Verificar se shiftand ultrapassa tempo de myers em relação à K    
+    -myers-    
+    Elapsed Time: 1221.13
+    Elapsed Time: 1277.33
+    Number of Occurrences: 1977370
+    Number of Occurrences: 1925093
+    grep = 0
+
+    -shiftand-
+    Elapsed Time: 1597.88
+    Number of Occurrences: 1953242
+    Number of Occurrences: 1925082 
+    grep = 0
+    
+    constação: há um aumento significativo do shiftand a medida que k cresce.

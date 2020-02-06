@@ -1,3 +1,5 @@
+// VERSÃO QUE UTILIZA FILTRAGEM (WU MANBER 92) + SHIFT AND GONNET 1989
+
 #include "include/define.h"
 #include <iostream>
 #include <sys/types.h>

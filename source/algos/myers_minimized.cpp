@@ -1,5 +1,7 @@
-// MYERS 1999
-//BUSCA O PADRÃO EM TODA A SEQUENCIA
+//VERSÃO QUE PÁRA LEITURA DA SEQUÊNCIA AO ENCONTRAR O PRIMEIRO PADRÃO
+
+//ESTA VERSÃO ESTÁ DEIXANDO PARA TRÁS MUITOS ADAPTADORES DE CASAMENTO EXATO
+	//ESTES ADAPTADORES DEIXADOS, ESTÃO NA EXTREMIDADE FINAL DA SEQUÊNCIA
 
 #include "include/define.h"
 #include <iostream>
@@ -30,11 +32,9 @@ vector<int> search(char *P, long m, char *T, long n){
 	// ComputePM(&P);
 	int MAXCHAR = 256;
 	int posicaoAnterior, quantGrupo, posicaoAtual, indiceMedio, acumulaPmedia;
-	// bool match = false;
+	bool match = false;
 
 	// ================== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS =====================
-	int inicializador = 0;
-	posicaoAnterior = 0;
 	quantGrupo = 0;
 	posicaoAtual = 0;
 	indiceMedio = 0;
@@ -55,7 +55,7 @@ vector<int> search(char *P, long m, char *T, long n){
 	long D0, HP, HN;
 
 	long currDist = m;
-	long currDistAnt = 0;
+	long currDistAnt;
 
 	for (int j = 0; j < n; ++j){	
 
@@ -75,63 +75,32 @@ vector<int> search(char *P, long m, char *T, long n){
 
 		if (currDist <= k){
 
-			// cerr << "Ocorrência > " << j << endl;
-
 			currDistAnt = currDist;
 
-			// match = true;
-
-			inicializador++;
-
-				if(inicializador == 1){
+			match = true;
 
 					quantGrupo++;
-					posicaoAnterior = posicaoAtual;
 					acumulaPmedia += posicaoAtual;
 
-				}
-				else{
-
-					// se posicao anterior +1 eh igual a posicao atual (significa que eh parte do grupo)
-					if((posicaoAnterior+1) == posicaoAtual){
-
-						quantGrupo++;
-						posicaoAnterior = posicaoAtual;
-						acumulaPmedia += posicaoAtual;
-
-					}
-					else{
-
-						indiceMedio = acumulaPmedia/quantGrupo;
-						indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
-
-						acumulaPmedia = posicaoAtual;
-						posicaoAnterior = posicaoAtual;
-						quantGrupo = 1;
-						inicializador = 1;
-						
-				}
-
-		    }
-
-		}
-		// else{
-		// 	if(match == true){
-		// 		indiceMedio = acumulaPmedia/quantGrupo;
-		// 		indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
-		// 		break;
-		// 	}
-		// }
-
-		if (posicaoAtual == n){
-			if(quantGrupo >= 1){
-					indiceMedio = acumulaPmedia/quantGrupo;
-					indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
+		}else{
+			if(match == true){
+				indiceMedio = acumulaPmedia/quantGrupo;
+				indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
+				break;
 			}
-	    }
-	}
+		}
 
-	// cerr << "--------------------------------------------------------" << endl;
+		// RESOLVER CORTE NA EXTREMIDADE FINAL DA SEQUENCIA (PRECISA SER TESTADO)
+		if (posicaoAtual == n){
+			if (match == true){
+				indiceMedio = acumulaPmedia/quantGrupo;
+				indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
+				break;
+			}
+		}
+		/////////////////////////////////////////////////////////////////////////
+
+	}
 
 	return indexx;
 

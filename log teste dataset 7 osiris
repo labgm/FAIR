@@ -1,0 +1,21 @@
+
+DATASET = 7
+k = 5
+Server = OSIRIS
+
+==================
+MYERS (99)
+==================
+
+Elapsed Time: 1221.13
+Number of Occurrences: 1977370
+Number of Occurrences: 1925093
+
+
+==================
+SHIFTAPROX (sem filtragem) (89)
+==================
+
+Elapsed Time: 1597.88
+Number of Occurrences: 1953242
+Number of Occurrences: 1925082
