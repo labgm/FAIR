@@ -1,7 +1,11 @@
 >preciso testar a versão myers_minimized, para verificar se ainda deixa adaptadores nas extremidades finais
     -> SE resultado for positivo eu altero a versão do shiftand para cortar apenas o primeiro adaptador encontrado, finalizando a leitura da sequencia
-    ....
-
+    
+    RESULTADO
+    Elapsed Time: 1111.15
+    Number of Occurrences: 1791306
+    Number of Occurrences: 1740989
+    grep = 114
 
 
 >preciso testar o shiftand aprox com k = 5 para verificar o tempo e compará-lo com a versão de myers
