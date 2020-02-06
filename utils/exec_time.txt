@@ -1,0 +1,50 @@
+SBNDMq4
+Pattern: CCATCCCG
+Pattern Length = 8
+Time:7.059
+Nº Occurrences: 5765
+Trim: 13.3473
+
+Pattern: CAGCCGCTGGGTCCGC
+Pattern Length = 16
+Time:7.03139
+Nº Occurrences: 6
+Trim: 12.99992
+
+Pattern: TCGCGCAAAGCGTGGCGCTGACCAAAGTCTCC
+Pattern Length = 32
+Time:8.47803
+Nº Occurrences: 12
+Trim: 13.932
+
+Pattern:CCGATGGCGACTTCGGTCGCAGCAAGGCCGACTCCTTCGGTCCCGCCCCGTGTATCCAGCCCCiG
+Pattern Length = 64
+Time: 7.16593
+Nº Occurrences: 1
+Trim: 13.854
+
+QF43
+Pattern: CCATCCCG
+Pattern Length = 8
+Time : 29.6488
+Nº of Occurrences: 5820
+Trim: 33.0342
+
+Pattern: CAGCCGCTGGGTCCGC
+Pattern Length = 16
+Time: 28.8017
+Number of Occurrences: 8
+Trim: 34.2925
+
+Pattern: TCGCGCAAAGCGTGGCGCTGACCAAAGTCTCC
+Pattern Length = 32
+Time:29.4792
+Nº Occurrences: 12
+Trim:42.9897
+
+Pattern:CCGATGGCGACTTCGGTCGCAGCAAGGCCGACTCCTTCGGTCCCGCCCCGTGTATCCAGCCCCiG
+Pattern Length = 64
+Time: 30.9842
+Nº Occurrences: 1
+Trim: 33.6567
+

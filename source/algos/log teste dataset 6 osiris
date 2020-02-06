@@ -1,0 +1,51 @@
+
+DATASET = 6
+k = 3
+Server = OSIRIS
+
+==================
+MYERS (99)
+==================
+
+-- Pesquisa toda a sequência
+
+Number of Occurrences: 1213
+Number of Occurrences: 1786
+grep = 0
+Elapsed Time: 388.809
+Elapsed Time: 404.795
+Elapsed Time: 409.083
+
+-- Alterado (ao encontrar primeiro match com k erros, retorna índice e pára leitura da sequência)
+
+Number of Occurrences: 1081
+Number of Occurrences: 1443
+grep = 0
+Elapsed Time: 396.345
+Elapsed Time: 364.198
+Elapsed Time: 401.726
+
+
+==================
+SHIFTAPROX (sem filtragem) (89)
+==================
+
+Number of Occurrences: 1213
+Number of Occurrences: 1786
+
+Elapsed Time: 452.514
+Elapsed Time: 428.149
+Elapsed Time: 567.729
+
+
+==================
+AGREP (com filtragem) (92)
+==================
+
+Number of Occurrences: 862
+Number of Occurrences: 1050
+
+Elapsed Time: 366.483
+Elapsed Time: 476.967
+
+

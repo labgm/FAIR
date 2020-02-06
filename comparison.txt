@@ -1,0 +1,70 @@
+FAIR:
+
+CCCCCC
+single no trim: 6.51182
+occ.: 37067
+single trim: 13.978
+occ.: ""
+
+CTGTCTCTTATACACATCT
+single no trim: 6.31776
+occ.: 1
+single trim: 15.116
+occ.: 1
+
+
+paired no trim: 12.3054
+paired trim: 27.7053
+occ.: Error
+
+paired no trim: 12.455
+paired trim: 28.3724
+occ.:
+
+Adapter Removal v2:
+
+SINGLE NO TRIM:
+rocessed a total of 1,909,263 reads in 12.8s; 149,000 reads per second on average ...
+
+real	0m12,779s
+user	0m11,174s
+sys	0m0,741s
+
+SINGLE TRIM:
+Processed a total of 1,909,263 reads in 11.9s; 160,000 reads per second on average ...
+
+real	0m11,892s
+user	0m10,497s
+sys	0m0,720s
+
+PAIRED NO TRIM:
+Processed a total of 3,818,526 reads in 33.3s; 114,000 reads per second on average ...
+
+real	0m33,310s
+user	0m29,275s
+sys	0m1,649s
+
+PAIRED TRIM:
+Processed a total of 3,818,526 reads in 35.9s; 106,000 reads per second on average ...
+
+real	0m35,911s
+user	0m30,747s
+sys	0m1,720s
+
+
+Alien Trimmer:
+
+
+single trim: 138.74
+occ.: 1.351.398 trimmed
+4.870 removed
+
+paired trim:
+[05:05]   1,909,263 read pairs processed:   2,898,475 trimmed (fwd:   1,351,398  rev:   1,547,077)      44,364 removed (fwd:       4,870  rev:      39,494)
+301.69user 4.40system 5:05.37elapsed 100%CPU (0avgtext+0avgdata 148000maxresident)k
+0inputs+2116920outputs (0major+32852minor)pagefaults 0swaps
+
+
+Trimmomatic:
+
+
