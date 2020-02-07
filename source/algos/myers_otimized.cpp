@@ -27,7 +27,14 @@
 
 using namespace std;
 
-vector<int> search(char *P, long m, char *T, long n){
+vector<int> search(char *PP, long m, char *T, long n){
+
+	char P[64];
+
+	strcpy(P, PP);
+	strcat(P, PP);
+
+	// cerr << P << endl;
 
 	long k = 3;
 	
@@ -35,30 +42,42 @@ vector<int> search(char *P, long m, char *T, long n){
 
 	int MAXCHAR = 256;
 
-	// MComputePM ////////////////////////////////////////
+
+	// ComputePM ////////////////////////////////////////
 	long PM[MAXCHAR];
+	for (int ii = 0; ii < MAXCHAR; ii++) PM[ii] = 0;
+	for (int ii = 1; ii <= 64; ii++){
+		long temp = 1 << (ii-1);
+		PM[P[ii-1]+127] = PM[P[ii-1]+127] | temp;
+	}
+	////////////////////////////////////////////////////
+
+
+	// MComputePM //////////////////////////////////////// x
+	// long PM[MAXCHAR];
 	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0;
 
 	int w = 64;
 	int r = w / m;
-	for (int s = 1; s <= r; s++){
+	for (int s = 1; s <= 1; s++){
 		for (int i = 1; i <= m; ++i){
 			long constt = 0 << ((r-s+1) * m ) - i;
-			long constt2 = (constt << m) | (1 << (m*(s-1)+i-1));
+			long ccc = 1 << (m*(s-1)+i-1);
+			long constt2 = (constt << ccc) | ccc;
 			PM[P[i-1]+127] = PM[P[i-1]+127] | constt2;
 		}
 	}
 	////////////////////////////////////////////////////
 
 	long ZM;
-	ZM = 0x7FFFFFFF;
-	ZM = (ZM << m) | ZM;
+	ZM = 0x7FFFFFFF7FFFFFFF;
+	// ZM = (ZM << m) | ZM;
 
 	long EM;
-	EM = 0x80000000;
-	EM = (EM << m) | EM;
+	EM = 0x8000000080000000;
+	// EM = (EM << m) | EM;
 
-	long VN = 0;
+	long VN = 0x0000000000000000;
 
 	long VP = 0xFFFFFFFFFFFFFFFF;
 
@@ -67,11 +86,11 @@ vector<int> search(char *P, long m, char *T, long n){
 
 	long D0, HP, HN, XP, XN;
 
-	for (int j = 0; j < n; ++j){	
+	for (int j = 1; j <= n; ++j){	
 
-		// MStep //////////////////////////////////////////////////
+		// MStep ////////////////////////////////////////////////// OK
 		XP = VP & ZM;
-		D0 = (((PM[T[j]+127] & XP) + XP) ^ XP) | PM[T[j]+127] | VN;
+		D0 = (((PM[T[j-1]+127] & XP) + XP) ^ XP) | PM[T[j-1]+127] | VN;
 		HP = VN | ~ (D0 | VP);
 		HN = VP & D0;
 		XP = (HP & ZM) << 1;
@@ -80,12 +99,12 @@ vector<int> search(char *P, long m, char *T, long n){
 		VN = XP & D0;
 		//////////////////////////////////////////////////////////
 
-		MC = MC + ((HN & EM) >> (m-1)) - 1 - ((HP & EM) >> (m-1));
+		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
 
 		long OM = MC & EM;
-		if ((MC & EM) != 0){
+		if (OM != 0x0000000000000000){
 
-			while (OM != 0){
+			while (OM != 0x0000000000000000){
 				
 				int s = log2(OM);
 				int position = (s+1)/m;
@@ -99,7 +118,7 @@ vector<int> search(char *P, long m, char *T, long n){
 
 	}
 
-	cerr << "--------------------------------------------" << endl;
+	cerr << "========================================================================================" << endl;
 
 	return indexx;
 
