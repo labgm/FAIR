@@ -1,7 +1,6 @@
 //VERSÃO QUE PÁRA LEITURA DA SEQUÊNCIA AO ENCONTRAR O PRIMEIRO PADRÃO
 
-//ESTA VERSÃO ESTÁ DEIXANDO PARA TRÁS MUITOS ADAPTADORES DE CASAMENTO EXATO
-	//ESTES ADAPTADORES DEIXADOS, ESTÃO NA EXTREMIDADE FINAL DA SEQUÊNCIA
+//ESTA VERSÃO ESTÁ DEIXANDO PARA TRÁS ALGUNS ADAPTADORES DE CASAMENTO EXATO
 
 #include "include/define.h"
 #include <iostream>
@@ -88,7 +87,6 @@ vector<int> search(char *P, long m, char *T, long n){
 			}
 		}
 
-		// RESOLVER CORTE NA EXTREMIDADE FINAL DA SEQUENCIA (PRECISA SER TESTADO)
 		if (posicaoAtual == n){
 			if (match == true){
 				indiceMedio = acumulaPmedia/quantGrupo;
@@ -96,7 +94,6 @@ vector<int> search(char *P, long m, char *T, long n){
 				break;
 			}
 		}
-		/////////////////////////////////////////////////////////////////////////
 
 	}
 

@@ -3,6 +3,8 @@
 
 //BUSCA O PADRÃO EM TODA A SEQUENCIA
 
+//FALTANDO TERMINAR ALGORITMO
+
 #include "include/define.h"
 #include <iostream>
 #include <sys/types.h>
