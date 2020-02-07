@@ -1,3 +1,5 @@
+// VERSÃO QUE UTILIZA FILTRAGEM (WU MANBER 92) + SHIFT AND (Baeza e GONNET 1989)
+
 #include "include/define.h"
 #include <iostream>
 #include <sys/types.h>
@@ -111,7 +113,6 @@ vector<int> search(char *P, long m, char *T, long n){
 					posicaoAnterior = posicaoAtual;
 					acumulaPmedia += posicaoAtual;
 				}else{
-
 				//se posicao anterior +1 eh igual a posicao atual (significa que eh parte do grupo)
 				if((posicaoAnterior+1) == posicaoAtual){
 						quantGrupo++;
@@ -119,44 +120,25 @@ vector<int> search(char *P, long m, char *T, long n){
 						acumulaPmedia += posicaoAtual;
 				}
 
-				//alteração 1.4
-			// 	else{
+				else{
 
-			// 					indiceMedio = acumulaPmedia/quantGrupo;
-			// 					indexx.insert(indexx.begin(), (indiceMedio - m));
+								indiceMedio = acumulaPmedia/quantGrupo;
+								indexx.insert(indexx.begin(), (indiceMedio - m));
 
-			// 		acumulaPmedia = posicaoAtual;
-			// 		posicaoAnterior = posicaoAtual;
-			// 		//Alteração 1.3 > quantGrupo = 1; 
-			// 		quantGrupo = 1;
-			// 		inicializador = 1;
+					acumulaPmedia = posicaoAtual;
+					posicaoAnterior = posicaoAtual;
+
+					quantGrupo = 1;
+					inicializador = 1;
 					
-			// 		R[0] = 0;
-			// 		R2[0] = 0;
-
-			// 		// i = limitSup;
-
-			// 		// cerr << "Break" << endl;
-			// 		// break;
-
-			// }
-
-		}
-	}
-	//alteração 1.4
-	else{
-
-		if (inicializador >= 1){				
 					R[0] = 0;
 					R2[0] = 0;
-					i = limitSup;
 
-				indiceMedio = acumulaPmedia/quantGrupo;
-				indexx.insert(indexx.begin(), (indiceMedio - m));
-				break;
+			}
+
 		}
-
 	}
+
 
 			// SE FOR O ULTIMO CARACTER DA SEQUENCIA, EXIBI O ULTIMO MATCH CONSIDERADO
 			if(posicaoAtual == limitSup){

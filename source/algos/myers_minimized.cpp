@@ -29,7 +29,6 @@ vector<int> search(char *P, long m, char *T, long n){
 	
 	vector<int> indexx;
 
-	// ComputePM(&P);
 	int MAXCHAR = 256;
 	int posicaoAnterior, quantGrupo, posicaoAtual, indiceMedio, acumulaPmedia;
 	bool match = false;
@@ -43,10 +42,9 @@ vector<int> search(char *P, long m, char *T, long n){
 
 	// ComputePM ////////////////////////////////////////
 	long PM[MAXCHAR];
-	for (int ii = 0; ii < MAXCHAR; ii++) PM[ii] = 0;
-	for (int ii = 1; ii <= m; ii++){
-		long temp = 1 << (ii-1);
-		PM[P[ii-1]+127] = PM[P[ii-1]+127] | temp;
+	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0;
+	for (int x = 1; x <= m; x++){
+		PM[P[x-1]+127] = PM[P[x-1]+127] | (1 << (x-1));
 	}
 	////////////////////////////////////////////////////
 

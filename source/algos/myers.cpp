@@ -27,10 +27,8 @@ vector<int> search(char *P, long m, char *T, long n){
 	
 	vector<int> indexx;
 
-	// ComputePM(&P);
 	int MAXCHAR = 256;
 	int posicaoAnterior, quantGrupo, posicaoAtual, indiceMedio, acumulaPmedia;
-	// bool match = false;
 
 	// ================== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS =====================
 	int inicializador = 0;
@@ -72,14 +70,10 @@ vector<int> search(char *P, long m, char *T, long n){
 		if ((HP & 0x80000000) == 0x80000000) currDist += 1;
 		else if((HN & 0x80000000) == 0x80000000) currDist -= 1;
 
-
+		// MATCH =========
 		if (currDist <= k){
 
-			// cerr << "Ocorrência > " << j << endl;
-
 			currDistAnt = currDist;
-
-			// match = true;
 
 			inicializador++;
 
@@ -115,13 +109,6 @@ vector<int> search(char *P, long m, char *T, long n){
 		    }
 
 		}
-		// else{
-		// 	if(match == true){
-		// 		indiceMedio = acumulaPmedia/quantGrupo;
-		// 		indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
-		// 		break;
-		// 	}
-		// }
 
 		if (posicaoAtual == n){
 			if(quantGrupo >= 1){
@@ -131,7 +118,6 @@ vector<int> search(char *P, long m, char *T, long n){
 	    }
 	}
 
-	// cerr << "--------------------------------------------------------" << endl;
 
 	return indexx;
 

@@ -1,4 +1,4 @@
-//GONNET 1989
+// Baeza & GONNET 1989
 // BUSCA O PADRÃO EM TODA A SEQUENCIA
 
 #include "include/define.h"
@@ -22,26 +22,13 @@
 using namespace std;
 
 vector<int> search(char *P, long m, char *T, long n){
-
-// cerr << "Leitura" << endl;
-
-//	char T[] = {"TTGACCTTCTTAGAAATATTCTTGATAAATGACCCCGGTTTTCTTGTAAAACCTTCTTGATGACCCTTCTTAGAAAATTGATGACCCTTAACGGCGACCACCTTCTTGATGACCCTTGACGACGGACCCA"};
-//	char P[] = {"TTCTTGAAAA"};
-
-	// char T[] = PP;
-	// char P[] = TT;
-
-//	long m = sizeof(P)/sizeof(char) - 1;
-//	long n = sizeof(T)/sizeof(char) - 1;
+//	char T[] = {"TTGACCTTCTTAGAAATATTCTTGATAAATGACCCCGGTTTTCTTGTAAAACCTTCTTGATGACCCTTCTTAGAAAATTGATGACCCTTAACGGCGACCACCTTCTTGATGACCCTTGACGACGGACCCA"}; //	char P[] = {"TTCTTGAAAA"}; // char T[] = PP; // char P[] = TT; //	long m = sizeof(P)/sizeof(char) - 1; //	long n = sizeof(T)/sizeof(char) - 1;
 
 //	K = NUMERO MAXIMO DE ERROS PERMITIDOS (DELECAO, SUBSTITUICAO, INSERCAO)
 	long k = 3;
-	// cerr << "K: " << k << endl;
 
 	// ARMAZENA INDICES DE POSICOES CORRETAS DE MATCH APROXIMADO
 	vector<int> indexx;
-	// cerr << "M " << endl;
-
 
 	// ===== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS DE MATCH NO CASAMENTO APROXIMADO
 			int inicializador = 0;
@@ -127,8 +114,6 @@ vector<int> search(char *P, long m, char *T, long n){
 
 		}
 
-			// PEGA TODOS OS MATCHS APROXIMADOS
-			// indexx.push_back(i+1);
 
 			}
 
