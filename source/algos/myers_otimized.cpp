@@ -31,88 +31,86 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	char P[64];
 
+	char conc[33];
+
+	cerr << "SIZE T > " << strlen(T) << endl;
+
+	strcpy(conc, "CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG");
+
 	strcpy(P, PP);
-	strcat(P, PP);
+	strcat(P, conc);
 
-	// cerr << P << "B" << endl;
-	// cerr << "Z" << endl;
+	cerr << P << endl;
+	// cerr << "Len " << strlen(P) << endl;
 
-	unsigned long k = 3;
+	unsigned long k = 0;
 	
 	vector<int> indexx;
 
 	int MAXCHAR = 256;
 
 
-	// ComputePM ////////////////////////////////////////
-	unsigned long PM[MAXCHAR];
-	// for (int x = 0; x < MAXCHAR; x++) PM[x] = 0;
-	// for (int x = 1; x <= m; x++){
-	// 	PM[P[x-1]+127] = PM[P[x-1]+127] | (1 << (x-1));
-	// }
-	// ////////////////////////////////////////////////////
-
-
 	// MComputePM //////////////////////////////////////// x
-	// long PM[MAXCHAR];
-	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0;
+	long PM[MAXCHAR];
+	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0x0000000000000000;
 
 	int w = 64;
 	int r = w / m;
-	long constt, test, ccc, constt2;
+	long constt;
 	for (int s = 1; s <= r; s++){
-		for (int i = 1; i <= w; ++i){
-			constt = 0 << ((r-s+1) * m ) - i;
-			test = ((m*(s-1))+i-1);
-			ccc = 1 << ((m*(s-1))+i-1);
-			constt2 = (constt << (test + 1)) | ccc;
-			PM[P[i-1]+127] = PM[P[i-1]+127] | constt2;
+		for (int i = 1; i <= m; ++i){
+			constt = 1 << ((m*(s-1))+i-1);			
+			PM[P[i-1]+127] = PM[P[i-1]+127] | constt;
 		}
 	}
 	////////////////////////////////////////////////////
 
-	unsigned long ZM;
+	long ZM;
 	ZM = 0x7FFFFFFF7FFFFFFF; //ok
 
-	unsigned long EM;
+	long EM;
 	EM = 0x8000000080000000; //ok
 
-	unsigned long VN = 0; //ok
+	long VN = 0x0000000000000000; //ok
 
-	unsigned long VP = 0xFFFFFFFFFFFFFFFF; //ok
+	long VP = 0xFFFFFFFFFFFFFFFF; //ok
 
-	unsigned long tempp = pow(2, (m-1)); //ok
+	unsigned long temp = pow(2, m-1);
+	unsigned int MC = (temp + k) * (0x0000000100000001);
+//	 MC = (2147483648 + k) * 4294967297;	 	
 
-	unsigned long MC = (tempp + k) * (0x0000000100000001); //ok
 
-	unsigned long D0, HP, HN, XP, XN;
+	long D0, HP, HN, XP, XN;
+	unsigned long OM; 
 
-	for (int j = 0; j < n; ++j){	
+	for (int j = 1; j <= n; j++){
 
 		// MStep ////////////////// OK //////////////////////////////// OK
 		XP = VP & ZM;
-		D0 = (((PM[T[j]+127] & XP) + XP) ^ XP) | PM[T[j]+127] | VN;
+		D0 = (((PM[T[j-1]+127] & XP) + XP) ^ XP) | PM[T[j-1]+127] | VN;
 		HP = VN | ~ (D0 | VP);
 		HN = VP & D0;
 		XP = (HP & ZM) << 1;
 		XN = (HN & ZM) << 1;
+
 		VP = (XN | ~ (D0 | XP));
 		VN = XP & D0;
 		//////////////////////////////////////////////////////////
 
-		MC += ((HN & EM) >> (m-1)) - ((HP & EM) << (m-1));
+		MC = MC + (((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1)));
 
-		unsigned long OM = MC & EM;
-		if (OM != 0){
+		OM = MC & EM;
+		if (OM != 0x0000000000000000){
 
-			while (OM != 0){
+				cerr << "MATCH > " << j << endl;
+
+			while (OM != 0x0000000000000000){
 				
-				int s = log2(OM);
-				cerr << "s > " << s << endl;
-				int myP = (s+1)/m;
-				cerr << "P > " << myP << endl;
-				cerr << "POSICAO > " << j << endl;
+				long s = log2(OM);
+
+				cerr << "Padrão: " << s << endl;
 				OM = OM & ( ~ (1 << s));
+				// cerr << "OM 2 > " << OM << endl;
 
 			}
 
