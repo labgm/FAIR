@@ -3,8 +3,6 @@
 
 //BUSCA O PADRÃO EM TODA A SEQUENCIA
 
-//FALTANDO TERMINAR ALGORITMO
-
 #include "include/define.h"
 #include <iostream>
 #include <sys/types.h>
@@ -27,6 +25,20 @@
 
 using namespace std;
 
+
+void MReport(int j, unsigned long OM){
+
+			while (OM != 0x0000000000000000){
+				
+				int s = log2(OM);
+				cerr << "s > " << s << endl;
+				OM = OM & ~ (1 << s);
+				cerr << "MATCH > " << j << endl;
+
+			}
+
+}
+
 vector<int> search(char *PP, long m, char *T, long n){
 
 	char P[64];
@@ -37,13 +49,12 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	strcpy(conc, "CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG");
 
-	strcpy(P, PP);
-	strcat(P, conc);
+	strcpy(P, conc);
+	strcat(P, PP);
 
 	cerr << P << endl;
-	// cerr << "Len " << strlen(P) << endl;
 
-	unsigned long k = 0;
+	unsigned long k = 1;
 	
 	vector<int> indexx;
 
@@ -51,37 +62,39 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 
 	// MComputePM //////////////////////////////////////// x
-	long PM[MAXCHAR];
+	unsigned long PM[MAXCHAR];
 	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0x0000000000000000;
 
 	int w = 64;
 	int r = w / m;
-	long constt;
+	unsigned long constt, constt2, tmp;
 	for (int s = 1; s <= r; s++){
-		for (int i = 1; i <= m; ++i){
-			constt = 1 << ((m*(s-1))+i-1);			
-			PM[P[i-1]+127] = PM[P[i-1]+127] | constt;
+		for (int i = 1; i <= m; i++){
+			constt2 = m*(r-s+1)-1;
+			constt = 1 << m*(s-1)+i-1;	
+			tmp = (0 << constt2) | constt;
+			cerr << "tmp > " << tmp << endl;
+			PM[P[i-1]+127] = PM[P[i-1]+127] | tmp;
 		}
 	}
+
 	////////////////////////////////////////////////////
 
-	long ZM;
+	 unsigned long ZM;
 	ZM = 0x7FFFFFFF7FFFFFFF; //ok
 
-	long EM;
+	 unsigned long EM;
 	EM = 0x8000000080000000; //ok
 
-	long VN = 0x0000000000000000; //ok
+	 unsigned long VN = 0; //ok
 
-	long VP = 0xFFFFFFFFFFFFFFFF; //ok
+	 unsigned long VP = 0xFFFFFFFFFFFFFFFF; //ok
 
-	unsigned long temp = pow(2, m-1);
-	unsigned int MC = (temp + k) * (0x0000000100000001);
+	 unsigned long temp = pow(2, m-1);
+	 unsigned long MC = (temp + k) * (0x0000000100000001);
 //	 MC = (2147483648 + k) * 4294967297;	 	
 
-
-	long D0, HP, HN, XP, XN;
-	unsigned long OM; 
+	 unsigned long D0 = 0, HP = 0, HN = 0, XP = 0, XN = 0;
 
 	for (int j = 1; j <= n; j++){
 
@@ -97,22 +110,11 @@ vector<int> search(char *PP, long m, char *T, long n){
 		VN = XP & D0;
 		//////////////////////////////////////////////////////////
 
-		MC = MC + (((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1)));
+		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
 
-		OM = MC & EM;
-		if (OM != 0x0000000000000000){
+		if (MC & EM != 0x0000000000000000){
 
-				cerr << "MATCH > " << j << endl;
-
-			while (OM != 0x0000000000000000){
-				
-				long s = log2(OM);
-
-				cerr << "Padrão: " << s << endl;
-				OM = OM & ( ~ (1 << s));
-				// cerr << "OM 2 > " << OM << endl;
-
-			}
+			MReport(j, MC & EM);		
 
 		}
 
@@ -123,4 +125,3 @@ vector<int> search(char *PP, long m, char *T, long n){
 	return indexx;
 
 	}
-
