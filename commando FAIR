@@ -1,1 +1,4 @@
 ./FAIR --output output/ --forward data/arq1.fastq --reverse data/arq2.fastq --only-remove --forward-adapter ATATATATATATATATATATATATATATATAT --reverse-adapter ATATATATATATATATATATATATATATATAT
+
+./FAIR --output output/ --forward data/arq1.fastq --reverse data/arq2.fastq --only-remove --forward-adapter CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG --reverse-adapter CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG
+

@@ -25,15 +25,16 @@
 
 using namespace std;
 
-
 void MReport(int j, unsigned long OM){
 
 			while (OM != 0x0000000000000000){
 				
-				int s = log2(OM);
-				cerr << "s > " << s << endl;
-				OM = OM & ~ (1 << s);
-				cerr << "MATCH > " << j << endl;
+				int s = floor(log2(OM));
+				cerr << "s = " << s << endl;
+				cerr << "MATCH = " << j << endl;
+				cerr << "OM = " << OM << endl;
+				OM = OM & (~ (1 << s));
+				cerr << "-----------------" << endl;
 
 			}
 
@@ -45,56 +46,58 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	char conc[33];
 
-	cerr << "SIZE T > " << strlen(T) << endl;
+	// cerr << "SIZE T > " << strlen(T) << endl;
 
 	strcpy(conc, "CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG");
 
 	strcpy(P, conc);
 	strcat(P, PP);
 
-	cerr << P << endl;
+	// cerr << P << endl;
 
-	unsigned long k = 1;
+	unsigned long k = 0;
 	
 	vector<int> indexx;
 
 	int MAXCHAR = 256;
-
 
 	// MComputePM //////////////////////////////////////// x
 	unsigned long PM[MAXCHAR];
 	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0x0000000000000000;
 
 	int w = 64;
-	int r = w / m;
+	// int r = w / m;
+	int r = 2;
 	unsigned long constt, constt2, tmp;
 	for (int s = 1; s <= r; s++){
 		for (int i = 1; i <= m; i++){
-			constt2 = m*(r-s+1)-1;
-			constt = 1 << m*(s-1)+i-1;	
-			tmp = (0 << constt2) | constt;
-			cerr << "tmp > " << tmp << endl;
+			// constt2 = m*(r-s+1)-1;
+			constt = 1 << (m*(s-1)+i-1);	
+			// tmp = (0 << constt2) | constt;
+
+			tmp = constt;
+			// cerr << "tmp > " << tmp << endl;
 			PM[P[i-1]+127] = PM[P[i-1]+127] | tmp;
 		}
 	}
 
 	////////////////////////////////////////////////////
 
-	 unsigned long ZM;
+	unsigned long ZM;
 	ZM = 0x7FFFFFFF7FFFFFFF; //ok
 
-	 unsigned long EM;
+	unsigned long EM;
 	EM = 0x8000000080000000; //ok
 
-	 unsigned long VN = 0; //ok
+	unsigned long VN = 0; //ok
 
-	 unsigned long VP = 0xFFFFFFFFFFFFFFFF; //ok
+	unsigned long VP = 0xFFFFFFFFFFFFFFFF; //ok
 
-	 unsigned long temp = pow(2, m-1);
-	 unsigned long MC = (temp + k) * (0x0000000100000001);
-//	 MC = (2147483648 + k) * 4294967297;	 	
+	unsigned long temp = pow(2, m-1);
+	unsigned long MC = (temp + k) * (0x0000000100000001);
+//	MC = (2147483648 + k) * 4294967297;	 	
 
-	 unsigned long D0 = 0, HP = 0, HN = 0, XP = 0, XN = 0;
+	unsigned long D0 = 0, HP = 0, HN = 0, XP = 0, XN = 0;
 
 	for (int j = 1; j <= n; j++){
 
@@ -111,10 +114,11 @@ vector<int> search(char *PP, long m, char *T, long n){
 		//////////////////////////////////////////////////////////
 
 		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
-
-		if (MC & EM != 0x0000000000000000){
-
-			MReport(j, MC & EM);		
+		
+		unsigned long tp = MC & EM;
+		
+		if (tp != 0x0000000000000000){
+			MReport(j, tp);		
 
 		}
 
