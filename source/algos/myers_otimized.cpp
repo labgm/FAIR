@@ -33,7 +33,7 @@ void MReport(int j, unsigned long OM){
 				cerr << "s = " << s << endl;
 				cerr << "MATCH = " << j << endl;
 				cerr << "OM = " << OM << endl;
-				OM = OM & (~ (1 << s));
+				OM = OM & (~(1 << s));
 				cerr << "-----------------" << endl;
 
 			}
@@ -48,12 +48,12 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	// cerr << "SIZE T > " << strlen(T) << endl;
 
-	strcpy(conc, "CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG");
+	strcpy(conc, "ATATATATATATATATATATATATATATATAT");
 
 	strcpy(P, conc);
 	strcat(P, PP);
 
-	// cerr << P << endl;
+	cerr << P << endl;
 
 	unsigned long k = 0;
 	
@@ -63,7 +63,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	// MComputePM //////////////////////////////////////// x
 	unsigned long PM[MAXCHAR];
-	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0x0000000000000000;
+	for (int x = 0; x < MAXCHAR; x++) PM[x] = 0;
 
 	int w = 64;
 	// int r = w / m;
@@ -73,47 +73,47 @@ vector<int> search(char *PP, long m, char *T, long n){
 		for (int i = 1; i <= m; i++){
 			// constt2 = m*(r-s+1)-1;
 			constt = 1 << (m*(s-1)+i-1);	
+			cerr << "constt: " << constt << endl;
 			// tmp = (0 << constt2) | constt;
-
-			tmp = constt;
+			// tmp = constt;
 			// cerr << "tmp > " << tmp << endl;
-			PM[P[i-1]+127] = PM[P[i-1]+127] | tmp;
+			PM[P[i-1]] = PM[P[i-1]] | constt;
 		}
 	}
 
 	////////////////////////////////////////////////////
 
-	unsigned long ZM;
-	ZM = 0x7FFFFFFF7FFFFFFF; //ok
-
-	unsigned long EM;
-	EM = 0x8000000080000000; //ok
-
+	unsigned long ZM = 0x7FFFFFFF7FFFFFFF; //ok
+	unsigned long EM = 0x8000000080000000; //ok
 	unsigned long VN = 0; //ok
-
 	unsigned long VP = 0xFFFFFFFFFFFFFFFF; //ok
 
 	unsigned long temp = pow(2, m-1);
-	unsigned long MC = (temp + k) * (0x0000000100000001);
+	unsigned long long MC = (temp + k) * (0x0000000100000001);
+	// unsigned long long MC = (temp + k) * 4294967297;
 //	MC = (2147483648 + k) * 4294967297;	 	
+
 
 	unsigned long D0 = 0, HP = 0, HN = 0, XP = 0, XN = 0;
 
 	for (int j = 1; j <= n; j++){
 
+		cerr << "Carac: " << T[j-1] << endl;
+		cerr << "MC 1: " << MC << endl;
 		// MStep ////////////////// OK //////////////////////////////// OK
 		XP = VP & ZM;
-		D0 = (((PM[T[j-1]+127] & XP) + XP) ^ XP) | PM[T[j-1]+127] | VN;
-		HP = VN | ~ (D0 | VP);
+		D0 = (((PM[T[j-1]] & XP) + XP) ^ XP) | PM[T[j-1]] | VN;
+		HP = VN | ~(D0 | VP);
 		HN = VP & D0;
 		XP = (HP & ZM) << 1;
 		XN = (HN & ZM) << 1;
 
-		VP = (XN | ~ (D0 | XP));
+		VP = (XN | ~(D0 | XP));
 		VN = XP & D0;
 		//////////////////////////////////////////////////////////
 
 		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
+		cerr << "MC 2: " << MC << endl;
 		
 		unsigned long tp = MC & EM;
 		
