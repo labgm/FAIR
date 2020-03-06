@@ -99,14 +99,10 @@ void SingleFASTQ::erase(string adapter)
 	{
         if (i >= 0)
 		{
-			// if(occurrences < 30)
-			// cerr << "- " << i << endl;
-
 		    occurrences ++;
     		seq.erase(i, adapter.length());
 	    	qual.erase(i, adapter.length());
-            //cerr << "Occurrences: " << occurrences << endl;
-		}
+        }
 	}
 }
 
@@ -151,6 +147,10 @@ void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)
 			}
 		}
 	}
+}
+
+void ThreadTest(){
+
 }
 
 ostream &operator<<(ostream &os, const SingleFASTQ &single)

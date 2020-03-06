@@ -64,7 +64,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 	
 	vector<int> indexx;
 
-	uintmax_t MAXCHAR = 256;
+	uintmax_t MAXCHAR = 1024;
 
 	// MComputePM //////////////////////////////////////// x
 	uintmax_t PM[MAXCHAR];
@@ -85,7 +85,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 			// tmp = (UINTMAX_C(0) << constt2) | constt;
 			// tmp = constt;
 			// cerr << "tmp > " << tmp << endl;
-				PM[P[m*(s-1)+i-1]] = PM[P[m*(s-1)+i-1]] | constt;
+			PM[P[m*(s-1)+i-1]] = PM[P[m*(s-1)+i-1]] | constt;
 				// cerr << i << ": " << PM[P[m*(s-1)+i-1]] << endl;		
 		}
 	}
@@ -107,7 +107,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 	uintmax_t ZM = UINTMAX_C(0x7FFFFFFF7FFFFFFF);
 	// uintmax_t ZM = UINTMAX_C(0xFFFFFFFEFFFFFFFE); //reverso
 	uintmax_t EM = UINTMAX_C(0x8000000080000000); 
-   uintmax_t EM2 = UINTMAX_C(0x0000000100000001); //reverso
+//    uintmax_t EM2 = UINTMAX_C(0x0000000100000001); //reverso
 	uintmax_t VN = (0x0000000000000000); 
 	uintmax_t VP = UINTMAX_C(0xFFFFFFFFFFFFFFFF); 
 
@@ -150,7 +150,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 		cerr << "MC: " << MC << endl;
 		// cerr << "MC 2: " << MC << endl;
 		
-		unsigned long tp = MC & EM;
+		uintmax_t tp = MC & EM;
 		cerr << "tp: " << tp << endl;
 		
 		if (tp != 0){
