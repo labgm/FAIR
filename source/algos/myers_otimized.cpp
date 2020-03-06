@@ -60,7 +60,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 	cerr << "Padrão: " << P << endl;
 	// cerr << T << endl;
 
-	int k = 1;
+	int k = 0;
 	
 	vector<int> indexx;
 
@@ -86,7 +86,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 			// tmp = constt;
 			// cerr << "tmp > " << tmp << endl;
 				PM[P[m*(s-1)+i-1]] = PM[P[m*(s-1)+i-1]] | constt;
-				cerr << i << ": " << PM[P[m*(s-1)+i-1]] << endl;		
+				// cerr << i << ": " << PM[P[m*(s-1)+i-1]] << endl;		
 		}
 	}
 
@@ -107,44 +107,55 @@ vector<int> search(char *PP, long m, char *T, long n){
 	uintmax_t ZM = UINTMAX_C(0x7FFFFFFF7FFFFFFF);
 	// uintmax_t ZM = UINTMAX_C(0xFFFFFFFEFFFFFFFE); //reverso
 	uintmax_t EM = UINTMAX_C(0x8000000080000000); 
-	// uintmax_t EM = UINTMAX_C(0x0000000100000001); //reverso
-	uintmax_t VN = UINTMAX_C(0x0000000000000000); 
+   uintmax_t EM2 = UINTMAX_C(0x0000000100000001); //reverso
+	uintmax_t VN = (0x0000000000000000); 
 	uintmax_t VP = UINTMAX_C(0xFFFFFFFFFFFFFFFF); 
 
 	uintmax_t temp = pow(2, m-1);
-	uintmax_t MC = (temp + k) * UINTMAX_C(0x0000000100000001);
+	uintmax_t MC = (temp + k) * (0x0000000100000001);
+	cerr << "MC1: " << MC << endl;
 	// uintmax_t MC = (temp + k) * UINTMAX_C(0x8000000080000000); //reverso
 	// uintmax_t long MC = (temp + k) * 4294967297;
 //	MC = (2147483648 + k) * 4294967297;	 	
 
 
-	uintmax_t D0 = UINTMAX_C(0), HP = UINTMAX_C(0), HN = UINTMAX_C(0), XP = UINTMAX_C(0), XN = UINTMAX_C(0);
+	uintmax_t D0, HP, HN, XP, XN;
 
 	for (int j = 1; j <= n; j++){
 
 		// cerr << "Carac: " << T[j-1] << endl;
-		// cerr << "MC 1: " << MC << endl;
+		cerr << "J>>>>>>>> " << j-1 << endl;
 
 		// MStep ////////////////// OK ///////////////////////////		
 		XP = VP & ZM;
+		cerr << "XP: " << XP << endl;
 		D0 = (((PM[T[j-1]] & XP) + XP) ^ XP) | PM[T[j-1]] | VN;
+		cerr << "D0: " << D0 << endl;
 		HP = VN | ~(D0 | VP);
+		cerr << "HP: " << HP << endl;
 		HN = VP & D0;
-		XP = (HP & ZM) << UINTMAX_C(1);
-		XN = (HN & ZM) << UINTMAX_C(1);
+		cerr << "HN: " << HN << endl;
+		XP = (HP & ZM) << 1;
+		cerr << "XP: " << XP << endl;
+		XN = (HN & ZM) << 1;
+		cerr << "XN: " << XN << endl;
 
 		VP = XN | ~(D0 | XP);
+		cerr << "VP: " << VP << endl;
 		VN = XP & D0;
+		cerr << "VN: " << VN << endl;
 		//////////////////////////////////////////////////////////
 
 		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
+		cerr << "MC: " << MC << endl;
 		// cerr << "MC 2: " << MC << endl;
 		
-		uintmax_t tp = MC & EM;
+		unsigned long tp = MC & EM;
+		cerr << "tp: " << tp << endl;
 		
 		if (tp != 0){
 			// MReport(j, tp);		
-			cerr << "******: " << j << endl;
+			cerr << "MATCH: " << j-1 << endl;
 		}
 
 	}
