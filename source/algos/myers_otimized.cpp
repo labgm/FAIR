@@ -57,7 +57,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 	strcpy(P, conc);
 	strcat(P, PP);
 
-	cerr << "Padrão: " << P << endl;
+	// cerr << "Padrão: " << P << endl;
 	// cerr << T << endl;
 
 	int k = 0;
@@ -113,7 +113,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	uintmax_t temp = pow(2, m-1);
 	uintmax_t MC = (temp + k) * (0x0000000100000001);
-	cerr << "MC1: " << MC << endl;
+	// cerr << "MC1: " << MC << endl;
 	// uintmax_t MC = (temp + k) * UINTMAX_C(0x8000000080000000); //reverso
 	// uintmax_t long MC = (temp + k) * 4294967297;
 //	MC = (2147483648 + k) * 4294967297;	 	
@@ -124,38 +124,38 @@ vector<int> search(char *PP, long m, char *T, long n){
 	for (int j = 1; j <= n; j++){
 
 		// cerr << "Carac: " << T[j-1] << endl;
-		cerr << "J>>>>>>>> " << j-1 << endl;
+		// cerr << "J>>>>>>>> " << j-1 << endl;
 
 		// MStep ////////////////// OK ///////////////////////////		
 		XP = VP & ZM;
-		cerr << "XP: " << XP << endl;
+		// cerr << "XP: " << XP << endl;
 		D0 = (((PM[T[j-1]] & XP) + XP) ^ XP) | PM[T[j-1]] | VN;
-		cerr << "D0: " << D0 << endl;
+		// cerr << "D0: " << D0 << endl;
 		HP = VN | ~(D0 | VP);
-		cerr << "HP: " << HP << endl;
+		// cerr << "HP: " << HP << endl;
 		HN = VP & D0;
-		cerr << "HN: " << HN << endl;
+		// cerr << "HN: " << HN << endl;
 		XP = (HP & ZM) << 1;
-		cerr << "XP: " << XP << endl;
+		// cerr << "XP: " << XP << endl;
 		XN = (HN & ZM) << 1;
-		cerr << "XN: " << XN << endl;
+		// cerr << "XN: " << XN << endl;
 
 		VP = XN | ~(D0 | XP);
-		cerr << "VP: " << VP << endl;
+		// cerr << "VP: " << VP << endl;
 		VN = XP & D0;
-		cerr << "VN: " << VN << endl;
+		// cerr << "VN: " << VN << endl;
 		//////////////////////////////////////////////////////////
 
 		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
-		cerr << "MC: " << MC << endl;
+		// cerr << "MC: " << MC << endl;
 		// cerr << "MC 2: " << MC << endl;
 		
 		uintmax_t tp = MC & EM;
-		cerr << "tp: " << tp << endl;
+		// cerr << "tp: " << tp << endl;
 		
 		if (tp != 0){
 			// MReport(j, tp);		
-			cerr << "MATCH: " << j-1 << endl;
+			// cerr << "MATCH: " << j-1 << endl;
 		}
 
 	}

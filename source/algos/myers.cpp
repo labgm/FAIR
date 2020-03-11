@@ -23,7 +23,7 @@ using namespace std;
 
 vector<int> search(char *P, long m, char *T, long n){
 
-	long k = 0;
+	long k = 3;
 	
 	vector<int> indexx;
 
@@ -45,7 +45,7 @@ vector<int> search(char *P, long m, char *T, long n){
 	for (int ii = 1; ii <= m; ii++){
 		long temp = 1 << (ii-1);
 		PM[P[ii-1]+127] = PM[P[ii-1]+127] | temp;
-		cerr << ii - 1 << ": " << PM[P[ii-1]+127] << endl;
+		// cerr << ii - 1 << ": " << PM[P[ii-1]+127] << endl;
 	}
 	////////////////////////////////////////////////////
 
