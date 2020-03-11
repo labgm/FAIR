@@ -1,6 +1,8 @@
 #include "SingleFASTQFile.cpp"
+
 #include <pthread.h>
 #include <thread>
+
 class PairedFASTQFile
 {
 	string file;
@@ -9,40 +11,33 @@ class PairedFASTQFile
 	pair<string, string> adapters;
 
 public:
-	bool openFASTQInputFile(string forward, string reverse, int quality);
-	bool openFASTQOutputFile(string file, string file2);
-	bool hasNext();
+	// bool openFASTQInputFile(string forward, string reverse, int quality);
+	// bool openFASTQOutputFile(string file, string file2);
+	// bool hasNext();
 	PairedFASTQ getNext();
 	pair<string, string> identifyAdapters();
 	void trim(int minQuality, int minSequenceLength);
-	void removeAdapters(bool onlyRemove, string adapter1, string adapter2);
-	void write();
-	void closeOutput();
-	// *#
-	void removeForward(bool onlyRemove, string adapter);
-	void removeReverse(bool onlyRemove, string adapter);
+	// void removeAdapters(bool onlyRemove, string adapter1, string adapter2);
+	// void write();
+	// void closeOutput();
 
 	bool openFASTQInputFile_forward(string forward, int quality);
 	bool openFASTQInputFile_reverse(string reverse, int quality);
 	bool openFASTQOutputFile_forward(string file);
 	bool openFASTQOutputFile_reverse(string file2);
-
-	void execute_forward(string forwardAdapter, string forward, string outputDir, int phredOffset, bool onlyRemove, bool onlyIdentify);
-	void execute_reverse(string reverserAdapter, string reverse, string outputDir, int phredOffset, bool onlyRemove, bool onlyIdentify);
+	bool hasNext_forward();
+	bool hasNext_reverse();
+	void trim_forward(int minQuality, int minSequenceLength);
+	void trim_reverse(int minQuality, int minSequenceLength);
+	void removeAdapters_forward(bool onlyRemove, string adapter1);
+	void removeAdapters_reverse(bool onlyRemove, string adapter2);
+	void write_forward();
+	void write_reverse();
+	void closeOutput_forward();
+	void closeOutput_reverse();
 
 };
 
-bool PairedFASTQFile::openFASTQInputFile(string forward, string reverse, int quality)
-{
-	if (this->forward.openFASTQInput(forward, quality) && this->reverse.openFASTQInput(reverse, quality))
-	{
-		return true;
-	}
-
-	cerr << "Failed To Open Forward & Reverse Files." << endl;
-	return false;
-}
-// #* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 bool PairedFASTQFile::openFASTQInputFile_forward(string forward, int quality)
 {
 	if (this->forward.openFASTQInput(forward, quality))
@@ -75,10 +70,9 @@ bool PairedFASTQFile::openFASTQOutputFile_forward(string file)
 
 	return false;
 }
-
 bool PairedFASTQFile::openFASTQOutputFile_reverse(string file2)
 {
-	this->file = file;
+	// this->file = file;
 
 	if (this->reverse.openFASTQOutput(file2) == true)
 	{
@@ -87,97 +81,14 @@ bool PairedFASTQFile::openFASTQOutputFile_reverse(string file2)
 
 	return false;
 }
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-void PairedFASTQFile::execute_forward(string forwardAdapter, string forward, string outputDir, int phredOffset, bool onlyRemove, bool onlyIdentify)
+bool PairedFASTQFile::hasNext_forward()
 {
-			PairedFASTQFile p_fastq;
-			if (p_fastq.openFASTQInputFile_forward(forward, phredOffset) && p_fastq.openFASTQOutputFile_forward(outputDir))
-			{
-				if (onlyIdentify)
-				{
-					cerr << "Adapters (Paired File): " << endl;
-				}
-				else
-				{
-					
-
-					while (p_fastq.hasNext())
-					{
-						p_fastq.removeForward(onlyRemove, forwardAdapter);
-
-						// if (trim)
-						// {
-						// 	if (trimQuality)
-						// 	{
-						// 		p_fastq.trim(minQuality, 3);
-						// 	}
-						// 	else
-						// 	{
-						// 		p_fastq.trim(-1, 1);
-						// 	}
-						// }
-
-						p_fastq.write();
-					}
-					
-				}
-			}
+	return (forward.hasNext());
 }
-
-void PairedFASTQFile::execute_reverse(string reverserAdapter, string reverse, string outputDir, int phredOffset, bool onlyRemove, bool onlyIdentify)
+bool PairedFASTQFile::hasNext_reverse()
 {
-			PairedFASTQFile p_fastq;
-			if (p_fastq.openFASTQInputFile_reverse(reverse, phredOffset) && p_fastq.openFASTQOutputFile_reverse(outputDir))
-			{
-				if (onlyIdentify)
-				{
-					cerr << "Adapters (Paired File): " << endl;
-				}
-				else
-				{		
-
-					while (p_fastq.hasNext())
-					{
-						p_fastq.removeReverse(onlyRemove, reverserAdapter);
-
-						// if (trim)
-						// {
-						// 	if (trimQuality)
-						// 	{
-						// 		p_fastq.trim(minQuality, 3);
-						// 	}
-						// 	else
-						// 	{
-						// 		p_fastq.trim(-1, 1);
-						// 	}
-						// }
-
-						p_fastq.write();
-					}
-					
-				}
-			}
-}
-
-
-// $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-bool PairedFASTQFile::openFASTQOutputFile(string file, string file2)
-{
-	this->file = file;
-
-	if (this->forward.openFASTQOutput(file) && this->reverse.openFASTQOutput(file2) == true)
-	{
-		return true;
-	}
-
-	return false;
-}
-
-bool PairedFASTQFile::hasNext()
-{
-	return (forward.hasNext() && reverse.hasNext());
+	return (reverse.hasNext());
 }
 
 PairedFASTQ PairedFASTQFile::getNext()
@@ -193,49 +104,39 @@ pair<string, string> PairedFASTQFile::identifyAdapters()
 	return adapters;
 }
 
-void PairedFASTQFile::trim(int minQuality, int minSequenceLength)
+void PairedFASTQFile::trim_forward(int minQuality, int minSequenceLength)
 {
 	forward.trim(minQuality, 0);
+}
+void PairedFASTQFile::trim_reverse(int minQuality, int minSequenceLength)
+{
 	reverse.trim(minQuality, 0);
 }
 
-// *#
-void PairedFASTQFile::removeForward(bool onlyRemove, string adapter)
+void PairedFASTQFile::removeAdapters_forward(bool onlyRemove, string adapter1)
 {
-	// cerr << "Removendo Forward" << endl;
-	forward.removeAdapter(onlyRemove, adapter);
-	// cerr << "Forward FOI" << endl;
-}
-void PairedFASTQFile::removeReverse(bool onlyRemove, string adapter)
-{
-	// cerr << "Removendo Reverse" << endl;
-	reverse.removeAdapter(onlyRemove, adapter);
-	// cerr << "Reverse FOI" << endl;
-}
-
-void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2)
-{
-
-	// PairedFASTQFile pff;
-	// thread t1 {&PairedFASTQFile::removeForward, &pff, onlyRemove, adapter1};
-	// t1.join();
-	// thread t2 {&PairedFASTQFile::removeReverse, &pff, onlyRemove, adapter2};
-	// t2.join();
-
 	forward.removeAdapter(onlyRemove, adapter1);
+}
+void PairedFASTQFile::removeAdapters_reverse(bool onlyRemove, string adapter2)
+{
 	reverse.removeAdapter(onlyRemove, adapter2);
-
 }
 
-void PairedFASTQFile::write()
+void PairedFASTQFile::write_forward()
 {
 	forward.write();
+}
+void PairedFASTQFile::write_reverse()
+{
 	reverse.write();
 }
 
-void PairedFASTQFile::closeOutput()
+void PairedFASTQFile::closeOutput_forward()
 {
 	forward.closeOutput();
+}
+void PairedFASTQFile::closeOutput_reverse()
+{
 	reverse.closeOutput();
 }
 

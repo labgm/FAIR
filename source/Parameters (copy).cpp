@@ -216,19 +216,36 @@ bool Parameters::parseParameters()
 		else if (forward.length() != 0 && reverse.length() != 0)
 		{
 			cerr << "Paired Files: " << forward << " | " << reverse << endl;
+			PairedFASTQFile p_fastq;
+			if (p_fastq.openFASTQInputFile(forward, reverse, phredOffset) && p_fastq.openFASTQOutputFile(outputDir, outputDir2))
+			{
+				if (onlyIdentify)
+				{
+					cerr << "Adapters (Paired File): " << endl;
+				}
+				else
+				{
+					clock_gettime(CLOCK_MONOTONIC, &start);
 
-			
-			clock_gettime(CLOCK_MONOTONIC, &start);
+					while (p_fastq.hasNext())
+					{
+						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter);
 
-			// AQUI
-			PairedFASTQFile pfqf;
-			thread t1(&PairedFASTQFile::execute_forward, &pfqf, forwardAdapter, forward, outputDir, phredOffset, onlyRemove, onlyIdentify);
-			thread t2(&PairedFASTQFile::execute_reverse, &pfqf, reverseAdapter, reverse, outputDir2, phredOffset, onlyRemove, onlyIdentify);
+						if (trim)
+						{
+							if (trimQuality)
+							{
+								p_fastq.trim(minQuality, 3);
+							}
+							else
+							{
+								p_fastq.trim(-1, 1);
+							}
+						}
 
-			t1.join();
-			t2.join();
-
-			clock_gettime(CLOCK_MONOTONIC, &finish);
+						p_fastq.write();
+					}
+					clock_gettime(CLOCK_MONOTONIC, &finish);
 
 					elapsed = (finish.tv_sec - start.tv_sec);
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
@@ -238,7 +255,9 @@ bool Parameters::parseParameters()
 
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
-			// p_fastq.closeOutput();
+				}
+			}
+			p_fastq.closeOutput();
 
 			return true;
 		}

@@ -149,10 +149,6 @@ void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)
 	}
 }
 
-void ThreadTest(){
-
-}
-
 ostream &operator<<(ostream &os, const SingleFASTQ &single)
 {
 	os << single.id << endl;
