@@ -146,5 +146,3 @@ void SingleFASTQFile::closeOutput()
 	fin.close();
 	fout.close();
 }
-
-

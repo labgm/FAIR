@@ -25,7 +25,7 @@ vector<int> search(char *P, long m, char *T, long n){
 //	char T[] = {"TTGACCTTCTTAGAAATATTCTTGATAAATGACCCCGGTTTTCTTGTAAAACCTTCTTGATGACCCTTCTTAGAAAATTGATGACCCTTAACGGCGACCACCTTCTTGATGACCCTTGACGACGGACCCA"}; //	char P[] = {"TTCTTGAAAA"}; // char T[] = PP; // char P[] = TT; //	long m = sizeof(P)/sizeof(char) - 1; //	long n = sizeof(T)/sizeof(char) - 1;
 
 //	K = NUMERO MAXIMO DE ERROS PERMITIDOS (DELECAO, SUBSTITUICAO, INSERCAO)
-	long k = 3;
+	long k = 0;
 
 	// ARMAZENA INDICES DE POSICOES CORRETAS DE MATCH APROXIMADO
 	vector<int> indexx;

@@ -1,25 +1,16 @@
 #include "SingleFASTQFile.cpp"
 
-#include <pthread.h>
-#include <thread>
-
 class PairedFASTQFile
 {
-	string file;
+	string file, file2;
 	SingleFASTQFile forward, reverse;
 	PairedFASTQ pairedSequence;
 	pair<string, string> adapters;
 
 public:
-	// bool openFASTQInputFile(string forward, string reverse, int quality);
-	// bool openFASTQOutputFile(string file, string file2);
-	// bool hasNext();
+
 	PairedFASTQ getNext();
 	pair<string, string> identifyAdapters();
-	void trim(int minQuality, int minSequenceLength);
-	// void removeAdapters(bool onlyRemove, string adapter1, string adapter2);
-	// void write();
-	// void closeOutput();
 
 	bool openFASTQInputFile_forward(string forward, int quality);
 	bool openFASTQInputFile_reverse(string reverse, int quality);
@@ -40,7 +31,7 @@ public:
 
 bool PairedFASTQFile::openFASTQInputFile_forward(string forward, int quality)
 {
-	if (this->forward.openFASTQInput(forward, quality))
+	if (this->forward.openFASTQInput_forward(forward, quality))
 	{
 		return true;
 	}
@@ -50,7 +41,7 @@ bool PairedFASTQFile::openFASTQInputFile_forward(string forward, int quality)
 }
 bool PairedFASTQFile::openFASTQInputFile_reverse(string reverse, int quality)
 {
-	if (this->reverse.openFASTQInput(reverse, quality))
+	if (this->reverse.openFASTQInput_reverse(reverse, quality))
 	{
 		return true;
 	}
@@ -61,7 +52,7 @@ bool PairedFASTQFile::openFASTQInputFile_reverse(string reverse, int quality)
 
 bool PairedFASTQFile::openFASTQOutputFile_forward(string file)
 {
-	this->file = file;
+	// this->file = file;
 
 	if (this->forward.openFASTQOutput(file) == true)
 	{
@@ -72,7 +63,7 @@ bool PairedFASTQFile::openFASTQOutputFile_forward(string file)
 }
 bool PairedFASTQFile::openFASTQOutputFile_reverse(string file2)
 {
-	// this->file = file;
+	// this->file2 = file2;
 
 	if (this->reverse.openFASTQOutput(file2) == true)
 	{
@@ -133,11 +124,11 @@ void PairedFASTQFile::write_reverse()
 
 void PairedFASTQFile::closeOutput_forward()
 {
-	forward.closeOutput();
+	forward.closeOutput_paired(1);
 }
 void PairedFASTQFile::closeOutput_reverse()
 {
-	reverse.closeOutput();
+	reverse.closeOutput_paired(2);
 }
 
 

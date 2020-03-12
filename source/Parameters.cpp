@@ -1,5 +1,5 @@
 #include "PairedFASTQFile.cpp"
-
+#include<thread>
 class Parameters
 {
 private:
@@ -212,21 +212,101 @@ bool Parameters::parseParameters()
 			s_fastq.closeOutput();
 
 			return true;
+			
 		}
+
+		// *** PAIRED-END DATA ***
 		else if (forward.length() != 0 && reverse.length() != 0)
 		{
 			cerr << "Paired Files: " << forward << " | " << reverse << endl;
-
 			
 			clock_gettime(CLOCK_MONOTONIC, &start);
 
-			// AQUI
-			PairedFASTQFile pfqf;
-			thread t1(&PairedFASTQFile::removeAdapters_forward, &pfqf, onlyRemove, forwardAdapter);
-			thread t2(&PairedFASTQFile::removeAdapters_reverse, &pfqf, onlyRemove, reverseAdapter);
+			// THREAD 1 - FORWARD
+			thread t1{[=](){
+
+			PairedFASTQFile p_fastq_f;
+
+			if (p_fastq_f.openFASTQInputFile_forward(forward, phredOffset) && p_fastq_f.openFASTQOutputFile_forward(outputDir))
+			{
+				if (onlyIdentify)
+				{
+					cerr << "Adapters (Paired File): " << endl;
+				}
+				else
+				{
+					while (p_fastq_f.hasNext_forward())
+					{
+						p_fastq_f.removeAdapters_forward(onlyRemove, forwardAdapter);
+
+						if (trim)
+						{
+							if (trimQuality)
+							{
+								p_fastq_f.trim_forward(minQuality, 3);
+							}
+							else
+							{
+								p_fastq_f.trim_forward(-1, 1);
+							}
+						}
+
+						p_fastq_f.write_forward();
+					}
+				}
+			}
+
+			p_fastq_f.closeOutput_forward();
+
+			}};
+
+			// THREAD 2 - REVERSE
+			thread t2{[=](){
+
+			PairedFASTQFile p_fastq_r;
+
+			if (p_fastq_r.openFASTQInputFile_reverse(reverse, phredOffset) && p_fastq_r.openFASTQOutputFile_reverse(outputDir2))
+			{
+
+				if (onlyIdentify)
+				{
+					cerr << "Adapters (Paired File): " << endl;
+				}
+				else
+				{
+
+				while (p_fastq_r.hasNext_reverse())
+					{
+						p_fastq_r.removeAdapters_reverse(onlyRemove, reverseAdapter);
+
+						if (trim)
+						{
+							if (trimQuality)
+							{
+								p_fastq_r.trim_reverse(minQuality, 3);
+							}
+							else
+							{
+								p_fastq_r.trim_reverse(-1, 1);
+							}
+						}
+
+						p_fastq_r.write_reverse();
+
+					}
+				}
+			}
+
+			p_fastq_r.closeOutput_reverse();
+
+			}};
 
 			t1.join();
 			t2.join();
+
+			// thread t1(&PairedFASTQFile::removeAdapters_forward, &p_fastq, onlyRemove, forwardAdapter);
+			// thread t2(&PairedFASTQFile::removeAdapters_reverse, &p_fastq, onlyRemove, reverseAdapter);
+
 
 			clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -238,9 +318,10 @@ bool Parameters::parseParameters()
 
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
-			// p_fastq.closeOutput();
+
 
 			return true;
+
 		}
 		else if (interlaced.length() != 0)
 		{
