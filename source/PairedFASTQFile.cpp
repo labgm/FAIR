@@ -2,46 +2,27 @@
 
 class PairedFASTQFile
 {
-	string file, file2;
+	string file;
 	SingleFASTQFile forward, reverse;
 	PairedFASTQ pairedSequence;
 	pair<string, string> adapters;
 
 public:
-
+	bool openFASTQInputFile(string forward, string reverse, int quality);
+	bool openFASTQOutputFile(string file, string file2);
+	bool hasNext();
 	PairedFASTQ getNext();
 	pair<string, string> identifyAdapters();
-
-	bool openFASTQInputFile_forward(string forward, int quality);
-	bool openFASTQInputFile_reverse(string reverse, int quality);
-	bool openFASTQOutputFile_forward(string file);
-	bool openFASTQOutputFile_reverse(string file2);
-	bool hasNext_forward();
-	bool hasNext_reverse();
-	void trim_forward(int minQuality, int minSequenceLength);
-	void trim_reverse(int minQuality, int minSequenceLength);
-	void removeAdapters_forward(bool onlyRemove, string adapter1);
-	void removeAdapters_reverse(bool onlyRemove, string adapter2);
-	void write_forward();
-	void write_reverse();
-	void closeOutput_forward();
-	void closeOutput_reverse();
+	void trim(int minQuality, int minSequenceLength);
+	void removeAdapters(bool onlyRemove, string adapter1, string adapter2);
+	void write();
+	void closeOutput();
 
 };
 
-bool PairedFASTQFile::openFASTQInputFile_forward(string forward, int quality)
+bool PairedFASTQFile::openFASTQInputFile(string forward, string reverse, int quality)
 {
-	if (this->forward.openFASTQInput_forward(forward, quality))
-	{
-		return true;
-	}
-
-	cerr << "Failed To Open Forward & Reverse Files." << endl;
-	return false;
-}
-bool PairedFASTQFile::openFASTQInputFile_reverse(string reverse, int quality)
-{
-	if (this->reverse.openFASTQInput_reverse(reverse, quality))
+	if (this->forward.openFASTQInput(forward, quality) && this->reverse.openFASTQInput(reverse, quality))
 	{
 		return true;
 	}
@@ -50,22 +31,11 @@ bool PairedFASTQFile::openFASTQInputFile_reverse(string reverse, int quality)
 	return false;
 }
 
-bool PairedFASTQFile::openFASTQOutputFile_forward(string file)
+bool PairedFASTQFile::openFASTQOutputFile(string file, string file2)
 {
-	// this->file = file;
+	this->file = file;
 
-	if (this->forward.openFASTQOutput(file) == true)
-	{
-		return true;
-	}
-
-	return false;
-}
-bool PairedFASTQFile::openFASTQOutputFile_reverse(string file2)
-{
-	// this->file2 = file2;
-
-	if (this->reverse.openFASTQOutput(file2) == true)
+	if (this->forward.openFASTQOutput(file) && this->reverse.openFASTQOutput(file2) == true)
 	{
 		return true;
 	}
@@ -73,13 +43,9 @@ bool PairedFASTQFile::openFASTQOutputFile_reverse(string file2)
 	return false;
 }
 
-bool PairedFASTQFile::hasNext_forward()
+bool PairedFASTQFile::hasNext()
 {
-	return (forward.hasNext());
-}
-bool PairedFASTQFile::hasNext_reverse()
-{
-	return (reverse.hasNext());
+	return (forward.hasNext() && reverse.hasNext());
 }
 
 PairedFASTQ PairedFASTQFile::getNext()
@@ -95,40 +61,30 @@ pair<string, string> PairedFASTQFile::identifyAdapters()
 	return adapters;
 }
 
-void PairedFASTQFile::trim_forward(int minQuality, int minSequenceLength)
+void PairedFASTQFile::trim(int minQuality, int minSequenceLength)
 {
 	forward.trim(minQuality, 0);
-}
-void PairedFASTQFile::trim_reverse(int minQuality, int minSequenceLength)
-{
 	reverse.trim(minQuality, 0);
 }
 
-void PairedFASTQFile::removeAdapters_forward(bool onlyRemove, string adapter1)
+void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2)
 {
+
 	forward.removeAdapter(onlyRemove, adapter1);
-}
-void PairedFASTQFile::removeAdapters_reverse(bool onlyRemove, string adapter2)
-{
 	reverse.removeAdapter(onlyRemove, adapter2);
+
 }
 
-void PairedFASTQFile::write_forward()
+void PairedFASTQFile::write()
 {
 	forward.write();
-}
-void PairedFASTQFile::write_reverse()
-{
 	reverse.write();
 }
 
-void PairedFASTQFile::closeOutput_forward()
+void PairedFASTQFile::closeOutput()
 {
-	forward.closeOutput_paired(1);
-}
-void PairedFASTQFile::closeOutput_reverse()
-{
-	reverse.closeOutput_paired(2);
+	forward.closeOutput();
+	reverse.closeOutput();
 }
 
 

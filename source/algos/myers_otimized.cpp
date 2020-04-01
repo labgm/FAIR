@@ -57,18 +57,18 @@ vector<int> search(char *PP, long m, char *T, long n){
 	strcpy(P, conc);
 	strcat(P, PP);
 
-	// cerr << "Padrão: " << P << endl;
+	cerr << "Padrão: " << P << endl;
 	// cerr << T << endl;
 
 	int k = 0;
 	
 	vector<int> indexx;
 
-	uintmax_t MAXCHAR = 1024;
+	int MAXCHAR = 1024;
 
 	// MComputePM //////////////////////////////////////// x
 	uintmax_t PM[MAXCHAR];
-	for (int x = 1; x <= MAXCHAR; x++) PM[x-1] = UINTMAX_C(0x0000000000000000);
+	for (int x = 1; x <= MAXCHAR; x++) PM[x-1] = (0x0000000000000000);
 
 	// for (int x = 0; x < MAXCHAR; x++) cerr << "-:" << PM[x] << endl;	
 
@@ -78,15 +78,18 @@ vector<int> search(char *PP, long m, char *T, long n){
 	uintmax_t constt, constt2, tmp;
 
 	for (int s = 1; s <= r; s++){
-		for (uintmax_t i = 1; i <= m; i++){
+		for (int i = 1; i <= m; i++){
 			// constt2 = m*(r-s+1)-i;
-			constt = UINTMAX_C(1) << m*(s-1)+i-1;	
-			// cerr << "constt: " << constt << endl;
+			uint64_t um = 1;
+			constt = um << m*(s-1)+i-1;	// ok
+			cerr << "constt: " << constt << endl;
 			// tmp = (UINTMAX_C(0) << constt2) | constt;
 			// tmp = constt;
 			// cerr << "tmp > " << tmp << endl;
-			PM[P[m*(s-1)+i-1]] = PM[P[m*(s-1)+i-1]] | constt;
-				// cerr << i << ": " << PM[P[m*(s-1)+i-1]] << endl;		
+			PM[P[m*(s-1)+i-1]] = constt | PM[P[m*(s-1)+i-1]];
+				cerr << "Pos. Caracter P > " << (m*(s-1)+i-1) << endl;		
+				cerr << "Mascara de bits: " << PM[P[m*(s-1)+i-1]] << endl; //ok
+				cerr << "--------------------" << endl;
 		}
 	}
 
@@ -104,14 +107,14 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	////////////////////////////////////////////////////
 
-	uintmax_t ZM = UINTMAX_C(0x7FFFFFFF7FFFFFFF);
+	uintmax_t ZM = (0x7FFFFFFF7FFFFFFF);
 	// uintmax_t ZM = UINTMAX_C(0xFFFFFFFEFFFFFFFE); //reverso
-	uintmax_t EM = UINTMAX_C(0x8000000080000000); 
+	uintmax_t EM = (0x8000000080000000); 
 //    uintmax_t EM2 = UINTMAX_C(0x0000000100000001); //reverso
 	uintmax_t VN = (0x0000000000000000); 
-	uintmax_t VP = UINTMAX_C(0xFFFFFFFFFFFFFFFF); 
+	uintmax_t VP = (0xFFFFFFFFFFFFFFFF); 
 
-	uintmax_t temp = pow(2, m-1);
+	int temp = pow(2, m-1);
 	uintmax_t MC = (temp + k) * (0x0000000100000001);
 	// cerr << "MC1: " << MC << endl;
 	// uintmax_t MC = (temp + k) * UINTMAX_C(0x8000000080000000); //reverso
@@ -140,7 +143,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 		XN = (HN & ZM) << 1;
 		// cerr << "XN: " << XN << endl;
 
-		VP = XN | ~(D0 | XP);
+		VP = (XN | ~(D0 | XP));
 		// cerr << "VP: " << VP << endl;
 		VN = XP & D0;
 		// cerr << "VN: " << VN << endl;
@@ -150,12 +153,12 @@ vector<int> search(char *PP, long m, char *T, long n){
 		// cerr << "MC: " << MC << endl;
 		// cerr << "MC 2: " << MC << endl;
 		
-		uintmax_t tp = MC & EM;
-		// cerr << "tp: " << tp << endl;
+		uint64_t tp = MC & EM;
+		cerr << "tp: " << tp << endl;
 		
-		if (tp != 0){
+		if (tp != 0x0000000000000000){
 			// MReport(j, tp);		
-			// cerr << "MATCH: " << j-1 << endl;
+			cerr << "MATCH: " << j-1 << endl;
 		}
 
 	}

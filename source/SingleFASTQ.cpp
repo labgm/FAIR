@@ -1,11 +1,11 @@
 //#include "algos/sbndmq4.cpp"
-#include "algos/shiftand.cpp"
+// #include "algos/shiftand.cpp"
 
 // #include "algos/shiftand_filtragem.cpp"
 // #include "algos/myers.cpp"
 // #include "algos/myers_minimized.cpp"
 
-// #include "algos/myers_otimized.cpp"
+#include "algos/myers_otimized.cpp"
 
 class SingleFASTQ
 {

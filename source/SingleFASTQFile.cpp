@@ -19,14 +19,6 @@ public:
 	void removeAdapter(bool onlyRemove, string adapter);
 	void write();
 	void closeOutput();
-	void closeOutput_paired(int typeRead);
-
-	void identifyQuality_forward();
-	void identifyQuality_reverse();
-
-	bool openFASTQInput_forward(string file, int quality);
-	bool openFASTQInput_reverse(string file, int quality);
-
 };
 
 bool SingleFASTQFile::openFASTQInput(string file, int quality)
@@ -36,51 +28,6 @@ bool SingleFASTQFile::openFASTQInput(string file, int quality)
 	if (quality == 0)
 	{
 		identifyQuality();
-	}
-	else
-	{
-		this->quality = quality;
-	}
-
-	fin.open(file);
-	if (fin.is_open())
-	{
-		return true;
-	}
-
-	cerr << "Failed to Open Input File" << file << endl;
-	return false;
-}
-
-bool SingleFASTQFile::openFASTQInput_forward(string file, int quality)
-{
-	this->file = file;
-
-	if (quality == 0)
-	{
-		identifyQuality_forward();
-	}
-	else
-	{
-		this->quality = quality;
-	}
-
-	fin.open(file);
-	if (fin.is_open())
-	{
-		return true;
-	}
-
-	cerr << "Failed to Open Input File" << file << endl;
-	return false;
-}
-bool SingleFASTQFile::openFASTQInput_reverse(string file, int quality)
-{
-	this->file = file;
-
-	if (quality == 0)
-	{
-		identifyQuality_reverse();
 	}
 	else
 	{
@@ -138,9 +85,6 @@ string SingleFASTQFile::identifyAdapter()
 
 void SingleFASTQFile::identifyQuality()
 {
-
-	cerr << "NOT" << endl;
-
 	cerr << endl
 		 << "Phred Quality Offset of " << file << ":" << endl;
 
@@ -153,46 +97,6 @@ void SingleFASTQFile::identifyQuality()
 	if (fef >> quality)
 	{
 		system("rm qual.txt && rm seq_sample.fastq");
-		fef.close();
-	}
-	cerr << endl;
-}
-
-void SingleFASTQFile::identifyQuality_forward()
-{
-
-	cerr << endl
-		 << "Phred Quality Offset of " << file << ":" << endl;
-
-	string command = "sed -n '2p' " + file + " > seq_sample_forward.fastq";
-
-	system(command.c_str());
-	system("python3 source/bin/identify-phred.py seq_sample_forward.fastq");
-
-	ifstream fef("qual.txt");
-	if (fef >> quality)
-	{
-		system("rm qual.txt && rm seq_sample_forward.fastq");
-		fef.close();
-	}
-	cerr << endl;
-}
-void SingleFASTQFile::identifyQuality_reverse()
-{
-
-	cerr << endl
-		 << "Phred Quality Offset of " << file << ":" << endl;
-
-	string command = "sed -n '2p' " + file + " > seq_sample_reverse.fastq";
-
-	system(command.c_str());
-	system("python3 source/bin/identify-phred.py seq_sample_reverse.fastq");
-
-	ifstream fef("qual.txt");
-	if (fef >> quality)
-	{
-		system("rm qual.txt && rm seq_sample_reverse.fastq");
-		// system("rm seq_sample_reverse.fastq");
 		fef.close();
 	}
 	cerr << endl;
@@ -215,11 +119,7 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter)
 		adapter = identifyAdapter();
 	}
 
-	// cerr << "Mark 1" << endl;
-
 	sequence.erase(adapter);
-
-	// cerr << "Mark 2" << endl;
 
 	// int number_of_ocurrences = 0;
 
@@ -231,7 +131,6 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter)
 
 	// }
 }
-
 
 void SingleFASTQFile::write()
 {
@@ -247,16 +146,3 @@ void SingleFASTQFile::closeOutput()
 	fin.close();
 	fout.close();
 }
-
-void SingleFASTQFile::closeOutput_paired(int typeRead)
-{
-	if(typeRead == 1)
-	cerr << "Number of Occurrences (Forward): " << sequence.getOccurrences() << endl;
-	else
-	cerr << "Number of Occurrences (Reverse): " << sequence.getOccurrences() << endl;
-
-	fin.close();
-	fout.close();
-}
-
-
