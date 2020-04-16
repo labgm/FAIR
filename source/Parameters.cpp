@@ -5,7 +5,7 @@ class Parameters
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
 	bool onlyIdentify, onlyRemove, trim, trimQuality, ready;
-	int minQuality, threads, phredOffset;
+	int minQuality, threads, phredOffset, mismatchMax = 3;
 
 public:
 	Parameters(int argc, char *const argv[]);
@@ -115,6 +115,11 @@ Parameters::Parameters(int argc, char *const argv[])
 			outputDir = argv[i + 1];
 			continue;
 		}
+		else if (argument == "--mismatch" || argument == "-mm")
+		{
+			mismatchMax = atoi(argv[i + 1]);
+			continue;
+		}
 	}
 
 	const char *oDir = outputDir.c_str();
@@ -185,7 +190,7 @@ bool Parameters::parseParameters()
 					while (s_fastq.hasNext())
 					{
 
-						s_fastq.removeAdapter(onlyRemove, singleAdapter);
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax);
 
 						if (trim)
 						{
@@ -229,7 +234,7 @@ bool Parameters::parseParameters()
 
 					while (p_fastq.hasNext())
 					{
-						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter);
+						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchMax);
 
 						if (trim)
 						{
@@ -278,7 +283,7 @@ bool Parameters::parseParameters()
 						while (s_fastq.hasNext())
 						{
 
-							s_fastq.removeAdapter(onlyRemove, singleAdapter);
+							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax);
 
 							if (trim)
 							{

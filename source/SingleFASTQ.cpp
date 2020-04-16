@@ -1,11 +1,4 @@
-//#include "algos/sbndmq4.cpp"
-// #include "algos/shiftand.cpp"
-
-// #include "algos/shiftand_filtragem.cpp"
-// #include "algos/myers.cpp"
-// #include "algos/myers_minimized.cpp"
-
-#include "algos/myers_otimized.cpp"
+#include "algos/core.cpp"
 
 class SingleFASTQ
 {
@@ -25,7 +18,7 @@ public:
 	string getQuality();
 	void convertQualToInteger(int qual_score);
 	int getOccurrences();
-	void erase(string adapter);
+	void erase(string adapter, int mismatchMax);
 	void trim(int qual_score, int minQuality, int minSequenceLength);
 };
 
@@ -81,8 +74,7 @@ int SingleFASTQ::getOccurrences()
 	return occurrences;
 }
 
-
-void SingleFASTQ::erase(string adapter)
+void SingleFASTQ::erase(string adapter, int mismatchMax)
 {
 	vector<int> index;
 
@@ -92,7 +84,10 @@ void SingleFASTQ::erase(string adapter)
 	strcpy(seq_c, seq.c_str());
 	strcpy(adapter_c, adapter.c_str());
 
-	index = search(adapter_c, adapter.length(), seq_c, seq.length());
+	if(mismatchMax > 0)
+	index = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax);
+	else
+	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
 
 	for (auto &&i : index)

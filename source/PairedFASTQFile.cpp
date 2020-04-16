@@ -14,7 +14,7 @@ public:
 	PairedFASTQ getNext();
 	pair<string, string> identifyAdapters();
 	void trim(int minQuality, int minSequenceLength);
-	void removeAdapters(bool onlyRemove, string adapter1, string adapter2);
+	void removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax);
 	void write();
 	void closeOutput();
 
@@ -67,12 +67,10 @@ void PairedFASTQFile::trim(int minQuality, int minSequenceLength)
 	reverse.trim(minQuality, 0);
 }
 
-void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2)
+void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax)
 {
-
-	forward.removeAdapter(onlyRemove, adapter1);
-	reverse.removeAdapter(onlyRemove, adapter2);
-
+	forward.removeAdapter(onlyRemove, adapter1, mismatchMax);
+	reverse.removeAdapter(onlyRemove, adapter2, mismatchMax);
 }
 
 void PairedFASTQFile::write()

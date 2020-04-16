@@ -21,9 +21,9 @@
 
 using namespace std;
 
-vector<int> search(char *P, long m, char *T, long n){
+vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
-	long k = 3;
+	int k = mismatchMax;
 	
 	vector<int> indexx;
 
