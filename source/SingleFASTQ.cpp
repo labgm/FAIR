@@ -89,7 +89,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 	else
 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
-
 	for (auto &&i : index)
 	{
         if (i >= 0)
@@ -103,40 +102,34 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 
 void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)
 {
-
 	convertQualToInteger(qual_score);
-	int minSeq;
+	int minSeq = 0;
+	int posicaoInicial = -1;
 
 	for (int i = seq.length() ; i > 0; i--)
 	{
 		if (seq.at(i - 1) == 'N')
 		{
-			// cerr << "N Trim" << endl << endl;
 
-			if (minSeq == minSequenceLength)
+			minSeq ++;
+			if (minSeq == (minSequenceLength))
 			{
-				int j = i - 1;
-
-				for (j ; j <= j - minSeq; j--)
-				{
-					seq.erase(j, 1);
-					qual.erase(j, 1);
-				}
-				minSeq = 0;
-			}
-			else
-			{
-				// Not in minSequenceLength
-				minSeq ++;
+				posicaoInicial = i - 1 + (minSequenceLength);
 			}
 			
+		}else{
+			if(posicaoInicial != -1)
+			{
+				seq.erase(posicaoInicial-minSeq, minSeq);
+				qual.erase(posicaoInicial-minSeq, minSeq);			
+			}
+				posicaoInicial = -1;
+				minSeq = 0;
 		}
 		if (minQuality != -1)
 		{
 			if (int_quality[i] < minQuality)
 			{
-				// cerr << "Quality Trim" << endl << endl;
-
 				seq.erase(i, 1);
 				qual.erase(i, 1);
 			}

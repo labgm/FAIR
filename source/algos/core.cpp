@@ -71,50 +71,48 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		if ((HP & 0x80000000) == 0x80000000) currDist += 1;
 		else if((HN & 0x80000000) == 0x80000000) currDist -= 1;
 
+		// printf("%d,%d\n", j, currDist);
 		// MATCH =========
 		if (currDist <= k){
 
-			currDistAnt = currDist;
+				inicializador++;
 
-			inicializador++;
+				if(inicializador == 1)
+				{
 
-				if(inicializador == 1){
-
+					acumulaPmedia += posicaoAtual+currDist;
 					quantGrupo++;
-					posicaoAnterior = posicaoAtual;
-					acumulaPmedia += posicaoAtual;
 
-				}
-				else{
-
-					// se posicao anterior +1 eh igual a posicao atual (significa que eh parte do grupo)
-					if((posicaoAnterior+1) == posicaoAtual){
-
+				}else{
+					if(currDist < currDistAnt)
+					{
+						acumulaPmedia += posicaoAtual+currDist;
 						quantGrupo++;
-						posicaoAnterior = posicaoAtual;
-						acumulaPmedia += posicaoAtual;
-
 					}
-					else{
-
-						indiceMedio = acumulaPmedia/quantGrupo;
-						indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
-
-						acumulaPmedia = posicaoAtual;
-						posicaoAnterior = posicaoAtual;
-						quantGrupo = 1;
-						inicializador = 1;
-						
 				}
 
-		    }
+				currDistAnt = currDist;
+				
+		}else{
+
+			if(quantGrupo >= 1)
+			{
+				
+				indiceMedio = acumulaPmedia/quantGrupo;
+				indexx.insert(indexx.begin(), (indiceMedio - m));
+
+				inicializador = 0;
+				acumulaPmedia = 0;
+				quantGrupo = 0;
+
+			}
 
 		}
 
 		if (posicaoAtual == n){
 			if(quantGrupo >= 1){
 					indiceMedio = acumulaPmedia/quantGrupo;
-					indexx.insert(indexx.begin(), (indiceMedio - m) + currDistAnt);
+					indexx.insert(indexx.begin(), (indiceMedio - m));
 			}
 	    }
 	}
@@ -126,7 +124,6 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 
 vector<int> searchShiftAnd(char *P, long m, char *T, long n){
-//	char T[] = {"TTGACCTTCTTAGAAATATTCTTGATAAATGACCCCGGTTTTCTTGTAAAACCTTCTTGATGACCCTTCTTAGAAAATTGATGACCCTTAACGGCGACCACCTTCTTGATGACCCTTGACGACGGACCCA"}; //	char P[] = {"TTCTTGAAAA"}; // char T[] = PP; // char P[] = TT; //	long m = sizeof(P)/sizeof(char) - 1; //	long n = sizeof(T)/sizeof(char) - 1;
 
 //	K = NUMERO MAXIMO DE ERROS PERMITIDOS (DELECAO, SUBSTITUICAO, INSERCAO)
 	int k = 0;
@@ -165,7 +162,8 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 			Rnovo = ((((unsigned long)Rant) >> 1) | Ri) & Masc[T[i] + 127];
 			R[0] = Rnovo;
 
-			for (j = 1; j <= k; j++){
+			for (j = 1; j <= k; j++)
+			{
 
 				Rnovo = ((((unsigned long) R[j]) >> 1) & Masc[T[i] + 127]) | Rant | (((unsigned long)(Rant | Rnovo))  >> 1);
 				Rant = R[j];
@@ -216,12 +214,11 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 				}
 
-		}
-
+			}
 
 			}
 
-			// SE FOR O ULTIMO CARACTER DA SEQUENCIA, EXIBI O ULTIMO MATCH CONSIDERADO
+			// SE FOR O ULTIMO CARACTER DA SEQUENCIA, INSERE O ULTIMO MATCH CONSIDERADO
 			if(posicaoAtual == n){
 
 					if(quantGrupo >= 1){
@@ -232,8 +229,6 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 					}
 			}
-
-			// ************************************************************************************
 
 		}
 

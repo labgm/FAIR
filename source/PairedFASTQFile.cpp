@@ -63,8 +63,8 @@ pair<string, string> PairedFASTQFile::identifyAdapters()
 
 void PairedFASTQFile::trim(int minQuality, int minSequenceLength)
 {
-	forward.trim(minQuality, 0);
-	reverse.trim(minQuality, 0);
+	forward.trim(minQuality, minSequenceLength);
+	reverse.trim(minQuality, minSequenceLength);
 }
 
 void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax)

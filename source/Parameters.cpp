@@ -5,7 +5,7 @@ class Parameters
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
 	bool onlyIdentify, onlyRemove, trim, trimQuality, ready;
-	int minQuality, threads, phredOffset, mismatchMax = 3;
+	int minQuality, threads, phredOffset, mismatchMax = 2;
 
 public:
 	Parameters(int argc, char *const argv[]);
@@ -244,11 +244,12 @@ bool Parameters::parseParameters()
 							}
 							else
 							{
-								p_fastq.trim(-1, 1);
+								p_fastq.trim(-1, 3);
 							}
 						}
 
 						p_fastq.write();
+
 					}
 					clock_gettime(CLOCK_MONOTONIC, &finish);
 
