@@ -51,8 +51,8 @@ vector<int> search(char *PP, long m, char *T, long n){
 
 	// cerr << "SIZE T > " << strlen(T) << endl;
 
-	// strcpy(conc, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-	strcpy(conc, "CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG");
+	strcpy(conc, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	// strcpy(conc, "CAGGTCGTAACTGTGGTCAGCCGAGTTAAGCG");
 
 	strcpy(P, conc);
 	strcat(P, PP);
@@ -64,7 +64,7 @@ vector<int> search(char *PP, long m, char *T, long n){
 	
 	vector<int> indexx;
 
-	int MAXCHAR = 1024;
+	int MAXCHAR = 256;
 
 	// MComputePM //////////////////////////////////////// x
 	uintmax_t PM[MAXCHAR];
@@ -80,9 +80,9 @@ vector<int> search(char *PP, long m, char *T, long n){
 	for (int s = 1; s <= r; s++){
 		for (int i = 1; i <= m; i++){
 			// constt2 = m*(r-s+1)-i;
-			uint64_t um = 1;
+			uintmax_t um = 1;
 			constt = um << m*(s-1)+i-1;	// ok
-			cerr << "constt: " << constt << endl;
+			// cerr << "constt: " << constt << endl;
 			// tmp = (UINTMAX_C(0) << constt2) | constt;
 			// tmp = constt;
 			// cerr << "tmp > " << tmp << endl;
@@ -152,11 +152,11 @@ vector<int> search(char *PP, long m, char *T, long n){
 		MC = MC + ((HN & EM) >> (m-1)) - ((HP & EM) >> (m-1));
 		// cerr << "MC: " << MC << endl;
 		// cerr << "MC 2: " << MC << endl;
-		
-		uint64_t tp = MC & EM;
+		// uint64_t
+		uintmax_t tp = MC & EM;
 		cerr << "tp: " << tp << endl;
 		
-		if (tp != 0x0000000000000000){
+		if (tp != 0){
 			// MReport(j, tp);		
 			cerr << "MATCH: " << j-1 << endl;
 		}

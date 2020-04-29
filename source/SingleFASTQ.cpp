@@ -8,6 +8,7 @@ class SingleFASTQ
 	friend ostream &operator<<(ostream &os, const SingleFASTQ &single);
 
 public:
+	bool SearchAdapter(string adapter, string seqi);
 	void setIdentifier(string id);
 	string getIdentifier();
 	void setSequence(string seq);
@@ -20,6 +21,8 @@ public:
 	int getOccurrences();
 	void erase(string adapter, int mismatchMax);
 	void trim(int qual_score, int minQuality, int minSequenceLength);
+	void identify(string adapt);
+	void setIdentifierAdapter(string idAdapter);
 };
 
 void SingleFASTQ::setIdentifier(string id)
@@ -89,6 +92,8 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 	else
 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
+	// index = search(adapter_c, adapter.length(), seq_c, seq.length());
+
 	for (auto &&i : index)
 	{
         if (i >= 0)
@@ -98,6 +103,33 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 	    	qual.erase(i, adapter.length());
         }
 	}
+}
+
+bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
+{
+	vector<int> index;
+	int mismatchMax = 1;
+
+	char seq_c[seqi.length() + 1];
+	char adapter_c[adapter.length() + 1];
+
+	strcpy(seq_c, seqi.c_str());
+	strcpy(adapter_c, adapter.c_str());
+
+	index = searchMyers(adapter_c, adapter.length(), seq_c, seqi.length(), mismatchMax);
+
+	// index = search(adapter_c, adapter.length(), seq_c, seq.length());
+
+	for (auto &&i : index)
+	{
+        if (i >= 0)
+		{
+		    return true;
+        }
+	}
+
+	return false;
+
 }
 
 void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)

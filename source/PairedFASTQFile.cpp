@@ -3,7 +3,7 @@
 class PairedFASTQFile
 {
 	string file;
-	SingleFASTQFile forward, reverse;
+	SingleFASTQFile forward, reverse, identAdapter, adaptersVec;
 	PairedFASTQ pairedSequence;
 	pair<string, string> adapters;
 
@@ -18,6 +18,8 @@ public:
 	void write();
 	void closeOutput();
 
+	bool hasNextSearchAdapters();
+
 };
 
 bool PairedFASTQFile::openFASTQInputFile(string forward, string reverse, int quality)
@@ -30,6 +32,7 @@ bool PairedFASTQFile::openFASTQInputFile(string forward, string reverse, int qua
 	cerr << "Failed To Open Forward & Reverse Files." << endl;
 	return false;
 }
+
 
 bool PairedFASTQFile::openFASTQOutputFile(string file, string file2)
 {
@@ -46,6 +49,25 @@ bool PairedFASTQFile::openFASTQOutputFile(string file, string file2)
 bool PairedFASTQFile::hasNext()
 {
 	return (forward.hasNext() && reverse.hasNext());
+}
+
+bool PairedFASTQFile::hasNextSearchAdapters()
+{
+	if(forward.hasNextSearchAdapters("forward") && reverse.hasNextSearchAdapters("reverse"))
+	{
+		return true;
+	}
+
+	for (int i = 0; i < forward.getAdaptersVec().size(); ++i)
+	{
+		cerr << forward.getAdaptersVec()[i] << " > " << forward.getAdaptersVecQuant()[i] << endl;
+	}
+	for (int i = 0; i < reverse.getAdaptersVec().size(); ++i)
+	{
+		cerr << reverse.getAdaptersVec()[i] << " > " << reverse.getAdaptersVecQuant()[i] << endl;
+	}
+
+	return false;
 }
 
 PairedFASTQ PairedFASTQFile::getNext()

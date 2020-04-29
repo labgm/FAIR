@@ -181,7 +181,28 @@ bool Parameters::parseParameters()
 			{
 				if (onlyIdentify)
 				{
-					cerr << "Adapter (Single File)" << s_fastq.identifyAdapter() << endl;
+					cerr << "Adapters Found (Single File): " << endl;
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+						while(s_fastq.hasNextSearchAdapters("forward"))
+						{}
+
+						for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
+						{
+							cerr << s_fastq.getAdaptersVec()[i] << " > " << s_fastq.getAdaptersVecQuant()[i] << endl;
+						}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+					// cerr << "Total de bases: " << totalBase << endl;
+					// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
+
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
 				}
 				else
 				{
@@ -212,9 +233,10 @@ bool Parameters::parseParameters()
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
+				
+					s_fastq.closeOutput();				
 				}
 			}
-			s_fastq.closeOutput();
 
 			return true;
 		}
@@ -226,10 +248,26 @@ bool Parameters::parseParameters()
 			{
 				if (onlyIdentify)
 				{
-					cerr << "Adapters (Paired File): " << endl;
-				}
-				else
-				{
+					cerr << "Adapters Found (Paired File): " << endl;
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+						while(p_fastq.hasNextSearchAdapters())
+						{}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+					// cerr << "Total de bases: " << totalBase << endl;
+					// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
+
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+
+				}else{
+					
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
 					while (p_fastq.hasNext())
@@ -261,9 +299,11 @@ bool Parameters::parseParameters()
 
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
+				
+					p_fastq.closeOutput();
+
 				}
 			}
-			p_fastq.closeOutput();
 
 			return true;
 		}
@@ -275,7 +315,28 @@ bool Parameters::parseParameters()
 				{
 					if (onlyIdentify)
 					{
-						cerr << "Adapter (Interlaced File)" << s_fastq.identifyAdapter() << endl;
+						cerr << "Adapters Found (Interlaced File)" << s_fastq.identifyAdapter() << endl;
+							clock_gettime(CLOCK_MONOTONIC, &start);
+
+							while(s_fastq.hasNextSearchAdapters("forward"))
+							{}
+
+							for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
+							{
+								cerr << s_fastq.getAdaptersVec()[i] << " > " << s_fastq.getAdaptersVecQuant()[i] << endl;
+							}
+
+						clock_gettime(CLOCK_MONOTONIC, &finish);
+
+						elapsed = (finish.tv_sec - start.tv_sec);
+						elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+						// cerr << "Total de bases: " << totalBase << endl;
+						// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
+
+						cerr << endl
+							 << "Elapsed Time: " << elapsed << endl;
+
 					}
 					else
 					{

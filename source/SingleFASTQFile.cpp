@@ -1,12 +1,16 @@
 #include "PairedFASTQ.cpp"
+#include <algorithm>
 
 class SingleFASTQFile
 {
-	SingleFASTQ sequence;
+	SingleFASTQ sequence, identAdapter;
 	string file, adapter;
 	ofstream fout;
 	ifstream fin;
 	int quality; // 33 or 64
+
+	vector<string> adaptersVec;
+	vector<int> adaptersVecQuant;
 
 public:
 	bool openFASTQInput(string file, int quality);
@@ -19,6 +23,14 @@ public:
 	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax);
 	void write();
 	void closeOutput();
+
+	bool SearchAdapters(string seq, string typeRead);
+	bool hasNextSearchAdapters(string typeRead);
+
+	vector<string> getAdaptersVec();
+	vector<int> getAdaptersVecQuant();
+
+
 };
 
 bool SingleFASTQFile::openFASTQInput(string file, int quality)
@@ -70,6 +82,102 @@ bool SingleFASTQFile::hasNext()
 	sequence.setQuality(lines[3]);
 
 	return true;
+}
+
+bool SingleFASTQFile::hasNextSearchAdapters(string typeRead)
+{
+
+	string lines[4];
+
+	for (int i = 0; i < 4; i++)
+		if (!getline(fin, lines[i]))
+			return false;
+
+	string seq = lines[1];
+
+	if(SearchAdapters(seq, typeRead))
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
+bool SingleFASTQFile::SearchAdapters(string seq, string typeRead)
+{
+
+  string adapt;
+  ifstream myfile("adapters.txt");
+  int i = 1;
+  if (myfile.is_open())
+  {
+    while (!myfile.eof() )
+    {
+      getline (myfile,adapt);
+      if(adapt != "" & (i%2) == 0)
+      {
+	  		if(identAdapter.SearchAdapter(adapt, seq))
+	  		{
+	  			if(typeRead == "forward")
+	  			{
+	  				string aux = "Forward: "+adapt;
+	  				// cerr << aux << endl;
+	  				if (std::find(this->adaptersVec.begin(), this->adaptersVec.end(), aux) != this->adaptersVec.end())
+					{
+	  					for (int i = 0; i < this->adaptersVec.size(); ++i)
+	  					{
+	  						if(this->adaptersVec[i] == aux)
+	  						{
+	  							this->adaptersVecQuant[i] += 1;
+	  							break;
+	  						}
+	  					}
+	  				}else{
+	  					this->adaptersVec.push_back(aux);
+	  					this->adaptersVecQuant.push_back(1);
+	  				}
+	  			}
+	  			else if(typeRead == "reverse")
+	  			{
+	  				string aux = "Reverse: "+adapt;
+	  				// cerr << aux << endl;
+	  				if (std::find(this->adaptersVec.begin(), this->adaptersVec.end(), aux) != this->adaptersVec.end())
+					{
+	  					for (int i = 0; i < this->adaptersVec.size(); ++i)
+	  					{
+	  						if(this->adaptersVec[i] == aux)
+	  						{
+	  							this->adaptersVecQuant[i] += 1;
+	  							break;
+	  						}
+	  					}
+	  				}else{
+	  					this->adaptersVec.push_back(aux);
+	  					this->adaptersVecQuant.push_back(1);
+	  				}
+	  			}
+	  			// STOP SEARCH (PARA CONSIDERAR PRIMEIRO ADAPTADOR ENCONTRADO)
+	  			// return false;
+	  		}
+
+      }
+      	 i += 1;
+    }
+    myfile.close();
+  }
+
+  return true;
+
+}
+
+vector<string> SingleFASTQFile::getAdaptersVec()
+{
+	return adaptersVec;
+}
+vector<int> SingleFASTQFile::getAdaptersVecQuant()
+{
+	return adaptersVecQuant;
 }
 
 SingleFASTQ SingleFASTQFile::getNext()
