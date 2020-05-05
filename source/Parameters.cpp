@@ -188,9 +188,14 @@ bool Parameters::parseParameters()
 						while(s_fastq.hasNextSearchAdapters("forward"))
 						{}
 
+						s_fastq.writeOnlyIdentifyHeader("forward");
+
 						for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
 						{
-							cerr << s_fastq.getAdaptersVec()[i] << " > " << s_fastq.getAdaptersVecQuant()[i] << endl;
+							// cerr << s_fastq.getAdaptersVec()[i] << " > " << s_fastq.getAdaptersVecQuant()[i] << endl;
+							string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
+							s_fastq.writeOnlyIdentify(textOutputIdentify);
+
 						}
 
 					clock_gettime(CLOCK_MONOTONIC, &finish);
@@ -203,6 +208,8 @@ bool Parameters::parseParameters()
 
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
+
+						 s_fastq.closeOutput();	
 				}
 				else
 				{
@@ -266,6 +273,8 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 
+					p_fastq.closeOutput();
+
 				}else{
 					
 					clock_gettime(CLOCK_MONOTONIC, &start);
@@ -300,8 +309,8 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
-					p_fastq.closeOutput();
 
+					p_fastq.closeOutput();
 				}
 			}
 

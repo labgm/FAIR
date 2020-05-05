@@ -7,6 +7,8 @@ class PairedFASTQFile
 	PairedFASTQ pairedSequence;
 	pair<string, string> adapters;
 
+	string textOutputIdentify;
+
 public:
 	bool openFASTQInputFile(string forward, string reverse, int quality);
 	bool openFASTQOutputFile(string file, string file2);
@@ -58,13 +60,21 @@ bool PairedFASTQFile::hasNextSearchAdapters()
 		return true;
 	}
 
+	forward.writeOnlyIdentifyHeader("forward");
+	reverse.writeOnlyIdentifyHeader("reverse");
+
 	for (int i = 0; i < forward.getAdaptersVec().size(); ++i)
 	{
-		cerr << forward.getAdaptersVec()[i] << " > " << forward.getAdaptersVecQuant()[i] << endl;
+		cerr << forward.getAdaptersVec()[i] << "\t" << forward.getAdaptersVecQuant()[i] << endl;
+		textOutputIdentify = forward.getAdaptersVec()[i] + "\t" + std::to_string(forward.getAdaptersVecQuant()[i]);
+		forward.writeOnlyIdentify(textOutputIdentify);
+
 	}
 	for (int i = 0; i < reverse.getAdaptersVec().size(); ++i)
 	{
-		cerr << reverse.getAdaptersVec()[i] << " > " << reverse.getAdaptersVecQuant()[i] << endl;
+		cerr << reverse.getAdaptersVec()[i] << "\t" << reverse.getAdaptersVecQuant()[i] << endl;
+		textOutputIdentify = reverse.getAdaptersVec()[i] + "\t" + std::to_string(reverse.getAdaptersVecQuant()[i]);
+		reverse.writeOnlyIdentify(textOutputIdentify);
 	}
 
 	return false;

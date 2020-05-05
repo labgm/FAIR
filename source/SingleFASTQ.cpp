@@ -108,7 +108,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 {
 	vector<int> index;
-	int mismatchMax = 1;
+	int mismatchMax = 0;
 
 	char seq_c[seqi.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -117,8 +117,6 @@ bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 	strcpy(adapter_c, adapter.c_str());
 
 	index = searchMyers(adapter_c, adapter.length(), seq_c, seqi.length(), mismatchMax);
-
-	// index = search(adapter_c, adapter.length(), seq_c, seq.length());
 
 	for (auto &&i : index)
 	{

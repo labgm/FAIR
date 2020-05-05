@@ -30,6 +30,8 @@ public:
 	vector<string> getAdaptersVec();
 	vector<int> getAdaptersVecQuant();
 
+	void writeOnlyIdentifyHeader(string type);
+	void writeOnlyIdentify(string text);
 
 };
 
@@ -121,7 +123,8 @@ bool SingleFASTQFile::SearchAdapters(string seq, string typeRead)
 	  		{
 	  			if(typeRead == "forward")
 	  			{
-	  				string aux = "Forward: "+adapt;
+	  				string aux = adapt;
+	  				// string aux = "Forward: "+adapt;
 	  				// cerr << aux << endl;
 	  				if (std::find(this->adaptersVec.begin(), this->adaptersVec.end(), aux) != this->adaptersVec.end())
 					{
@@ -140,7 +143,8 @@ bool SingleFASTQFile::SearchAdapters(string seq, string typeRead)
 	  			}
 	  			else if(typeRead == "reverse")
 	  			{
-	  				string aux = "Reverse: "+adapt;
+	  				string aux = adapt;
+	  				// string aux = "Reverse: "+adapt;
 	  				// cerr << aux << endl;
 	  				if (std::find(this->adaptersVec.begin(), this->adaptersVec.end(), aux) != this->adaptersVec.end())
 					{
@@ -246,6 +250,21 @@ void SingleFASTQFile::write()
 	fout << sequence.getSequence() << "\n";
 	fout << sequence.getPlaceHolder() << "\n";
 	fout << sequence.getQuality() << "\n";
+}
+
+void SingleFASTQFile::writeOnlyIdentifyHeader(string type)
+{
+	if(type == "forward")
+	fout << "- Found Adapters - Forward" << "\n\n";
+	if(type == "reverse")
+	fout << "- Found Adapters - Reverse" << "\n\n";
+
+	fout << "Adapter\tAmount" << "\n";
+}
+
+void SingleFASTQFile::writeOnlyIdentify(string text)
+{
+	fout << text << "\n";
 }
 
 void SingleFASTQFile::closeOutput()
