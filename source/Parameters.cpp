@@ -4,7 +4,7 @@ class Parameters
 {
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
-	bool onlyIdentify, onlyRemove, trim, trimQuality, ready;
+	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert;
 	int minQuality, threads, phredOffset, mismatchMax = 2;
 
 public:
@@ -26,6 +26,8 @@ Parameters::Parameters(int argc, char *const argv[])
 	phredOffset = 0;
 
 	ready = true;
+
+	onlyInsert = false;
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -68,6 +70,11 @@ Parameters::Parameters(int argc, char *const argv[])
 		else if (argument == "--only-remove")
 		{
 			onlyRemove = true;
+			continue;
+		}
+		else if (argument == "--only-insert")
+		{
+			onlyInsert = true;
 			continue;
 		}
 		else if (argument == "--trim")
@@ -210,8 +217,9 @@ bool Parameters::parseParameters()
 						 << "Elapsed Time: " << elapsed << endl;
 
 						 s_fastq.closeOutput();	
+
 				}
-				else
+				else if(onlyRemove)
 				{
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
@@ -241,8 +249,30 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
-					s_fastq.closeOutput();				
+					s_fastq.closeOutput();		
+
+				}else if(onlyInsert){
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					while (s_fastq.hasNext())
+					{
+
+						s_fastq.insertAdapter(singleAdapter, 0, 0);
+
+						s_fastq.write();
+					}
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+				
+					s_fastq.closeOutput();	
+
 				}
+
 			}
 
 			return true;
@@ -275,7 +305,7 @@ bool Parameters::parseParameters()
 
 					p_fastq.closeOutput();
 
-				}else{
+				}else if(onlyRemove){
 					
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
@@ -303,14 +333,34 @@ bool Parameters::parseParameters()
 					elapsed = (finish.tv_sec - start.tv_sec);
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-					// cerr << "Total de bases: " << totalBase << endl;
-					// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;				
 
+					p_fastq.closeOutput();
+
+				}else if(onlyInsert){
+
+					cerr << "Only Insert" << endl;
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					while (p_fastq.hasNext())
+					{
+
+						p_fastq.insertAdapters(forwardAdapter, reverseAdapter);
+						p_fastq.write();
+
+					}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
+					p_fastq.closeOutput();	
 
-					p_fastq.closeOutput();
 				}
 			}
 

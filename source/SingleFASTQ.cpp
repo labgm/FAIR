@@ -23,6 +23,9 @@ public:
 	void trim(int qual_score, int minQuality, int minSequenceLength);
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
+
+	void insert(string adapter, int taxaInsercao, int taxaInserida);
+
 };
 
 void SingleFASTQ::setIdentifier(string id)
@@ -128,6 +131,19 @@ bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 
 	return false;
 
+}
+
+
+void SingleFASTQ::insert(string adapter, int taxaInsercao, int taxaInserida)
+{
+
+	string temp = ",";
+
+	for (int i = 0; i < (adapter.length()-1); ++i) temp += ",";
+
+	seq += adapter;
+	qual += temp;
+     
 }
 
 void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)

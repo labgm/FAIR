@@ -21,6 +21,7 @@ public:
 	void closeOutput();
 
 	bool hasNextSearchAdapters();
+	void insertAdapters(string adapter1, string adapter2);
 
 };
 
@@ -103,6 +104,12 @@ void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string ad
 {
 	forward.removeAdapter(onlyRemove, adapter1, mismatchMax);
 	reverse.removeAdapter(onlyRemove, adapter2, mismatchMax);
+}
+
+void PairedFASTQFile::insertAdapters(string adapter1, string adapter2)
+{
+	forward.insertAdapter(adapter1, 0, 0);
+	reverse.insertAdapter(adapter2, 0, 0);
 }
 
 void PairedFASTQFile::write()
