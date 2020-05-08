@@ -103,6 +103,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
         if (i >= 0)
 		{
 		    occurrences ++;
+		    // cerr << occurrences << endl;
     		seq.erase(i, adapter.length());
 	    	qual.erase(i, adapter.length());
         }

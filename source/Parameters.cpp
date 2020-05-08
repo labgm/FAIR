@@ -279,7 +279,7 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
-						 s_fastq.closeOutput("onlyRemove");		
+					s_fastq.closeOutput("onlyRemove");		
 
 				}else if(onlyInsert){
 
