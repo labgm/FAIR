@@ -1,4 +1,5 @@
 #include "algos/core.cpp"
+#include <algorithm>
 
 class SingleFASTQ
 {
@@ -24,7 +25,7 @@ public:
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
 
-	void insert(string adapter, int taxaInsercao, int taxaInserida);
+	void insert(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition);
 
 };
 
@@ -133,17 +134,144 @@ bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 
 }
 
-
-void SingleFASTQ::insert(string adapter, int taxaInsercao, int taxaInserida)
+void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition)
 {
 
-	string temp = ",";
+	if(toInsert)
+	{
 
-	for (int i = 0; i < (adapter.length()-1); ++i) temp += ",";
+	// bool adapterInsertionLeft = false; // Inserir adaptadores na esquerda ou direta
+	// bool adapterRandomPosition = true; // se será inserido em posicoes aleatorias (seguindo 'adapterInsertionLeft' LEFT or RIGHT da read)
+	// double adapterErrorRate = 0.7; // taxa de erro máxima nos adaptadores (Ex: 70% do adaptador pode sofrer alteração)
+	int ratio = 20; // Distância máxima de bases do adaptador das extremidades da read(LEFT or RIGHT)
+	
+	int maxErrors = adapterErrorRate * (adapter.length());
+		// cerr << "maxErrors: " << maxErrors << endl;
 
-	seq += adapter;
-	qual += temp;
-     
+	int quantErrors = rand() % (maxErrors+1) + 0; //Gerando erros de 0 até maxErrors
+		// cerr << "quant errors1: " << quantErrors << endl;
+
+	// CRIANDO NOVO ADAPTADOR COM ERROS - PT1
+	vector<int> vecErrorPositions;
+
+	for (int i = 0; i < quantErrors; ++i)
+	{
+		int posi = rand() % (adapter.length()) + 0; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR
+		if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), posi) != vecErrorPositions.end())
+		{
+			// contém
+			i--;
+		}else{
+			// não contém
+			vecErrorPositions.push_back(posi);
+			// cerr << "Posi: " << posi << endl;			
+		}
+	}
+
+	// PT2
+	if(vecErrorPositions.size() > 0)
+	{
+
+	string adapter_aux = "";
+
+		for (int i = 0; i < adapter.length(); ++i)
+		{
+			if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), i) != vecErrorPositions.end())
+			{
+				int typeError = rand() % 2 + 1;
+				if(typeError == 1) // Erro de Substituição
+				{
+					string bases = "ACTG";
+					int randomBase = rand() % 4 + 0;
+					adapter_aux += bases[randomBase];
+				}
+			}else{
+				adapter_aux += adapter[i];
+			}
+		}
+		
+		adapter = adapter_aux;
+	}
+
+	string temp_qual = ",";
+
+	// GERANDO VALOR STRING DE QUALIDADE
+	for (int i = 0; i < (adapter.length()-1); ++i) temp_qual += ",";
+
+
+	// GERANDO STRINGS DE SEQUENCIA E QUALIDADE
+	string aux_seq = "";
+	string aux_qual = "";
+	if(ratio < seq.length())
+	{
+
+	if(adapterRandomPosition)
+	{
+
+		int positionRand = 0;
+ 		positionRand = rand() % ratio + 1; // +1 é obrigatorio
+
+		if(adapterInsertionLeft == true)
+		{
+			for (int i = 0; i < seq.length(); ++i)
+			{
+				if(i == positionRand)
+				{
+					aux_seq += adapter;
+					aux_qual += temp_qual;
+				
+				}else{
+
+					aux_seq += seq[i];
+					aux_qual += qual[i];
+				}
+			}
+
+		}else{
+
+			int posiRight = seq.length() - positionRand;
+
+			for (int i = 0; i < seq.length(); ++i)
+			{
+				if(i == posiRight)
+				{
+					aux_seq += adapter;
+					aux_qual += temp_qual;
+				
+				}else{
+
+					aux_seq += seq[i];
+					aux_qual += qual[i];
+
+				}
+			}
+		}
+
+		seq = aux_seq;
+		qual = aux_qual;
+
+	}else{
+		
+		if(adapterInsertionLeft)
+		{
+			seq = adapter+seq;
+			qual = temp_qual+qual;
+
+		}else{
+
+			seq += adapter;
+			qual += temp_qual;
+		}
+	}
+
+	}
+
+	}
+
+	// cerr << "seq: " << seq << endl;
+	// cerr << "qua: " << qual << endl;
+
+
 }
 
 void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)

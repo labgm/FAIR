@@ -18,10 +18,10 @@ public:
 	void trim(int minQuality, int minSequenceLength);
 	void removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax);
 	void write();
-	void closeOutput();
+	void closeOutput(string typeOperation);
 
 	bool hasNextSearchAdapters();
-	void insertAdapters(string adapter1, string adapter2);
+	void insertAdapters(string adapter1, string adapter2, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition);
 
 };
 
@@ -66,14 +66,14 @@ bool PairedFASTQFile::hasNextSearchAdapters()
 
 	for (int i = 0; i < forward.getAdaptersVec().size(); ++i)
 	{
-		cerr << forward.getAdaptersVec()[i] << "\t" << forward.getAdaptersVecQuant()[i] << endl;
+		cerr << "Forward: " << forward.getAdaptersVec()[i] << "\t" << forward.getAdaptersVecQuant()[i] << endl;
 		textOutputIdentify = forward.getAdaptersVec()[i] + "\t" + std::to_string(forward.getAdaptersVecQuant()[i]);
 		forward.writeOnlyIdentify(textOutputIdentify);
 
 	}
 	for (int i = 0; i < reverse.getAdaptersVec().size(); ++i)
 	{
-		cerr << reverse.getAdaptersVec()[i] << "\t" << reverse.getAdaptersVecQuant()[i] << endl;
+		cerr << "Reverse: " << reverse.getAdaptersVec()[i] << "\t" << reverse.getAdaptersVecQuant()[i] << endl;
 		textOutputIdentify = reverse.getAdaptersVec()[i] + "\t" + std::to_string(reverse.getAdaptersVecQuant()[i]);
 		reverse.writeOnlyIdentify(textOutputIdentify);
 	}
@@ -106,10 +106,10 @@ void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string ad
 	reverse.removeAdapter(onlyRemove, adapter2, mismatchMax);
 }
 
-void PairedFASTQFile::insertAdapters(string adapter1, string adapter2)
+void PairedFASTQFile::insertAdapters(string adapter1, string adapter2, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition)
 {
-	forward.insertAdapter(adapter1, 0, 0);
-	reverse.insertAdapter(adapter2, 0, 0);
+	forward.insertAdapter(adapter1, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
+	reverse.insertAdapter(adapter2, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
 }
 
 void PairedFASTQFile::write()
@@ -118,10 +118,10 @@ void PairedFASTQFile::write()
 	reverse.write();
 }
 
-void PairedFASTQFile::closeOutput()
+void PairedFASTQFile::closeOutput(string typeOperation)
 {
-	forward.closeOutput();
-	reverse.closeOutput();
+	forward.closeOutput(typeOperation);
+	reverse.closeOutput(typeOperation);
 }
 
 

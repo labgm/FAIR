@@ -19,6 +19,9 @@ def processLine(line):
     os.system("mkdir ../data/"+linha[0]+"/output_fair/k5")
 
     print("\n--- k0 ---\n")
+    
+    print("./FAIR --only-remove -f ../data/"+linha[0]+"/"+linha[0]+"_1.fastq --forward-adapter "+linha[1]+" -r ../data/"+linha[0]+"/"+linha[0]+"_2.fastq --reverse-adapter "+linha[2]+" -o ../data/"+linha[0]+"/output_fair/k0 -mm 0")
+
     os.system("./FAIR --only-remove -f ../data/"+linha[0]+"/"+linha[0]+"_1.fastq --forward-adapter "+linha[1]+" -r ../data/"+linha[0]+"/"+linha[0]+"_2.fastq --reverse-adapter "+linha[2]+" -o ../data/"+linha[0]+"/output_fair/k0 -mm 0")
     print("\n--- k1 ---\n")
     os.system("./FAIR --only-remove -f ../data/"+linha[0]+"/"+linha[0]+"_1.fastq --forward-adapter "+linha[1]+" -r ../data/"+linha[0]+"/"+linha[0]+"_2.fastq --reverse-adapter "+linha[2]+" -o ../data/"+linha[0]+"/output_fair/k1 -mm 1")

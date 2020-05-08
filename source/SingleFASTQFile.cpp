@@ -22,7 +22,7 @@ public:
 	void trim(int minQuality, int minSequenceLength);
 	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax);
 	void write();
-	void closeOutput();
+	void closeOutput(string typeOperation);
 
 	bool SearchAdapters(string seq, string typeRead);
 	bool hasNextSearchAdapters(string typeRead);
@@ -33,7 +33,7 @@ public:
 	void writeOnlyIdentifyHeader(string type);
 	void writeOnlyIdentify(string text);
 
-	void insertAdapter(string adapter, int taxaInsercao, int taxaInserida);
+	void insertAdapter(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition);
 
 };
 
@@ -162,6 +162,45 @@ bool SingleFASTQFile::SearchAdapters(string seq, string typeRead)
 	  					this->adaptersVec.push_back(aux);
 	  					this->adaptersVecQuant.push_back(1);
 	  				}
+
+	  			}
+	  			else if(typeRead == "interlaced,forward" || typeRead == "interlaced,reverse")
+	  			{	  				
+	  				if(typeRead == "interlaced,forward")
+	  				{
+		  				string aux = "Forward: "+adapt;
+		  				if (std::find(this->adaptersVec.begin(), this->adaptersVec.end(), aux) != this->adaptersVec.end())
+						{
+		  					for (int i = 0; i < this->adaptersVec.size(); ++i)
+		  					{
+		  						if(this->adaptersVec[i] == aux)
+		  						{
+		  							this->adaptersVecQuant[i] += 1;
+		  							break;
+		  						}
+		  					}
+		  				}else{
+		  					this->adaptersVec.push_back(aux);
+		  					this->adaptersVecQuant.push_back(1);
+		  				}
+		  			}else{
+		  				string aux = "Reverse: "+adapt;
+		  				if (std::find(this->adaptersVec.begin(), this->adaptersVec.end(), aux) != this->adaptersVec.end())
+						{
+		  					for (int i = 0; i < this->adaptersVec.size(); ++i)
+		  					{
+		  						if(this->adaptersVec[i] == aux)
+		  						{
+		  							this->adaptersVecQuant[i] += 1;
+		  							break;
+		  						}
+		  					}
+		  				}else{
+		  					this->adaptersVec.push_back(aux);
+		  					this->adaptersVecQuant.push_back(1);
+		  				}
+		  			}
+
 	  			}
 	  			// STOP SEARCH (PARA CONSIDERAR PRIMEIRO ADAPTADOR ENCONTRADO)
 	  			// return false;
@@ -246,11 +285,11 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatc
 	// }
 }
 
-void SingleFASTQFile::insertAdapter(string adapter, int taxaInsercao, int taxaInserida)
+void SingleFASTQFile::insertAdapter(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition)
 {
 
 	this->adapter = adapter;
-	sequence.insert(adapter, taxaInsercao, taxaInserida);
+	sequence.insert(adapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
 
 }
 
@@ -268,6 +307,10 @@ void SingleFASTQFile::writeOnlyIdentifyHeader(string type)
 	fout << "- Found Adapters - Forward" << "\n\n";
 	if(type == "reverse")
 	fout << "- Found Adapters - Reverse" << "\n\n";
+	if(type == "single")
+	fout << "- Found Adapters - Single" << "\n\n";
+	if(type == "interlaced")
+	fout << "- Found Adapters - Interlaced" << "\n\n";
 
 	fout << "Adapter\tAmount" << "\n";
 }
@@ -277,9 +320,11 @@ void SingleFASTQFile::writeOnlyIdentify(string text)
 	fout << text << "\n";
 }
 
-void SingleFASTQFile::closeOutput()
+void SingleFASTQFile::closeOutput(string typeOperation)
 {
-	cerr << "Number of Occurrences: " << sequence.getOccurrences() << endl;
+	if(typeOperation == "onlyRemove")
+		cerr << "Number of Occurrences: " << sequence.getOccurrences() << endl;
+	// if(typeOperation == "onlyRemove")
 	fin.close();
 	fout.close();
 }

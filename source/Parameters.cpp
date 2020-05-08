@@ -4,8 +4,9 @@ class Parameters
 {
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
-	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert;
-	int minQuality, threads, phredOffset, mismatchMax = 2;
+	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert, adapterInsertionLeft, adapterRandomPosition;
+	int minQuality, threads, phredOffset, mismatchMax;
+	double adapterInsertionRate, adapterErrorRate;			
 
 public:
 	Parameters(int argc, char *const argv[]);
@@ -27,7 +28,14 @@ Parameters::Parameters(int argc, char *const argv[])
 
 	ready = true;
 
-	onlyInsert = false;
+	mismatchMax = 2; // Mismatch's máximo para encontrar os adaptadores nas leituras
+
+	// OnlyInsert
+	onlyInsert = false; // Ativar inserção de adaptadores
+	adapterErrorRate = 0.1; // Taxa de erro máxima no adaptador(mismatch) (Default: 10%)
+	adapterInsertionLeft = true; // Inserção do adaptador à direita ou esquerda
+	adapterRandomPosition = false; // Posicão aleatória do adaptador (true or false) se for false, ficará na extremidade da read
+	adapterInsertionRate = 0.01; // taxa de inserção dos adaptadores (Ex: 1% das reads serão infectadas)
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -127,6 +135,31 @@ Parameters::Parameters(int argc, char *const argv[])
 			mismatchMax = atoi(argv[i + 1]);
 			continue;
 		}
+		else if (argument == "--insertion-rate" || argument == "-ir")
+		{
+			adapterInsertionRate = atof(argv[i + 1]);
+			continue;
+		}
+		else if (argument == "--error-rate" || argument == "-er")
+		{
+			adapterErrorRate = atof(argv[i + 1]);
+			continue;
+		}
+		else if (argument == "--insertion-left")
+		{
+			adapterInsertionLeft = true;
+			continue;
+		}
+		else if (argument == "--insertion-right")
+		{
+			adapterInsertionLeft = false;
+			continue;
+		}
+		else if (argument == "--random-position")
+		{
+			adapterRandomPosition = true;
+			continue;
+		}
 	}
 
 	const char *oDir = outputDir.c_str();
@@ -142,7 +175,7 @@ Parameters::Parameters(int argc, char *const argv[])
 		printVersion();
 		ready = false;
 	}
-	else if (outputDir.length() == 0 || (single.length() == 0 && (forward.length() == 0 || reverse.length() == 0)))
+	else if (outputDir.length() == 0 || (single.length() == 0 && (forward.length() == 0 || reverse.length() == 0) && interlaced.length() == 0))
 	{
 		printHelp();
 		ready = false;
@@ -195,11 +228,11 @@ bool Parameters::parseParameters()
 						while(s_fastq.hasNextSearchAdapters("forward"))
 						{}
 
-						s_fastq.writeOnlyIdentifyHeader("forward");
+						s_fastq.writeOnlyIdentifyHeader("single");
 
 						for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
 						{
-							// cerr << s_fastq.getAdaptersVec()[i] << " > " << s_fastq.getAdaptersVecQuant()[i] << endl;
+							cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
 							string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
 							s_fastq.writeOnlyIdentify(textOutputIdentify);
 
@@ -210,13 +243,10 @@ bool Parameters::parseParameters()
 					elapsed = (finish.tv_sec - start.tv_sec);
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-					// cerr << "Total de bases: " << totalBase << endl;
-					// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
-
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 
-						 s_fastq.closeOutput();	
+						 s_fastq.closeOutput("onlyIdentify");	
 
 				}
 				else if(onlyRemove)
@@ -249,19 +279,36 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
-					s_fastq.closeOutput();		
+						 s_fastq.closeOutput("onlyRemove");		
 
 				}else if(onlyInsert){
 
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
+					bool toInsert = false;
+					int contAdaptersInseridos = 0;
+
+					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
+					int contador = rateInsertionAdapterInt;
+
 					while (s_fastq.hasNext())
 					{
+						toInsert = false;
 
-						s_fastq.insertAdapter(singleAdapter, 0, 0);
+						if((contador % rateInsertionAdapterInt) == 0)
+						{
+							toInsert = true;
+							++contAdaptersInseridos;
+						}
 
+						++contador;
+						// cerr << "cont: " << contador << endl; 
+						s_fastq.insertAdapter(singleAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
 						s_fastq.write();
 					}
+
+					cerr << "Adapters Inseridos: " << contAdaptersInseridos << endl;
+
 					clock_gettime(CLOCK_MONOTONIC, &finish);
 
 					elapsed = (finish.tv_sec - start.tv_sec);
@@ -269,7 +316,7 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
-					s_fastq.closeOutput();	
+					s_fastq.closeOutput("onlyInsert");	
 
 				}
 
@@ -297,13 +344,10 @@ bool Parameters::parseParameters()
 					elapsed = (finish.tv_sec - start.tv_sec);
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-					// cerr << "Total de bases: " << totalBase << endl;
-					// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
-
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 
-					p_fastq.closeOutput();
+					p_fastq.closeOutput("onlyIdentify");
 
 				}else if(onlyRemove){
 					
@@ -336,7 +380,7 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;				
 
-					p_fastq.closeOutput();
+					p_fastq.closeOutput("onlyRemove");
 
 				}else if(onlyInsert){
 
@@ -344,13 +388,31 @@ bool Parameters::parseParameters()
 
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
+					bool toInsert = false;
+					int contAdaptersInseridos = 0;
+
+					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
+					int contador = rateInsertionAdapterInt;
+
 					while (p_fastq.hasNext())
 					{
+						
+						toInsert = false;
 
-						p_fastq.insertAdapters(forwardAdapter, reverseAdapter);
+						if((contador % rateInsertionAdapterInt) == 0)
+						{
+							toInsert = true;
+							++contAdaptersInseridos;
+						}
+
+						++contador;
+
+						p_fastq.insertAdapters(forwardAdapter, reverseAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
 						p_fastq.write();
 
 					}
+
+					cerr << "Adapters Inseridos: " << contAdaptersInseridos*2 << endl;
 
 					clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -359,7 +421,7 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << "Elapsed Time: " << elapsed << endl;
 				
-					p_fastq.closeOutput();	
+					p_fastq.closeOutput("onlyInsert");	
 
 				}
 			}
@@ -377,12 +439,26 @@ bool Parameters::parseParameters()
 						cerr << "Adapters Found (Interlaced File)" << s_fastq.identifyAdapter() << endl;
 							clock_gettime(CLOCK_MONOTONIC, &start);
 
-							while(s_fastq.hasNextSearchAdapters("forward"))
-							{}
+							string type = "interlaced,forward";
+
+							int cont = 1;
+							while(s_fastq.hasNextSearchAdapters(type))
+							{
+									if(cont % 2 == 0)
+									type = "interlaced,reverse";
+									else
+									type = "interlaced,forward";
+
+								++cont;
+							}
+
+							s_fastq.writeOnlyIdentifyHeader("interlaced");
 
 							for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
 							{
-								cerr << s_fastq.getAdaptersVec()[i] << " > " << s_fastq.getAdaptersVecQuant()[i] << endl;
+								cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
+								string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
+								s_fastq.writeOnlyIdentify(textOutputIdentify);
 							}
 
 						clock_gettime(CLOCK_MONOTONIC, &finish);
@@ -390,15 +466,13 @@ bool Parameters::parseParameters()
 						elapsed = (finish.tv_sec - start.tv_sec);
 						elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-						// cerr << "Total de bases: " << totalBase << endl;
-						// cerr << "Aproximadamente: " << totalBase/elapsed << endl;
-
 						cerr << endl
 							 << "Elapsed Time: " << elapsed << endl;
 
-					}
-					else
-					{
+					s_fastq.closeOutput("onlyIdentify");
+
+					}else if(onlyRemove){
+
 						clock_gettime(CLOCK_MONOTONIC, &start);
 
 						while (s_fastq.hasNext())
@@ -406,22 +480,71 @@ bool Parameters::parseParameters()
 
 							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax);
 
-							if (trim)
+						if (trim)
+						{
+							if (trimQuality)
 							{
-								s_fastq.trim(minQuality, 0);
+								s_fastq.trim(minQuality, 3);
 							}
+							else
+							{
+								s_fastq.trim(-1, 3);
+							}
+						}
 
 							s_fastq.write();
 						}
+
 						clock_gettime(CLOCK_MONOTONIC, &finish);
 
 						elapsed = (finish.tv_sec - start.tv_sec);
 						elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 						cerr << endl
 							 << "Elapsed Time: " << elapsed << endl;
+
+
+					s_fastq.closeOutput("onlyRemove");
+					
+					}else if(onlyInsert){
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					bool toInsert = false;
+					int contAdaptersInseridos = 0;
+
+					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
+					int contador = rateInsertionAdapterInt;
+
+					while (s_fastq.hasNext())
+					{
+						toInsert = false;
+
+						if((contador % rateInsertionAdapterInt) == 0)
+						{
+							toInsert = true;
+							++contAdaptersInseridos;
+						}
+
+						++contador;
+						// cerr << "cont: " << contador << endl; 
+						s_fastq.insertAdapter(singleAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
+						s_fastq.write();
 					}
+
+					cerr << "Adapters Inseridos: " << contAdaptersInseridos << endl;
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+				
+					s_fastq.closeOutput("onlyInsert");	
+
+					}
+
 				}
-				s_fastq.closeOutput();
 
 			return true;	
 		}
@@ -430,42 +553,57 @@ bool Parameters::parseParameters()
 }
 void Parameters::printHelp()
 {
-	cerr <<" FAIR - Fast Adapter Identification and Removal v1.0" << endl;
+	cerr <<"  FAIIR - Fast Adapter Identification, Insertion and Removal v1.0" << endl;
 	cerr << "" << endl;
-	cerr << "Usage: /home/joao/FAIR -o <output_dir> [options]" << endl;
+	cerr << " Usage: /home/joao/FAIR -o <output_dir> [options]" << endl;
 	cerr << "" << endl;
-	cerr << "Basic options:" << endl;
-	cerr << "-o/--output   <output_dir>   directory to store all the resulting files (required)" << endl;
-	cerr << "-h/--help                    prints this usage message" << endl;
-	cerr << "-v/--version                 prints version" << endl;
+	cerr << "|> Basic options:" << endl;
+	cerr << "|-o/--output   <output_dir>   directory to store all the resulting files (required)" << endl;
+	cerr << "|-h/--help                    prints this usage message" << endl;
+	cerr << "|-v/--version                 prints version" << endl;
 	cerr << "" << endl;
-	cerr << "Input data:" << endl;
-	cerr << "-s/--single        <filename>    file with unpaired reads" << endl;
-	cerr << "-f/--forward       <filename>    file with forward paired-end reads" << endl;
-	cerr << "-r/--reverse       <filename>    file with reverse paired-end reads" << endl;
-	cerr << "-i/--interlaced    <filename>    file with interlaced forward and reverse paired-end reads" << endl;
+	cerr << "|> Input data:" << endl;
+	cerr << "|-s/--single        <filename>    file with unpaired reads" << endl;
+	cerr << "|-f/--forward       <filename>    file with forward paired-end reads" << endl;
+	cerr << "|-r/--reverse       <filename>    file with reverse paired-end reads" << endl;
+	cerr << "|-i/--interlaced    <filename>    file with interlaced forward and reverse paired-end reads" << endl;
 	cerr << "" << endl;
-	cerr << "Pipeline options:" << endl;
-	cerr << "--only-identify         runs only adapter identification (without removal)" << endl;
-	cerr << "--only-remove           runs only adapter removal (without identification)" << endl;
-	cerr << "                        need to set adapter(s) if this option is set" << endl;
-	cerr << "--trim                  trim ambiguous bases (N) at 5'/3' termini" << endl;
-	cerr << "--trim-quality          trim bases at 5'/3' termini with quality scores <= to" << endl;
-	cerr << "                        --min-quality value" << endl;
-	cerr << "--min-quality   <int>   minimal quality value to trim" << endl;
+	cerr << "|> Pipeline options:" << endl;
+	cerr << "|--only-identify         runs only adapter identification (without removal)" << endl;
+	cerr << "|--only-remove           runs only adapter removal (without identification)" << endl;
+	cerr << "|                        need to set adapter(s) if this option is set" << endl;
+	cerr << "|--trim                  trim ambiguous bases (N) at 5'/3' termini" << endl;
+	cerr << "|--trim-quality          trim bases at 5'/3' termini with quality scores <= to" << endl;
+	cerr << "|                        --min-quality value" << endl;
+	cerr << "|--min-quality   <int>   minimal quality value to trim" << endl;
 	cerr << "" << endl;
-	cerr << "Advanced options:" << endl;
-	cerr << "--adapter     <adapter>         adapter sequence that will be removed (unpaired reads)" << endl;
-	cerr << "                                required with --only-remove" << endl;
-	cerr << "--forward-adapter   <adapter>   adapter sequence that will be removed" << endl;
-	cerr << "                                in the forward paired-end reads (required with --only-remove)" << endl;
-	cerr << "--reverse-adapter   <adapter>   adapter sequence that will be removed" << endl;
-	cerr << "                                in the reverse paired-end reads (required with --only-remove)" << endl;
-	cerr << "-t/--threads    <int>           number of threads" << endl;
-	cerr << "                                [default: 1]" << endl;
-	cerr << "--phred-offset    <33 or 64>    PHRED quality offset in the input reads (33 or 64)" << endl;
-	cerr << "                                [default: auto-detect]" << endl;
+	cerr << "|>Advanced options:" << endl;
+	cerr << "|--adapter     <adapter>          adapter sequence that will be removed (unpaired reads)" << endl;
+	cerr << "|                                required with --only-remove" << endl;
+	cerr << "|--forward-adapter   <adapter>    adapter sequence that will be removed" << endl;
+	cerr << "|                                in the forward paired-end reads (required with --only-remove)" << endl;
+	cerr << "|--reverse-adapter   <adapter>    adapter sequence that will be removed" << endl;
+	cerr << "|                                in the reverse paired-end reads (required with --only-remove)" << endl;
+	cerr << "|-t/--threads    <int>            number of threads" << endl;
+	cerr << "|                                [default: 1]" << endl;
+	cerr << "|--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)" << endl;
+	cerr << "|                                [default: auto-detect]" << endl;
 	cerr << "                                " << endl;
+	cerr << "|> Adapter insertion options:" << endl;
+	cerr << "|--insertion-left     <adapter>   adapter sequence that will be removed (unpaired reads)" << endl;
+	cerr << "|                                required with --only-remove" << endl;
+	cerr << "|--forward-adapter   <adapter>    adapter sequence that will be removed" << endl;
+	cerr << "|                                in the forward paired-end reads (required with --only-remove)" << endl;
+	cerr << "|--reverse-adapter   <adapter>    adapter sequence that will be removed" << endl;
+	cerr << "|                                in the reverse paired-end reads (required with --only-remove)" << endl;
+	cerr << "|-ir/--insertion-rate  <double>   insertion rate of the adapters in read" << endl;
+	cerr << "|                                [default: 0.01] (1%)" << endl;
+	cerr << "|--random-position                " << endl;
+	cerr << "|                                 " << endl;
+	cerr << "|--insertion-left                to insert in left read" << endl;
+	cerr << "|or --insertion-right            to insert in right read" << endl;
+	cerr << "|-er/--insertion-rate                                " << endl;
+
 }
 void Parameters::printVersion()
 {
