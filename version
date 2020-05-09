@@ -1,1 +1,3 @@
-Versão com algoritmo ShiftAnd de Wu & Manber (92) para mismatch = 0 e algoritmo de Myers (99) para mismatch > 0
++ Versão com algoritmo ShiftAnd de Wu & Manber (92) para mismatch = 0 e algoritmo de Myers (99) para mismatch > 0;
++ Adição de função OnlyInsert testado para todo tipo de dado;
++ Outputs Padronizados;
