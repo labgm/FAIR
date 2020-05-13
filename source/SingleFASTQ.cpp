@@ -98,6 +98,23 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 
 	// index = search(adapter_c, adapter.length(), seq_c, seq.length());
 
+	if(mismatchMax >= 0)
+	{
+
+		for (int j = 0; j < index.size(); ++j)
+		{
+			if (index[j] >= 0)
+			{
+			    occurrences ++;
+	    		seq.erase(index[j], (adapter.length() - index[j+1]));
+		    	qual.erase(index[j], (adapter.length() - index[j+1]));
+	        }
+		    	j++;
+		}
+
+	}else{
+
+		
 	for (auto &&i : index)
 	{
         if (i >= 0)
@@ -107,6 +124,8 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
     		seq.erase(i, adapter.length());
 	    	qual.erase(i, adapter.length());
         }
+	}
+
 	}
 }
 

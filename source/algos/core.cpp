@@ -55,6 +55,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 	long currDist = m;
 	long currDistAnt = 0;
+	int minorCurr = k;
 
 	for (int j = 0; j < n; ++j){	
 
@@ -73,9 +74,10 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 		// printf("%d,%d\n", j, currDist);
 		// MATCH =========
+
 		if (currDist <= k){
 
-				inicializador++;
+			inicializador++;
 
 				if(inicializador == 1)
 				{
@@ -88,6 +90,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 					{
 						acumulaPmedia += posicaoAtual+currDist;
 						quantGrupo++;
+						minorCurr = currDist;
 					}
 				}
 
@@ -99,7 +102,10 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 			{
 				
 				indiceMedio = acumulaPmedia/quantGrupo;
-				indexx.insert(indexx.begin(), (indiceMedio - m));
+				// indexx.insert(indexx.begin(), (indiceMedio - m));
+				indexx.push_back(indiceMedio - m);
+				indexx.push_back(minorCurr);
+				// cerr << "Minor> " << minorCurr << endl;
 
 				inicializador = 0;
 				acumulaPmedia = 0;
@@ -112,12 +118,15 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		if (posicaoAtual == n){
 			if(quantGrupo >= 1){
 					indiceMedio = acumulaPmedia/quantGrupo;
-					indexx.insert(indexx.begin(), (indiceMedio - m));
+					// indexx.insert(indexx.begin(), (indiceMedio - m));					
+					indexx.push_back(indiceMedio - m);
+					indexx.push_back(minorCurr);
+					// cerr << "Minor> " << minorCurr << endl;
 			}
 	    }
 	}
 
-
+	// cerr << "-----------" << endl;
 	return indexx;
 
 	}
@@ -190,42 +199,43 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 				}
 				// A PARTIR DO SEGUNDO MATCH
-				else{
+				else
+				{
 
-				//se posicao anterior +1 eh igual a posicao atual (significa que eh parte do grupo)
-				if((posicaoAnterior+1) == posicaoAtual){
+					//se posicao anterior +1 eh igual a posicao atual (significa que eh parte do grupo)
+					if((posicaoAnterior+1) == posicaoAtual){
 
-						quantGrupo++;
+							quantGrupo++;
+							posicaoAnterior = posicaoAtual;
+							acumulaPmedia += posicaoAtual;
+
+					}else{
+
+						//TIRA A MEDIA DO GRUPO ANTERIOR - PEGANDO A SOMA ACUMULADA DO GRUPO DIVIDINDO-O PELA QUANTIDADE DE INDICES DO GRUPO 
+						//PARA SABER O VALOR EXATO DE MATCH
+						indiceMedio = acumulaPmedia/quantGrupo;
+						indexx.insert(indexx.begin(), (indiceMedio - m));
+		
+						//ATRIBUI AO NOVO GRUPO SUCESSOR VALORES DE INICIALIZACAO - RECOMECA COM POSICAO ATUAL E QUANTIDADE DO GRUPO JA COM VALOR 1
+						acumulaPmedia = posicaoAtual;
 						posicaoAnterior = posicaoAtual;
-						acumulaPmedia += posicaoAtual;
+						quantGrupo = 1;
+						inicializador = 1;
 
-				}else{
-
-					//TIRA A MEDIA DO GRUPO ANTERIOR - PEGANDO A SOMA ACUMULADA DO GRUPO DIVIDINDO-O PELA QUANTIDADE DE INDICES DO GRUPO 
-					//PARA SABER O VALOR EXATO DE MATCH
-					indiceMedio = acumulaPmedia/quantGrupo;
-					indexx.insert(indexx.begin(), (indiceMedio - m));
-	
-					//ATRIBUI AO NOVO GRUPO SUCESSOR VALORES DE INICIALIZACAO - RECOMECA COM POSICAO ATUAL E QUANTIDADE DO GRUPO JA COM VALOR 1
-					acumulaPmedia = posicaoAtual;
-					posicaoAnterior = posicaoAtual;
-					quantGrupo = 1;
-					inicializador = 1;
+					}
 
 				}
-
-			}
 
 			}
 
 			// SE FOR O ULTIMO CARACTER DA SEQUENCIA, INSERE O ULTIMO MATCH CONSIDERADO
 			if(posicaoAtual == n){
 
-					if(quantGrupo >= 1){
+					if(quantGrupo >= 1)
+					{
 
 						indiceMedio = acumulaPmedia/quantGrupo;
 						indexx.insert(indexx.begin(), (indiceMedio - m));
-
 
 					}
 			}
