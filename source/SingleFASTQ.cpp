@@ -160,8 +160,9 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 						occurrences ++;
 
-						// cerr << "limitInf: " << limitInf << endl;
-						// cerr << "quantCorte: " << quantCorte << endl;
+						cerr << "limitInf: " << limitInf << endl;
+						cerr << "quantCorte: " << quantCorte << endl;
+						cerr << "sizeN: " << seq.length() << endl;
 			    		
 			    		seq.erase(limitInf, quantCorte);
 				    	qual.erase(limitInf, quantCorte);
