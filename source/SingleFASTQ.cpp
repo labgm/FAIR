@@ -153,7 +153,11 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					{
 
 						int limitInf = index[i] + adapter.length() - (index_2[j] + adapter.length());
+						if (limitInf < 0) limitInf = 0;
+
 						int quantCorte = index[i] + adapter.length() - limitInf;
+						while((limitInf + quantCorte) >= seq.length()) --quantCorte;
+
 						occurrences ++;
 
 						// cerr << "limitInf: " << limitInf << endl;
@@ -239,7 +243,8 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 
 	for (int i = 0; i < quantErrors; ++i)
 	{
-		int posi = rand() % (adapter.length()) + 0; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR
+		// int posi = rand() % (adapter.length()) + 0; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR
+		int posi = rand() % (adapter.length() - 5) + 5; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR P/ teste com marcadores especiais -> XXXXXADAPTERAQUIZZZZZ
 		if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), posi) != vecErrorPositions.end())
 		{
 			// contém
@@ -259,15 +264,25 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 
 		for (int i = 0; i < adapter.length(); ++i)
 		{
+			// SE POSICAO DO VETOR ESTÁ DENTRO DO VETOR DE POSICOES A SER MODIFICADO
 			if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), i) != vecErrorPositions.end())
 			{
-				int typeError = rand() % 2 + 1;
-				if(typeError == 1) // Erro de Substituição
+				int typeError = rand() % 3 + 1;
+				if(typeError == 1) 
 				{
+					// Erro de Substituição
 					string bases = "ACTG";
 					int randomBase = rand() % 4 + 0;
 					adapter_aux += bases[randomBase];
 				}
+				else if(typeError == 2)
+				{
+					//ERRO de inserção
+					string bases = "ACTG";
+					int randomBase = rand() % 4 + 0;
+					adapter_aux += adapter[i] + bases[randomBase];
+				}
+
 			}else{
 				adapter_aux += adapter[i];
 			}
