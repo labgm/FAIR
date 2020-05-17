@@ -176,10 +176,15 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 			}else if(index[i+1] == 0){
 
 				int sizeCorte = adapter.length();
-				int limit = index[i] + sizeCorte;
+				// int limit = index[i] + sizeCorte;
 
 				if(index[i] < 0) index[i] = 0;
 				while((index[i] + sizeCorte) >= (seq.length() - 1)) sizeCorte -= 1;
+
+
+						cerr << "limitInf2: " << index[i] << endl;
+						cerr << "quantCorte2: " << sizeCorte << endl;
+						cerr << "sizeN2: " << seq.length() << endl;
 
 				seq.erase(index[i], sizeCorte);
 				qual.erase(index[i], sizeCorte);
