@@ -20,7 +20,7 @@ public:
 	string getQuality();
 	void convertQualToInteger(int qual_score);
 	int getOccurrences();
-	void erase(string adapter, int mismatchMax);
+	void erase(string adapter, int mismatchMax, string adapterInvert);
 	void trim(int qual_score, int minQuality, int minSequenceLength);
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
@@ -81,9 +81,12 @@ int SingleFASTQ::getOccurrences()
 	return occurrences;
 }
 
-void SingleFASTQ::erase(string adapter, int mismatchMax)
+void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 {
+
 	vector<int> index;
+	vector<int> index_2;
+		    // cerr << seq << endl;
 
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -96,37 +99,91 @@ void SingleFASTQ::erase(string adapter, int mismatchMax)
 	else
 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
-	// index = search(adapter_c, adapter.length(), seq_c, seq.length());
-
-	if(mismatchMax >= 0)
+	//PEGAR PARTE DE SEQUENCIA E INVERTER
+	if(index.size() > 0)
 	{
 
-		for (int j = 0; j < index.size(); ++j)
+		// if(1 == 1)
+		// {
+
+		// 	for (int i = 0; i < index.size(); ++i)
+		// 	{
+		// 		int sizeCorte = adapter.length();
+		// 		int limit = index[i] + sizeCorte;
+
+		// 		if(index[i] < 0) index[i] = 0;
+		// 		while((index[i] + sizeCorte) >= seq.length()) sizeCorte -= 1;
+
+		// 		seq.erase(index[i], sizeCorte);
+		// 		qual.erase(index[i], sizeCorte);
+
+		// 				occurrences ++;
+		// 		++i;
+		// 	}
+
+		// }else{
+
+		// PRECISION MODE
+		for (int i = 0; i < index.size(); ++i)
 		{
-			if (index[j] >= 0)
+
+			//SE MISMATCH MIN ENCONTRADO FOR DIFERENTE DE 0 -> CRIAR REVERSE DE PARTE DA SEQUECIA
+			if(index[i+1] != 0)
 			{
-			    occurrences ++;
-	    		seq.erase(index[j], (adapter.length() - index[j+1]));
-		    	qual.erase(index[j], (adapter.length() - index[j+1]));
-	        }
-		    	j++;
+				int limitSup = index[i] + adapter.length() - 1;
+				int limitInf = index[i] - mismatchMax;
+
+				string seq_aux_invert = "";
+				for (int j = limitSup; j >= limitInf; --j)
+				{
+					seq_aux_invert += seq[j];
+				}
+
+				char seq_invert_c[seq_aux_invert.length() + 1];
+				strcpy(seq_invert_c, seq_aux_invert.c_str());
+
+				char adapter_invert_c[adapterInvert.length() + 1];
+				strcpy(adapter_invert_c, adapterInvert.c_str());
+
+				index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
+
+				if(index_2.size() > 0)
+				{
+					for (int j = 0; j < index_2.size(); ++j)
+					{
+
+						int limitInf = index[i] + adapter.length() - (index_2[j] + adapter.length());
+						int quantCorte = index[i] + adapter.length() - limitInf;
+						occurrences ++;
+
+						// cerr << "limitInf: " << limitInf << endl;
+						// cerr << "quantCorte: " << quantCorte << endl;
+			    		
+			    		seq.erase(limitInf, quantCorte);
+				    	qual.erase(limitInf, quantCorte);
+
+				    	// erro coredump
+
+						++j;
+					}
+				}
+
+			}else if(index[i+1] == 0){
+
+				occurrences ++;
+			    // cerr << "occurrences" << endl;
+	    		seq.erase(index[i], adapter.length());
+		    	qual.erase(index[i], adapter.length());
+
+			}
+
+			++i;
+
 		}
-
-	}else{
-
-		
-	for (auto &&i : index)
-	{
-        if (i >= 0)
-		{
-		    occurrences ++;
-		    // cerr << occurrences << endl;
-    		seq.erase(i, adapter.length());
-	    	qual.erase(i, adapter.length());
-        }
+		// }
 	}
-
-	}
+			    // cerr << seq << endl;
+			    // cerr << qual << endl;
 }
 
 bool SingleFASTQ::SearchAdapter(string adapter, string seqi)

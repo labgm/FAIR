@@ -20,7 +20,7 @@ public:
 	string identifyAdapter();
 	void identifyQuality();
 	void trim(int minQuality, int minSequenceLength);
-	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax);
+	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert);
 	void write();
 	void closeOutput(string typeOperation);
 
@@ -260,7 +260,7 @@ void SingleFASTQFile::trim(int minQuality, int minSequenceLength)
 	sequence.trim(quality, minQuality, minSequenceLength);
 }
 
-void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatchMax)
+void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert)
 {
 
 	if (onlyRemove) // Adapter as Parameter
@@ -272,7 +272,7 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatc
 		adapter = identifyAdapter();
 	}
 
-	sequence.erase(adapter, mismatchMax);
+	sequence.erase(adapter, mismatchMax, adapterInvert);
 
 	// int number_of_ocurrences = 0;
 

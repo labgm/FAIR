@@ -56,6 +56,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 	long currDist = m;
 	long currDistAnt = 0;
 	int minorCurr = k;
+	int posiMinorCurr;
 
 	for (int j = 0; j < n; ++j){	
 
@@ -75,6 +76,8 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		// printf("%d,%d\n", j, currDist);
 		// MATCH =========
 
+			// cerr << posicaoAtual << ":" << currDist << endl;
+
 		if (currDist <= k){
 
 			inicializador++;
@@ -82,15 +85,19 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 				if(inicializador == 1)
 				{
 
-					acumulaPmedia += posicaoAtual+currDist;
+					// acumulaPmedia += posicaoAtual + minorCurr;
 					quantGrupo++;
+					minorCurr = currDist;
+					posiMinorCurr = posicaoAtual;
 
 				}else{
+
 					if(currDist < currDistAnt)
 					{
-						acumulaPmedia += posicaoAtual+currDist;
-						quantGrupo++;
+						// acumulaPmedia += posicaoAtual + minorCurr;
+						// quantGrupo++;
 						minorCurr = currDist;
+						posiMinorCurr = posicaoAtual;
 					}
 				}
 
@@ -100,11 +107,143 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 			if(quantGrupo >= 1)
 			{
+
+				// indiceMedio = acumulaPmedia/quantGrupo;
+				// indexx.push_back(indiceMedio - m);
+
+
+				indexx.insert(indexx.begin(), minorCurr);
+				indexx.insert(indexx.begin(), posiMinorCurr - m);
+
+				// indexx.push_back(posiMinorCurr - m);
+				// indexx.push_back(minorCurr);
+
+				// cerr << "posiMinorCurr > " << posiMinorCurr << endl;
+				// cerr << "posiMinorCurr - m> " << posiMinorCurr - m << endl;
+
+				inicializador = 0;
+				// acumulaPmedia = 0;
+				quantGrupo = 0;
+
+			}
+
+		}
+
+		if (posicaoAtual == n){
+			if(quantGrupo >= 1){
+
+					// indiceMedio = acumulaPmedia/quantGrupo;
+					indexx.insert(indexx.begin(), minorCurr);
+					indexx.insert(indexx.begin(), posiMinorCurr - m);
+					// indexx.push_back(indiceMedio - m);
+
+					// indexx.push_back(posiMinorCurr - m);
+					// indexx.push_back(minorCurr);
+
+					// cerr << "posiMinorCurr > " << posiMinorCurr << endl;
+					// cerr << "posiMinorCurr - m> " << posiMinorCurr - m << endl;
+			}
+	    }
+	}
+
+	// cerr << "----minorCurr------- : " << minorCurr << endl;
+	return indexx;
+
+	}
+
+
+	vector<int> searchMyersPalindromo(char *P, long m, char *T, long n, int mismatchMax){
+
+	int k = mismatchMax;
+	
+	vector<int> indexx;
+
+	int MAXCHAR = 256;
+	int posicaoAnterior, quantGrupo, posicaoAtual, indiceMedio, acumulaPmedia;
+
+	// ================== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS =====================
+	int inicializador = 0;
+	posicaoAnterior = 0;
+	quantGrupo = 0;
+	posicaoAtual = 0;
+	indiceMedio = 0;
+	acumulaPmedia = 0;
+	// =======================================================================================================
+
+	// ComputePM ////////////////////////////////////////
+	long PM[MAXCHAR];
+	for (int ii = 0; ii < MAXCHAR; ii++) PM[ii] = 0;
+	for (int ii = 1; ii <= m; ii++){
+		long temp = 1 << (ii-1);
+		PM[P[ii-1]+127] = PM[P[ii-1]+127] | temp;
+		// cerr << ii - 1 << ": " << PM[P[ii-1]+127] << endl;
+	}
+	////////////////////////////////////////////////////
+
+	long VN = 0;
+	long VP = 0xffffffff;
+	long D0, HP, HN;
+
+	long currDist = m;
+	long currDistAnt = 0;
+	int minorCurr = k;
+	int posiMinorCurr;
+
+	for (int j = 0; j < n; ++j){	
+
+		posicaoAtual = j+1;
+
+		// Step(j); ///////////////////////////////////////////////
+		D0 = (((PM[T[j]+127] & VP) + VP) ^ VP) | PM[T[j]+127] | VN;
+		HP = VN | ~ (D0 | VP);
+		HN = VP & D0;
+		VP = (HN << 1) | ~ (D0 | (HP << 1));
+		VN = (HP << 1) & D0;
+		///////////////////////////////////////////////////////////
+
+		if ((HP & 0x80000000) == 0x80000000) currDist += 1;
+		else if((HN & 0x80000000) == 0x80000000) currDist -= 1;
+
+		// printf("%d,%d\n", j, currDist);
+		// MATCH =========
+
+			cerr << posicaoAtual << ":" << currDist << endl;
+		
+		if (currDist <= k){
+
+
+			inicializador++;
+
+				if(inicializador == 1)
+				{
+
+					acumulaPmedia += posicaoAtual + minorCurr;
+					quantGrupo++;
+					minorCurr = currDist;
+					posiMinorCurr = posicaoAtual;
+
+				}else{
+
+					if(currDist < currDistAnt)
+					{
+						acumulaPmedia += posicaoAtual + minorCurr;
+						quantGrupo++;
+						minorCurr = currDist;
+						posiMinorCurr = posicaoAtual;
+					}
+				}
+
+				currDistAnt = currDist;
 				
-				indiceMedio = acumulaPmedia/quantGrupo;
-				// indexx.insert(indexx.begin(), (indiceMedio - m));
-				indexx.push_back(indiceMedio - m);
-				indexx.push_back(minorCurr);
+		}else{
+
+			if(quantGrupo >= 1)
+			{
+
+				// indiceMedio = acumulaPmedia/quantGrupo;
+				// indexx.push_back(indiceMedio - m);
+				indexx.push_back(posiMinorCurr - m);
+				// indexx.push_back(minorCurr);
 				// cerr << "Minor> " << minorCurr << endl;
 
 				inicializador = 0;
@@ -117,16 +256,19 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 		if (posicaoAtual == n){
 			if(quantGrupo >= 1){
-					indiceMedio = acumulaPmedia/quantGrupo;
-					// indexx.insert(indexx.begin(), (indiceMedio - m));					
-					indexx.push_back(indiceMedio - m);
-					indexx.push_back(minorCurr);
+
+					// indiceMedio = acumulaPmedia/quantGrupo;
+					// indexx.insert(indexx.begin(), (indiceMedio - m));
+					// indexx.push_back(indiceMedio - m);
+
+					indexx.push_back(posiMinorCurr - m);
+					// indexx.push_back(minorCurr);
 					// cerr << "Minor> " << minorCurr << endl;
 			}
 	    }
 	}
 
-	// cerr << "-----------" << endl;
+	cerr << "----------- : " << minorCurr << endl;
 	return indexx;
 
 	}
@@ -187,7 +329,7 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 				inicializador++;
 
-			// INICIALIZA APENAS NO PRIMEIRO MATCH, PARA SALVAR HISTORICO DE POSICAO
+				// INICIALIZA APENAS NO PRIMEIRO MATCH, PARA SALVAR HISTORICO DE POSICAO
 				if(inicializador == 1){
 
 					//SOMA 1 AO GRUPO

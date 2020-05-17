@@ -253,10 +253,17 @@ bool Parameters::parseParameters()
 				{
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
+					//INVERTER PADRAO
+					string adapterInvert = "";
+					for (int j = (singleAdapter.length() - 1); j >= 0; --j)
+					{
+						adapterInvert += singleAdapter[j];
+					}
+
 					while (s_fastq.hasNext())
 					{
 
-						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax);
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax, adapterInvert);
 
 						if (trim)
 						{
@@ -353,9 +360,22 @@ bool Parameters::parseParameters()
 					
 					clock_gettime(CLOCK_MONOTONIC, &start);
 
+					//INVERTER PADRAO FORWARD
+					string adapterInvert_f = "";
+					for (int j = (forwardAdapter.length() - 1); j >= 0; --j)
+					{
+						adapterInvert_f += forwardAdapter[j];
+					}
+					//INVERTER PADRAO REVERSE
+					string adapterInvert_r = "";
+					for (int j = (reverseAdapter.length() - 1); j >= 0; --j)
+					{
+						adapterInvert_r += reverseAdapter[j];
+					}
+
 					while (p_fastq.hasNext())
 					{
-						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchMax);
+						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchMax, adapterInvert_f, adapterInvert_r);
 
 						if (trim)
 						{
@@ -475,10 +495,17 @@ bool Parameters::parseParameters()
 
 						clock_gettime(CLOCK_MONOTONIC, &start);
 
+						//INVERTER PADRAO Single
+						string adapterInvert_s = "";
+						for (int j = (singleAdapter.length() - 1); j >= 0; --j)
+						{
+							adapterInvert_s += singleAdapter[j];
+						}
+
 						while (s_fastq.hasNext())
 						{
 
-							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax);
+							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax, adapterInvert_s);
 
 						if (trim)
 						{
