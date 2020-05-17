@@ -170,10 +170,16 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			}else if(index[i+1] == 0){
 
-				occurrences ++;
-			    // cerr << "occurrences" << endl;
-	    		seq.erase(index[i], adapter.length());
-		    	qual.erase(index[i], adapter.length());
+				int sizeCorte = adapter.length();
+				int limit = index[i] + sizeCorte;
+
+				if(index[i] < 0) index[i] = 0;
+				while((index[i] + sizeCorte) >= seq.length()) sizeCorte -= 1;
+
+				seq.erase(index[i], sizeCorte);
+				qual.erase(index[i], sizeCorte);
+
+						occurrences ++;
 
 			}
 
