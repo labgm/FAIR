@@ -178,7 +178,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				int limit = index[i] + sizeCorte;
 
 				if(index[i] < 0) index[i] = 0;
-				while((index[i] + sizeCorte) >= seq.length()) sizeCorte -= 1;
+				while((index[i] + sizeCorte) >= (seq.length() - 1)) sizeCorte -= 1;
 
 				seq.erase(index[i], sizeCorte);
 				qual.erase(index[i], sizeCorte);
