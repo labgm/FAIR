@@ -156,7 +156,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 						if (limitInf < 0) limitInf = 0;
 
 						int quantCorte = index[i] + adapter.length() - limitInf;
-						while((limitInf + quantCorte) >= seq.length()) --quantCorte;
+						while((limitInf + quantCorte) >= (seq.length() - 1)) --quantCorte;
 
 						occurrences ++;
 
