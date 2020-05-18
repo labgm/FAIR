@@ -124,8 +124,11 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 		// }else{
 
 		// PRECISION MODE
+		int cont = 0;
 		for (int i = 0; i < index.size(); ++i)
 		{
+
+			cont++;
 
 			//SE MISMATCH MIN ENCONTRADO FOR DIFERENTE DE 0 -> CRIAR REVERSE DE PARTE DA SEQUECIA
 			if(index[i+1] != 0)
@@ -152,20 +155,33 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					for (int j = 0; j < index_2.size(); ++j)
 					{
 
-						int limitInf = index[i] + adapter.length() - (index_2[j] + adapter.length());
-						if (limitInf < 0) limitInf = 0;
+						int limitInf = (index[i] + adapter.length()) - (index_2[j] + adapter.length());
+						// if (limitInf < 0) limitInf = 0;
 
-						int quantCorte = index[i] + adapter.length() - limitInf;
-						while((limitInf + quantCorte) >= (seq.length() - 1)) --quantCorte;
-
-						occurrences ++;
+						cerr << "" << endl;
+						cerr << cont << endl;
 
 						cerr << "limitInf: " << limitInf << endl;
-						cerr << "quantCorte: " << quantCorte << endl;
-						cerr << "sizeN: " << seq.length() << endl;
-			    		
-			    		seq.erase(limitInf, quantCorte);
-				    	qual.erase(limitInf, quantCorte);
+
+						int sizeCorte = index[i] + adapter.length() - limitInf;
+						cerr << "sizeCorte: " << sizeCorte << endl;
+						int limitSup = limitInf + sizeCorte;
+						// while(limitSup > seq.length()) --sizeCorte;
+
+						if(sizeCorte > 0 & limitSup <= seq.length())
+						{
+							occurrences ++;
+
+							cerr << "limitInf: " << limitInf << endl;
+							cerr << "sizeCorte: " << sizeCorte << endl;
+							cerr << "sizeN: " << seq.length() << endl;
+
+
+							cerr << "" << endl;
+				    		
+				    		seq.erase(limitInf, sizeCorte);
+					    	qual.erase(limitInf, sizeCorte);
+				    	}
 
 				    	// erro coredump
 
@@ -178,13 +194,22 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				int sizeCorte = adapter.length();
 				// int limit = index[i] + sizeCorte;
 
-				if(index[i] < 0) index[i] = 0;
-				while((index[i] + sizeCorte) >= (seq.length() - 1)) sizeCorte -= 1;
+						cerr << "" << endl;
+						cerr << cont << endl;
+
+						cerr << "limitInf2: " << index[i] << endl;
+						cerr << "sizeCorte2: " << sizeCorte << endl;
+
+				// if(index[i] < 0) index[i] = 0;
+				// while((index[i] + sizeCorte) >= (seq.length() - 1)) sizeCorte -= 1;
 
 
 						cerr << "limitInf2: " << index[i] << endl;
-						cerr << "quantCorte2: " << sizeCorte << endl;
+						cerr << "sizeCorte2: " << sizeCorte << endl;
 						cerr << "sizeN2: " << seq.length() << endl;
+
+
+						cerr << "" << endl;
 
 				seq.erase(index[i], sizeCorte);
 				qual.erase(index[i], sizeCorte);
