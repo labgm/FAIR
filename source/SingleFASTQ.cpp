@@ -95,8 +95,8 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 	// }
 
 
-	if(1 == 1)
-	{
+	// if(1 == 1)
+	// {
 
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -261,7 +261,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 			    // cerr << seq << endl;
 			    // cerr << qual << endl;
 
-	}
+	// }
 }
 
 bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
