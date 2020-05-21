@@ -88,6 +88,16 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 	vector<int> index_2;
 		    // cerr << seq << endl;
 
+	// for (int i = 0; i < qual.length(); ++i)
+	// {
+	// 	 code 
+	// 	cerr << i << ": " << qual[i] << endl;
+	// }
+
+
+	if(1 == 1)
+	{
+
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
 
@@ -99,29 +109,15 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 	else
 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
+		// cerr << "-----" << endl;
 	//PEGAR PARTE DE SEQUENCIA E INVERTER
 	if(index.size() > 0)
 	{
 
-		// if(1 == 1)
+		// for (int i = 0; i < index.size(); ++i)
 		// {
-
-		// 	for (int i = 0; i < index.size(); ++i)
-		// 	{
-		// 		int sizeCorte = adapter.length();
-		// 		int limit = index[i] + sizeCorte;
-
-		// 		if(index[i] < 0) index[i] = 0;
-		// 		while((index[i] + sizeCorte) >= seq.length()) sizeCorte -= 1;
-
-		// 		seq.erase(index[i], sizeCorte);
-		// 		qual.erase(index[i], sizeCorte);
-
-		// 				occurrences ++;
-		// 		++i;
-		// 	}
-
-		// }else{
+		// 	cerr << "index: " << index[i] << endl;
+		// }
 
 		// PRECISION MODE
 		// int cont = 0;
@@ -131,10 +127,12 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 			// cont++;
 
 			//SE MISMATCH MIN ENCONTRADO FOR DIFERENTE DE 0 -> CRIAR REVERSE DE PARTE DA SEQUECIA
+			// PROCESSAR ADAPTADORES NÃO EXATOS A FIM DE ENCONTRAR LIMITE INFERIOR E SUPERIOR DE CORTE
 			if(index[i+1] != 0)
 			{
 				int limitSup = index[i] + adapter.length() - 1;
 				int limitInf = index[i] - mismatchMax;
+				// int limitInf = 0;
 
 				string seq_aux_invert = "";
 				for (int j = limitSup; j >= limitInf; --j)
@@ -181,9 +179,19 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 							// cerr << "sizeN: " << seq.length() << endl;
 							// cerr << "" << endl;
 							// cerr << seq << endl;
+
+							if(limitInf >= (seq.length() - adapter.length()))
+							{
+								sizeCorte = seq.length() - limitInf;
+							}
+
 				    		
 				    		seq.erase(limitInf, sizeCorte);
 					    	qual.erase(limitInf, sizeCorte);
+							
+							// cerr << "*limitInf: " << limitInf << endl;
+							// cerr << "*sizeCorte: " << sizeCorte << endl;
+
 							occurrences ++;
 				    	}
 
@@ -194,6 +202,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					}
 				}
 
+			// PROCESSAR ADAPTADORES EXATOS 
 			}else if(index[i+1] == 0){
 
 				int sizeCorte = adapter.length();
@@ -216,18 +225,33 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 						// cerr << "sizeN2: " << seq.length() << endl;
 						// cerr << "limitSup2: " << limitSup << endl;
 						// cerr << "" << endl;
-				
-
 
 				if(sizeCorte > 0 & limitSup <= seq.length())
 				{
+
+					// SE CORTE ULTRAPASSA SEQUENCIA REDUZIR O CORTE ATÉ O FIM DA LEITURA
+					if(index[i] >= (seq.length() - adapter.length()))
+					{
+						sizeCorte = seq.length() - index[i];
+					}
 
 					seq.erase(index[i], sizeCorte);
 					qual.erase(index[i], sizeCorte);
 
 						occurrences ++;
 				}
+
 			}
+			// PROCESSAR FRAGMENTOS DE ADAPTADOR NO FIM DA SEQUÊNCIA 
+			// else if(index[i+1] < 0){
+
+			// 	int sizeCorte = index[i+1]*(-1);
+
+			// 	seq.erase(index[i], sizeCorte);
+			// 	qual.erase(index[i], sizeCorte);
+			// 	occurrences ++;
+
+			// }
 
 			++i;
 
@@ -236,12 +260,14 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 	}
 			    // cerr << seq << endl;
 			    // cerr << qual << endl;
+
+	}
 }
 
 bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 {
 	vector<int> index;
-	int mismatchMax = 3;
+	int mismatchMax = 0;
 
 	char seq_c[seqi.length() + 1];
 	char adapter_c[adapter.length() + 1];
