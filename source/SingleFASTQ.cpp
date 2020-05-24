@@ -301,7 +301,7 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 	// bool adapterInsertionLeft = false; // Inserir adaptadores na esquerda ou direta
 	// bool adapterRandomPosition = true; // se será inserido em posicoes aleatorias (seguindo 'adapterInsertionLeft' LEFT or RIGHT da read)
 	// double adapterErrorRate = 0.7; // taxa de erro máxima nos adaptadores (Ex: 70% do adaptador pode sofrer alteração)
-	int ratio = 5; // Distância máxima de bases do adaptador das extremidades da read(LEFT or RIGHT)
+	int ratio = 30; // Distância máxima de bases do adaptador das extremidades da read(LEFT or RIGHT)
 	
 	int maxErrors = adapterErrorRate * (adapter.length());
 		// cerr << "maxErrors: " << maxErrors << endl;
