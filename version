@@ -1,4 +1,4 @@
 + Versão com algoritmo ShiftAnd de Wu & Manber (92) para mismatch = 0 e algoritmo de Myers (99) para mismatch > 0;
-+ Adição de função OnlyInsert testado para todo tipo de dado;
 + Outputs Padronizados;
-+ Ajuste de Corte baseado em leitura INVERSA (PRECISION MODE)
++ Ajuste de Corte baseado em leitura INVERSA (PRECISION MODE) - Considera a primeira posição com menor mismatch para definir limite inferior de corte
++ Insertion Mode - Permite inserção, deleção, substituição aleatória (--insertion-rate/ir, --error-rate/-er, --random-position, --insertion-left/--insertion-right)

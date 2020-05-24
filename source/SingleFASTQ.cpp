@@ -132,6 +132,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 			{
 				int limitSup = index[i] + adapter.length() - 1;
 				int limitInf = index[i] - mismatchMax;
+				if(limitInf < 0) limitInf = 0;
 				// int limitInf = 0;
 
 				string seq_aux_invert = "";
@@ -139,6 +140,8 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				{
 					seq_aux_invert += seq[j];
 				}
+
+				// cerr << "seq_aux_invert: " << seq_aux_invert << endl;
 
 				char seq_invert_c[seq_aux_invert.length() + 1];
 				strcpy(seq_invert_c, seq_aux_invert.c_str());
@@ -298,7 +301,7 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 	// bool adapterInsertionLeft = false; // Inserir adaptadores na esquerda ou direta
 	// bool adapterRandomPosition = true; // se será inserido em posicoes aleatorias (seguindo 'adapterInsertionLeft' LEFT or RIGHT da read)
 	// double adapterErrorRate = 0.7; // taxa de erro máxima nos adaptadores (Ex: 70% do adaptador pode sofrer alteração)
-	int ratio = 20; // Distância máxima de bases do adaptador das extremidades da read(LEFT or RIGHT)
+	int ratio = 5; // Distância máxima de bases do adaptador das extremidades da read(LEFT or RIGHT)
 	
 	int maxErrors = adapterErrorRate * (adapter.length());
 		// cerr << "maxErrors: " << maxErrors << endl;
@@ -311,8 +314,8 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 
 	for (int i = 0; i < quantErrors; ++i)
 	{
-		// int posi = rand() % (adapter.length()) + 0; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR
-		int posi = rand() % (adapter.length() - 5) + 5; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR P/ teste com marcadores especiais -> XXXXXADAPTERAQUIZZZZZ
+		int posi = rand() % (adapter.length()) + 0; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR
+		// int posi = rand() % (adapter.length() - 5) + 5; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR P/ teste com marcadores especiais -> XXXXXADAPTERAQUIZZZZZ
 		if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), posi) != vecErrorPositions.end())
 		{
 			// contém
@@ -348,11 +351,14 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 					//ERRO de inserção
 					string bases = "ACTG";
 					int randomBase = rand() % 4 + 0;
-					adapter_aux += adapter[i] + bases[randomBase];
+					adapter_aux += adapter[i]; 
+					adapter_aux += bases[randomBase];
 				}
 
 			}else{
+
 				adapter_aux += adapter[i];
+				
 			}
 		}
 		

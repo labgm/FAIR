@@ -73,6 +73,8 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		if ((HP & 0x80000000) == 0x80000000) currDist += 1;
 		else if((HN & 0x80000000) == 0x80000000) currDist -= 1;
 
+		// cerr << j << ": " << currDist << endl;
+
 		// printf("%d,%d\n", j, currDist);
 		// MATCH =========
 
