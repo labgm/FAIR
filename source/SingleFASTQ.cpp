@@ -86,17 +86,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 	vector<int> index;
 	vector<int> index_2;
-		    // cerr << seq << endl;
-
-	// for (int i = 0; i < qual.length(); ++i)
-	// {
-	// 	 code 
-	// 	cerr << i << ": " << qual[i] << endl;
-	// }
-
-
-	// if(1 == 1)
-	// {
 
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -114,13 +103,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 	if(index.size() > 0)
 	{
 
-		// for (int i = 0; i < index.size(); ++i)
-		// {
-		// 	cerr << "index: " << index[i] << endl;
-		// }
-
-		// PRECISION MODE
-		// int cont = 0;
 		for (int i = 0; i < index.size(); ++i)
 		{
 
@@ -159,48 +141,28 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 						if(seq.length() > 0)
 						{
 
-						int limitInf = (index[i] + adapter.length()) - (index_2[j] + adapter.length());
-						// if (limitInf < 0) limitInf = 0;
+							int limitInf = (index[i] + adapter.length()) - (index_2[j] + adapter.length());
+							// if (limitInf < 0) limitInf = 0;
 
-						// cerr << "Adapter:" << adapter << endl;
-						// cerr << "" << endl;
-						// cerr << cont << endl;
-						// cerr << "limitInf: " << limitInf << endl;
+							int sizeCorte = index[i] + adapter.length() - limitInf;
+							int limitSup = limitInf + sizeCorte;	
 
-
-						int sizeCorte = index[i] + adapter.length() - limitInf;
-						// cerr << "sizeCorte: " << sizeCorte << endl;
-						int limitSup = limitInf + sizeCorte;						
-						// cerr << "limitSup: " << limitSup << endl;
-						// while(limitSup > seq.length()) --sizeCorte;
-
-						if(sizeCorte > 0 & limitSup <= seq.length())
-						{
-
-							// cerr << "limitInf: " << limitInf << endl;
-							// cerr << "sizeCorte: " << sizeCorte << endl;
-							// cerr << "sizeN: " << seq.length() << endl;
-							// cerr << "" << endl;
-							// cerr << seq << endl;
-
-							if(limitInf >= (seq.length() - adapter.length()))
+							if(sizeCorte > 0 & limitSup <= seq.length())
 							{
-								sizeCorte = seq.length() - limitInf;
-							}
 
-				    		
-				    		seq.erase(limitInf, sizeCorte);
-					    	qual.erase(limitInf, sizeCorte);
-							
-							// cerr << "*limitInf: " << limitInf << endl;
-							// cerr << "*sizeCorte: " << sizeCorte << endl;
+								if(limitInf >= (seq.length() - adapter.length()))
+								{
+									sizeCorte = seq.length() - limitInf;
+								}
 
-							occurrences ++;
-				    	}
+					    		seq.erase(limitInf, sizeCorte);
+						    	qual.erase(limitInf, sizeCorte);
 
-				    	// erro coredump
+								occurrences ++;
+					    	}
 
-						++j;
+							++j;
+
 						}
 					}
 				}
@@ -210,24 +172,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 				int sizeCorte = adapter.length();
 				int limitSup = index[i] + sizeCorte;
-
-						// cerr << "Adapter:" << adapter << endl;
-				// int limit = index[i] + sizeCorte;
-
-						// cerr << "" << endl;
-						// cerr << cont << endl;
-
-						// cerr << "limitInf2: " << index[i] << endl;
-						// cerr << "sizeCorte2: " << sizeCorte << endl;
-
-				// if(index[i] < 0) index[i] = 0;
-				// while((index[i] + sizeCorte) >= (seq.length() - 1)) sizeCorte -= 1;
-
-						// cerr << "limitInf2: " << index[i] << endl;
-						// cerr << "sizeCorte2: " << sizeCorte << endl;
-						// cerr << "sizeN2: " << seq.length() << endl;
-						// cerr << "limitSup2: " << limitSup << endl;
-						// cerr << "" << endl;
 
 				if(sizeCorte > 0 & limitSup <= seq.length())
 				{
