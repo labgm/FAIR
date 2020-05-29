@@ -142,7 +142,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 						{
 
 							int limitInf = (index[i] + adapter.length()) - (index_2[j] + adapter.length());
-							// if (limitInf < 0) limitInf = 0;
+							if (limitInf < 0) limitInf = 0;
 
 							int sizeCorte = index[i] + adapter.length() - limitInf;
 							int limitSup = limitInf + sizeCorte;	
