@@ -72,6 +72,12 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		if ((HP & 0x80000000) == 0x80000000) currDist += 1;
 		else if((HN & 0x80000000) == 0x80000000) currDist -= 1;
 
+		// SE ESTÁ SE APROXIMANDO DA EXTREMIDADE AUMENTAR QUANTIDADE DE MISMATCH
+		if (posicaoAtual >= (n - m))
+		{
+			k = m / 2;
+		}
+
 		if (currDist <= k){
 
 			inicializador++;

@@ -298,14 +298,19 @@ bool Parameters::parseParameters()
 					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
 					int contador = rateInsertionAdapterInt;
 
+					// int contPosi = 1;
+
 					while (s_fastq.hasNext())
 					{
 						toInsert = false;
 
+						// COMECA INSERINDO NA PRIMEIRA READ
 						if((contador % rateInsertionAdapterInt) == 0)
 						{
 							toInsert = true;
 							++contAdaptersInseridos;
+						}else{
+							// cerr << "0" << endl;
 						}
 
 						++contador;

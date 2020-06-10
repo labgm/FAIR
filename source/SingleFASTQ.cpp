@@ -84,6 +84,8 @@ int SingleFASTQ::getOccurrences()
 void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 {
 
+	// cerr << seq.length() << endl;
+
 	vector<int> index;
 	vector<int> index_2;
 
@@ -131,7 +133,18 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				char adapter_invert_c[adapterInvert.length() + 1];
 				strcpy(adapter_invert_c, adapterInvert.c_str());
 
-				index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
+				// SE ADAPTADOR ESTÁ EM POSICAO DA EXTREMIDADE AUMENTAR QUANTIDADE DE MISMATCH
+				if(index[i] >= (seq.length() - adapter.length()))
+				{
+					int new_mismatch_max = adapter.length() / 2;
+					index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), new_mismatch_max);
+				
+				}else{
+					
+					index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
+				
+				}	
+
 
 				if(index_2.size() > 0)
 				{
@@ -214,7 +227,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 {
 	vector<int> index;
-	int mismatchMax = 0;
+	int mismatchMax = 3;
 
 	char seq_c[seqi.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -309,10 +322,10 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 		adapter = adapter_aux;
 	}
 
-	string temp_qual = ",";
+	string temp_qual = "F";
 
 	// GERANDO VALOR STRING DE QUALIDADE
-	for (int i = 0; i < (adapter.length()-1); ++i) temp_qual += ",";
+	for (int i = 0; i < (adapter.length()-1); ++i) temp_qual += "F";
 
 
 	// GERANDO STRINGS DE SEQUENCIA E QUALIDADE
@@ -353,6 +366,7 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 				{
 					aux_seq += adapter;
 					aux_qual += temp_qual;
+					cerr << adapter.length() << endl;
 				
 				}else{
 
@@ -366,6 +380,7 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 		seq = aux_seq;
 		qual = aux_qual;
 
+
 	}else{
 		
 		if(adapterInsertionLeft)
@@ -373,10 +388,15 @@ void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate,
 			seq = adapter+seq;
 			qual = temp_qual+qual;
 
+			cerr << adapter.length() << endl;
+		
 		}else{
 
 			seq += adapter;
 			qual += temp_qual;
+		
+			cerr << adapter.length() << endl;
+		
 		}
 	}
 
