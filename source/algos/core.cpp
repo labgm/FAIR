@@ -76,7 +76,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		// SE ESTÁ SE APROXIMANDO DA EXTREMIDADE AUMENTAR QUANTIDADE DE MISMATCH
 		if (posicaoAtual == n)
 		{
-			k = m / 2;
+			k = m / 4;
 			ultimo = true;
 		}
 
