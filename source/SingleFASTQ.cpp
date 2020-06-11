@@ -84,7 +84,7 @@ int SingleFASTQ::getOccurrences()
 void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 {
 
-	cerr << seq.length() << endl;
+	// cerr << seq.length() << endl;
 
 	vector<int> index;
 	vector<int> index_2;
