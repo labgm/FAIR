@@ -88,6 +88,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 	vector<int> index;
 	vector<int> index_2;
+	vector<int> index_3;
 
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -180,9 +181,9 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 				int mismatchMax_2 = adapter.length() / 2;
 
-				index_2 = searchMyers(adapter_c, adapter.length(), seq_end_c, adapter.length(), mismatchMax_2);
+				index_3 = searchMyers(adapter_c, adapter.length(), seq_end_c, adapter.length(), mismatchMax_2);
 
-				if(index_2.size() > 0)
+				if(index_3.size() > 0)
 				{
 
 					int limitInf = seq.length() - adapter.length();
