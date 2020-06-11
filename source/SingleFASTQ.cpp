@@ -134,7 +134,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				strcpy(adapter_invert_c, adapterInvert.c_str());
 
 				// SE ADAPTADOR ESTÁ EM POSICAO DA EXTREMIDADE AUMENTAR QUANTIDADE DE MISMATCH
-				if((index[i] + adapter.length()) >= (seq.length() - adapter.length() / 2))
+				if((index[i] + adapter.length()) >= (seq.length() - (adapter.length() / 2)))
 				{
 					int new_mismatch_max = adapter.length() / 2;
 					index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), new_mismatch_max);
