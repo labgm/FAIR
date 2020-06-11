@@ -180,7 +180,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 				int mismatchMax_2 = adapter.length() / 2;
 
-				index_2 = searchMyers(adapter_c, adapter.length(), seq_end_c, seq.length(), mismatchMax_2);
+				index_2 = searchMyers(adapter_c, adapter.length(), seq_end_c, adapter.length(), mismatchMax_2);
 
 				if(index_2.size() > 0)
 				{
@@ -190,7 +190,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					seq.erase(limitInf, adapter.length());
 					qual.erase(limitInf, adapter.length());
 
-					
+
 						occurrences ++;
 
 				}
