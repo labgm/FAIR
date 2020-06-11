@@ -140,8 +140,18 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				// 	index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), new_mismatch_max);
 				
 				// }else{
-					
+
+				if(index[i+1] < 0)
+				{
+					int mismatchMax_2 = adapter.length() / 3;
+					index_2 = searchMyers_2(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax_2);
+				
+				}else{
+
 					index_2 = searchMyers_2(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
+
+				}
+
 				
 				// }	
 
@@ -181,7 +191,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				}
 
 			// PROCESSAR ADAPTADORES EXATOS 
-			}else if(index[i+1] <= 0){
+			}else if(index[i+1] == 0){
 
 				int sizeCorte = adapter.length();
 				int limitSup = index[i] + sizeCorte;
