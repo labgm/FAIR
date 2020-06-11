@@ -56,6 +56,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 	long currDistAnt = 0;
 	int minorCurr = k;
 	int posiMinorCurr;
+	bool ultimo = false;
 
 	for (int j = 0; j < n; ++j){
 
@@ -76,6 +77,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 		if (posicaoAtual == n)
 		{
 			k = m / 2;
+			ultimo = true;
 		}
 
 		if (currDist <= k){
@@ -102,6 +104,8 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 			if(quantGrupo >= 1)
 			{
+				if(ultimo == true) minorCurr = minorCurr * (-1);
+
 				indexx.insert(indexx.begin(), minorCurr);
 				indexx.insert(indexx.begin(), posiMinorCurr - m);
 
@@ -115,6 +119,9 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 
 		if (posicaoAtual == n){
 			if(quantGrupo >= 1){
+
+				if(ultimo == true) minorCurr = minorCurr * (-1);
+
 					indexx.insert(indexx.begin(), minorCurr);
 					indexx.insert(indexx.begin(), posiMinorCurr - m);
 			}

@@ -134,16 +134,16 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				strcpy(adapter_invert_c, adapterInvert.c_str());
 
 				// SE ADAPTADOR ESTÁ EM POSICAO DA EXTREMIDADE AUMENTAR QUANTIDADE DE MISMATCH
-				if((index[i] + adapter.length()) >= (seq.length()))
-				{
-					int new_mismatch_max = adapter.length() / 2;
-					index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), new_mismatch_max);
+				// if((index[i] + adapter.length()) >= (seq.length()))
+				// {
+				// 	int new_mismatch_max = adapter.length() / 2;
+				// 	index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), new_mismatch_max);
 				
-				}else{
+				// }else{
 					
 					index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
 				
-				}	
+				// }	
 
 
 				if(index_2.size() > 0)
@@ -203,15 +203,13 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			}
 			// PROCESSAR FRAGMENTOS DE ADAPTADOR NO FIM DA SEQUÊNCIA 
-			// else if(index[i+1] < 0){
+			else if(index[i+1] < 0){
 
-			// 	int sizeCorte = index[i+1]*(-1);
+				seq.erase(index[i], adapter.length());
+				qual.erase(index[i], adapter.length());
+				occurrences ++;
 
-			// 	seq.erase(index[i], sizeCorte);
-			// 	qual.erase(index[i], sizeCorte);
-			// 	occurrences ++;
-
-			// }
+			}
 
 			++i;
 
