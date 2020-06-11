@@ -141,7 +141,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				
 				// }else{
 					
-					index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
+					index_2 = searchMyers_2(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
 				
 				// }	
 
@@ -181,7 +181,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				}
 
 			// PROCESSAR ADAPTADORES EXATOS 
-			}else if(index[i+1] == 0){
+			}else if(index[i+1] <= 0){
 
 				int sizeCorte = adapter.length();
 				int limitSup = index[i] + sizeCorte;
@@ -203,13 +203,13 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			}
 			// PROCESSAR FRAGMENTOS DE ADAPTADOR NO FIM DA SEQUÊNCIA 
-			else if(index[i+1] < 0){
+			// else if(index[i+1] < 0){
 
-				seq.erase(index[i], adapter.length());
-				qual.erase(index[i], adapter.length());
-				occurrences ++;
+			// 	seq.erase(index[i], adapter.length());
+			// 	qual.erase(index[i], adapter.length());
+			// 	occurrences ++;
 
-			}
+			// }
 
 			++i;
 
