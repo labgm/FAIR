@@ -21,7 +21,7 @@
 
 using namespace std;
 
-vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
+vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int indiceStart){
 
 	int k = mismatchMax;
 	
@@ -57,7 +57,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax){
 	int minorCurr = k;
 	int posiMinorCurr;
 
-	for (int j = 0; j < n; ++j){
+	for (int j = indiceStart; j < n; ++j){
 
 		posicaoAtual = j+1;
 

@@ -97,7 +97,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 	strcpy(adapter_c, adapter.c_str());
 
 	if(mismatchMax > 0)
-	index = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax);
+	index = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax, 0);
 	else
 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
@@ -134,7 +134,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				char adapter_invert_c[adapterInvert.length() + 1];
 				strcpy(adapter_invert_c, adapterInvert.c_str());
 
-				index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax);
+				index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), mismatchMax, 0);
 
 				if(index_2.size() > 0)
 				{
@@ -196,31 +196,44 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 			++i;
 
 		}
-	}
 
-		string seq_end = "";
-		for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
+	}else{
+		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
+
+		// string seq_end = "";
+		// for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
+		// {
+		// 	seq_end += seq[j];
+		// }
+
+		// char seq_end_c[seq_end.length() + 1];
+		// strcpy(seq_end_c, seq_end.c_str());
+		double taxaMismatchAdapter_extrem = 0.5;
+
+		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
+
+		if(taxaMismatchAdapter_extrem_int > 0)
 		{
-			seq_end += seq[j];
+
+			int indiceStart = seq.length() - ( adapter.length() - taxaMismatchAdapter_extrem_int) - 1;
+
+			index_3 = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax, indiceStart);
+
+			if(index_3.size() > 0)
+			{
+
+				int lini = indiceStart;
+				int quant = seq.length() - lini;
+
+				seq.erase(lini, quant);
+				qual.erase(lini, quant);
+
+				++ occurrences;
+
+			}
+
 		}
-
-		char seq_end_c[seq_end.length() + 1];
-		strcpy(seq_end_c, seq_end.c_str());
-		int mismatchMax_new = adapter.length() / 2;
-
-		index_3 = searchMyers(adapter_c, adapter.length(), seq_end_c, seq_end.length(), mismatchMax_new);
-
-		if(index_3.size() > 0)
-		{
-
-			int lini = seq.length() - adapter.length() - 1;
-			int quant = seq.length() - lini;
-
-			seq.erase(lini, quant);
-			qual.erase(lini, quant);
-
-			++ occurrences;
-
+		
 		}
 
 }
@@ -236,7 +249,7 @@ bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 	strcpy(seq_c, seqi.c_str());
 	strcpy(adapter_c, adapter.c_str());
 
-	index = searchMyers(adapter_c, adapter.length(), seq_c, seqi.length(), mismatchMax);
+	index = searchMyers(adapter_c, adapter.length(), seq_c, seqi.length(), mismatchMax, 0);
 
 	for (auto &&i : index)
 	{
