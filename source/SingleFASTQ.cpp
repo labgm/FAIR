@@ -88,6 +88,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 	vector<int> index;
 	vector<int> index_2;
+	vector<int> index_3;
 
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -209,15 +210,30 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 		}
 		// }
 	}
-	
-			int lini = seq.length() - adapter.length() - 1;
 
-			seq.erase(lini, adapter.length());
-			qual.erase(lini, adapter.length());
-			    // cerr << seq << endl;
-			    // cerr << qual << endl;
+				string seq_end = "";
+				for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
+				{
+					seq_end += seq[j];
+				}
 
-	// }
+				char seq_end_c[seq_end.length() + 1];
+				strcpy(seq_end_c, seq_end.c_str());
+				int mismatchMax_new = adapter.length() / 2;
+
+				index_3 = searchMyers(adapter_c, adapter.length(), seq_end_c, seq_end.length(), mismatchMax_new);
+
+				if(index_3.size() > 0)
+				{
+
+					int lini = seq.length() - adapter.length() - 1;
+
+					seq.erase(lini, adapter.length());
+					qual.erase(lini, adapter.length());
+
+				}
+
+
 }
 
 bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
