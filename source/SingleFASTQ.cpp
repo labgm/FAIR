@@ -197,7 +197,10 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		}
 
+		// cerr << "PT1" << endl;
+
 	}else{
+		// cerr << "PT2" << endl;
 		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
 
 		// string seq_end = "";
@@ -212,6 +215,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
 
+		// cerr << taxaMismatchAdapter_extrem_int << endl;
 		if(taxaMismatchAdapter_extrem_int > 0)
 		{
 
@@ -254,7 +258,13 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 							int limitInf = (index_3[i] + adapter.length()) - (index_2[j] + adapter.length());
 							if (limitInf < 0) limitInf = 0;
 
-							int sizeCorte = seq.length() - limitInf - 1;
+							int sizeCorte = seq.length() - limitInf;
+
+							while (limitInf+sizeCorte > seq.length()) --sizeCorte;
+
+							// cerr << "limInf: " << limitInf << endl;
+							// cerr << "limitSup: " << limitInf+sizeCorte << endl;
+
 							// int limitSup = seq.length();	
 
 							// if(sizeCorte > 0 & limitSup <= seq.length())
@@ -270,6 +280,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					}
 
 				}
+
 			++i;
 
 			}
