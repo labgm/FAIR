@@ -192,10 +192,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			}
 
-			int lini = seq.length() - adapter.length() - 1;
-
-			seq.erase(lini, adapter.length());
-			qual.erase(lini, adapter.length());
 
 			// PROCESSAR FRAGMENTOS DE ADAPTADOR NO FIM DA SEQUÊNCIA 
 			// else if(index[i+1] < 0){
@@ -213,6 +209,11 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 		}
 		// }
 	}
+	
+			int lini = seq.length() - adapter.length() - 1;
+
+			seq.erase(lini, adapter.length());
+			qual.erase(lini, adapter.length());
 			    // cerr << seq << endl;
 			    // cerr << qual << endl;
 
