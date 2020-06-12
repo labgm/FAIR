@@ -208,29 +208,79 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// char seq_end_c[seq_end.length() + 1];
 		// strcpy(seq_end_c, seq_end.c_str());
-		double taxaMismatchAdapter_extrem = 0.7;
+		double taxaMismatchAdapter_extrem = 0.5;
 
 		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
 
 		if(taxaMismatchAdapter_extrem_int > 0)
 		{
 
-			int indiceStart = seq.length() - ( adapter.length() - taxaMismatchAdapter_extrem_int) - 1;
+			int indiceStart = seq.length() - adapter.length() - 1;
 
+			// BUSCA EM EXTREMIDADE 3'
 			index_3 = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), taxaMismatchAdapter_extrem_int, indiceStart);
 
 			if(index_3.size() > 0)
 			{
 
-				int lini = indiceStart;
-				int quant = seq.length() - lini;
+				for (int i = 0; i < index_3.size(); ++i)
+				{
 
-				seq.erase(lini, quant);
-				qual.erase(lini, quant);
+				int limitSup = index_3[i] + adapter.length() - 1;
+				int limitInf = index_3[i] - mismatchMax;
+				if(limitInf < 0) limitInf = 0;
 
-				++ occurrences;
+				string seq_aux_invert = "";
+				for (int j = limitSup; j >= limitInf; --j)
+				{
+					seq_aux_invert += seq[j];
+				}
+
+				char seq_invert_c[seq_aux_invert.length() + 1];
+				strcpy(seq_invert_c, seq_aux_invert.c_str());
+
+				char adapter_invert_c[adapterInvert.length() + 1];
+				strcpy(adapter_invert_c, adapterInvert.c_str());
+
+				// BUSCA REVERSA  DA EXTREMIDADE 3'
+				index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), taxaMismatchAdapter_extrem_int, 0);
+
+				if(index_2.size() > 0)
+				{
+
+					for (int j = 0; j < index_2.size(); ++j)
+					{
+						
+							int limitInf = (index_3[i] + adapter.length()) - (index_2[j] + adapter.length());
+							if (limitInf < 0) limitInf = 0;
+
+							int sizeCorte = index_3[i] + adapter.length() - limitInf;
+							int limitSup = limitInf + sizeCorte;	
+
+							if(sizeCorte > 0 & limitSup <= seq.length())
+							{
+
+								if(limitInf >= (seq.length() - adapter.length()))
+								{
+									sizeCorte = seq.length() - limitInf;
+								}
+
+					    		seq.erase(limitInf, sizeCorte);
+						    	qual.erase(limitInf, sizeCorte);
+
+								occurrences ++;
+					    	}
+
+							++j;
+
+					}
+
+				}
+			++i;
 
 			}
+					
+				}
 
 		}
 		
