@@ -217,7 +217,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			int indiceStart = seq.length() - ( adapter.length() - taxaMismatchAdapter_extrem_int) - 1;
 
-			index_3 = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax, indiceStart);
+			index_3 = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), taxaMismatchAdapter_extrem_int, indiceStart);
 
 			if(index_3.size() > 0)
 			{
