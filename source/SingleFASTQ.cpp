@@ -88,7 +88,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 	vector<int> index;
 	vector<int> index_2;
-	vector<int> index_3;
 
 	char seq_c[seq.length() + 1];
 	char adapter_c[adapter.length() + 1];
@@ -170,32 +169,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					}
 				}
 
-				string seq_end = "";
-				for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
-				{
-					seq_end += seq[j];
-				}
-
-				char seq_end_c[seq_end.length() + 1];
-				strcpy(seq_end_c, seq_end.c_str());
-
-				int mismatchMax_2 = adapter.length() / 2;
-
-				index_3 = searchMyers(adapter_c, adapter.length(), seq_end_c, adapter.length(), mismatchMax_2);
-
-				if(index_3.size() > 0)
-				{
-
-					int limitInf = seq.length() - adapter.length();
-
-					seq.erase(limitInf, adapter.length());
-					qual.erase(limitInf, adapter.length());
-
-
-						occurrences ++;
-
-				}
-
 			// PROCESSAR ADAPTADORES EXATOS 
 			}else if(index[i+1] == 0){
 
@@ -218,6 +191,12 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				}
 
 			}
+
+			int lini = seq.length() - adapter.length() - 1;
+
+			seq.erase(lini, adapter.length());
+			qual.erase(lini, adapter.length());
+
 			// PROCESSAR FRAGMENTOS DE ADAPTADOR NO FIM DA SEQUÊNCIA 
 			// else if(index[i+1] < 0){
 
