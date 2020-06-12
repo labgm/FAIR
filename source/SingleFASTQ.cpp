@@ -193,46 +193,35 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			}
 
-
-			// PROCESSAR FRAGMENTOS DE ADAPTADOR NO FIM DA SEQUÊNCIA 
-			// else if(index[i+1] < 0){
-
-			// 	int sizeCorte = index[i+1]*(-1);
-
-			// 	seq.erase(index[i], sizeCorte);
-			// 	qual.erase(index[i], sizeCorte);
-			// 	occurrences ++;
-
-			// }
-
 			++i;
 
 		}
-		// }
 	}
 
-				string seq_end = "";
-				for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
-				{
-					seq_end += seq[j];
-				}
+		string seq_end = "";
+		for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
+		{
+			seq_end += seq[j];
+		}
 
-				char seq_end_c[seq_end.length() + 1];
-				strcpy(seq_end_c, seq_end.c_str());
-				int mismatchMax_new = adapter.length() / 2;
+		char seq_end_c[seq_end.length() + 1];
+		strcpy(seq_end_c, seq_end.c_str());
+		int mismatchMax_new = adapter.length() / 2;
 
-				index_3 = searchMyers(adapter_c, adapter.length(), seq_end_c, seq_end.length(), mismatchMax_new);
+		index_3 = searchMyers(adapter_c, adapter.length(), seq_end_c, seq_end.length(), mismatchMax_new);
 
-				if(index_3.size() > 0)
-				{
+		if(index_3.size() > 0)
+		{
 
-					int lini = seq.length() - adapter.length() - 1;
+			int lini = seq.length() - adapter.length() - 1;
+			int quant = seq.length() - lini;
 
-					seq.erase(lini, adapter.length());
-					qual.erase(lini, adapter.length());
+			seq.erase(lini, quant);
+			qual.erase(lini, quant);
 
-				}
+			++ occurrences;
 
+		}
 
 }
 
