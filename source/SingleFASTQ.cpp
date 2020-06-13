@@ -199,7 +199,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// cerr << "PT1" << endl;
 
-	}else{
+	}else if(1 == 2){
 		// cerr << "PT2" << endl;
 		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
 
