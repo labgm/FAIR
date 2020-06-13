@@ -211,7 +211,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// char seq_end_c[seq_end.length() + 1];
 		// strcpy(seq_end_c, seq_end.c_str());
-		double taxaMismatchAdapter_extrem = 0.5;
+		double taxaMismatchAdapter_extrem = 0.4;
 
 		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
 
@@ -227,11 +227,11 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 			if(index_3.size() > 0)
 			{
 
-				for (int i = 0; i < index_3.size(); ++i)
-				{
+				// for (int i = 0; i < index_3.size(); ++i)
+				// {
 
-				int limitSup = index_3[i] + adapter.length() - 1;
-				int limitInf = index_3[i] - mismatchMax;
+				int limitSup = index_3[0] + adapter.length() - 1;
+				int limitInf = index_3[0] - mismatchMax;
 				if(limitInf < 0) limitInf = 0;
 
 				string seq_aux_invert = "";
@@ -252,11 +252,11 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 				if(index_2.size() > 0)
 				{
 
-					for (int j = 0; j < index_2.size(); ++j)
-					{
+					// for (int j = 0; j < index_2.size(); ++j)
+					// {
 						
-							int limitInf = (index_3[i] + adapter.length()) - (index_2[j] + adapter.length());
-							int sizeCorte = index_3[i] + adapter.length() - limitInf;
+							int limitInf = (index_3[0] + adapter.length()) - (index_2[0] + adapter.length());
+							int sizeCorte = index_3[0] + adapter.length() - limitInf;
 							int limitSup = limitInf + sizeCorte;	
 
 							if(sizeCorte > 0 & limitSup <= seq.length())
@@ -278,15 +278,15 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 					    		
 					    	// }
 
-							++j;
+							// ++j;
 
-					}
+					// }
 
 				}
 
-			++i;
+			// ++i;
 
-			}
+			// }
 
 				}
 
