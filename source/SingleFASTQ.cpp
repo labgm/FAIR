@@ -197,20 +197,11 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		}
 
-		// cerr << "PT1" << endl;
+	}else if(1 == 1)
+	{
 
-	}else if(1 == 1){
-		// cerr << "PT2" << endl;
 		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
 
-		// string seq_end = "";
-		// for (int j = (seq.length() - adapter.length() - 1); j < seq.length(); ++j)
-		// {
-		// 	seq_end += seq[j];
-		// }
-
-		// char seq_end_c[seq_end.length() + 1];
-		// strcpy(seq_end_c, seq_end.c_str());
 		double taxaMismatchAdapter_extrem = 0.5;
 
 		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
@@ -226,9 +217,6 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 			if(index_3.size() > 0)
 			{
-
-				// for (int i = 0; i < index_3.size(); ++i)
-				// {
 
 				int limitSup = index_3[0] + adapter.length() - 1;
 				int limitInf = index_3[0] - mismatchMax;
@@ -251,48 +239,27 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 				if(index_2.size() > 0)
 				{
-
-					// for (int j = 0; j < index_2.size(); ++j)
-					// {
 						
-							int limitInf = (index_3[0] + adapter.length()) - (index_2[0] + adapter.length());
-							int sizeCorte = index_3[0] + adapter.length() - limitInf;
-							int limitSup = limitInf + sizeCorte;	
+					int limitInf = (index_3[0] + adapter.length()) - (index_2[0] + adapter.length());
+					int sizeCorte = index_3[0] + adapter.length() - limitInf;
+					int limitSup = limitInf + sizeCorte;	
 
-							if(sizeCorte > 0 & limitSup <= seq.length())
-							{
+					if(sizeCorte > 0 & limitSup <= seq.length())
+					{
 
-					    		seq.erase(limitInf, sizeCorte);
-						    	qual.erase(limitInf, sizeCorte);
+			    		seq.erase(limitInf, sizeCorte);
+				    	qual.erase(limitInf, sizeCorte);
 
-								occurrences ++;
-					    	}
-
-							// cerr << "limInf: " << limitInf << endl;
-							// cerr << "limitSup: " << limitInf+sizeCorte << endl;
-
-							// int limitSup = seq.length();	
-
-							// if(sizeCorte > 0 & limitSup <= seq.length())
-							// {
-					    		
-					    	// }
-
-							// ++j;
-
-					// }
+						occurrences ++;
+			    	}
 
 				}
 
-			// ++i;
-
-			// }
-
-				}
+			}
 
 		}
 		
-		}
+	}
 
 }
 
