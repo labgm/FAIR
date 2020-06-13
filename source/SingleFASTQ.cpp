@@ -211,7 +211,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// char seq_end_c[seq_end.length() + 1];
 		// strcpy(seq_end_c, seq_end.c_str());
-		double taxaMismatchAdapter_extrem = 0.3;
+		double taxaMismatchAdapter_extrem = 0.6;
 
 		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
 
