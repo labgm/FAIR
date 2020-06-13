@@ -199,7 +199,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// cerr << "PT1" << endl;
 
-	}else if(1 == 2){
+	}else if(1 == 1){
 		// cerr << "PT2" << endl;
 		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
 
@@ -211,7 +211,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// char seq_end_c[seq_end.length() + 1];
 		// strcpy(seq_end_c, seq_end.c_str());
-		double taxaMismatchAdapter_extrem = 0.4;
+		double taxaMismatchAdapter_extrem = 0.5;
 
 		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
 
