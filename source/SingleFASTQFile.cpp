@@ -20,7 +20,7 @@ public:
 	string identifyAdapter();
 	void identifyQuality();
 	void trim(int minQuality, int minSequenceLength);
-	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert);
+	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert, double mismatchRight);
 	void write();
 	void closeOutput(string typeOperation);
 
@@ -252,6 +252,7 @@ void SingleFASTQFile::identifyQuality()
 		system("rm qual.txt && rm seq_sample.fastq");
 		fef.close();
 	}
+
 	cerr << endl;
 }
 
@@ -260,7 +261,7 @@ void SingleFASTQFile::trim(int minQuality, int minSequenceLength)
 	sequence.trim(quality, minQuality, minSequenceLength);
 }
 
-void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert)
+void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
 {
 
 	if (onlyRemove) // Adapter as Parameter
@@ -272,7 +273,7 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatc
 		adapter = identifyAdapter();
 	}
 
-	sequence.erase(adapter, mismatchMax, adapterInvert);
+	sequence.erase(adapter, mismatchMax, adapterInvert, mismatchRight);
 
 	// int number_of_ocurrences = 0;
 
@@ -305,11 +306,11 @@ void SingleFASTQFile::writeOnlyIdentifyHeader(string type)
 {
 	if(type == "forward")
 	fout << "- Found Adapters - Forward" << "\n\n";
-	if(type == "reverse")
+	else if(type == "reverse")
 	fout << "- Found Adapters - Reverse" << "\n\n";
-	if(type == "single")
+	else if(type == "single")
 	fout << "- Found Adapters - Single" << "\n\n";
-	if(type == "interlaced")
+	else if(type == "interlaced")
 	fout << "- Found Adapters - Interlaced" << "\n\n";
 
 	fout << "Adapter\tAmount" << "\n";

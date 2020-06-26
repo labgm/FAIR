@@ -5,8 +5,8 @@ class Parameters
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
 	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert, adapterInsertionLeft, adapterRandomPosition;
-	int minQuality, threads, phredOffset, mismatchMax;
-	double adapterInsertionRate, adapterErrorRate;			
+	int minQuality, threads, phredOffset, mismatchGlobal;
+	double adapterInsertionRate, adapterErrorRate, mismatchRight;			
 
 public:
 	Parameters(int argc, char *const argv[]);
@@ -26,9 +26,11 @@ Parameters::Parameters(int argc, char *const argv[])
 	threads = 1;
 	phredOffset = 0;
 
+	mismatchRight = 0.5;
+
 	ready = true;
 
-	mismatchMax = 2; // Mismatch's máximo para encontrar os adaptadores nas leituras
+	mismatchGlobal = 2; // Mismatch's máximo para encontrar os adaptadores nas leituras
 
 	// OnlyInsert
 	onlyInsert = false; // Ativar inserção de adaptadores
@@ -132,7 +134,7 @@ Parameters::Parameters(int argc, char *const argv[])
 		}
 		else if (argument == "--mismatch" || argument == "-mm")
 		{
-			mismatchMax = atoi(argv[i + 1]);
+			mismatchGlobal = atoi(argv[i + 1]);
 			continue;
 		}
 		else if (argument == "--insertion-rate" || argument == "-ir")
@@ -158,6 +160,11 @@ Parameters::Parameters(int argc, char *const argv[])
 		else if (argument == "--random-position")
 		{
 			adapterRandomPosition = true;
+			continue;
+		}
+		else if (argument == "--mismatch-right" || argument == "-mmr")
+		{
+			mismatchRight = atof(argv[i + 1]);
 			continue;
 		}
 	}
@@ -263,7 +270,7 @@ bool Parameters::parseParameters()
 					while (s_fastq.hasNext())
 					{
 
-						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax, adapterInvert);
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
 
 						if (trim)
 						{
@@ -380,7 +387,7 @@ bool Parameters::parseParameters()
 
 					while (p_fastq.hasNext())
 					{
-						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchMax, adapterInvert_f, adapterInvert_r);
+						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchGlobal, adapterInvert_f, adapterInvert_r, mismatchRight);
 
 						if (trim)
 						{
@@ -510,7 +517,7 @@ bool Parameters::parseParameters()
 						while (s_fastq.hasNext())
 						{
 
-							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchMax, adapterInvert_s);
+							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert_s, mismatchRight);
 
 						if (trim)
 						{

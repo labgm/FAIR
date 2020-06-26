@@ -20,7 +20,7 @@ public:
 	string getQuality();
 	void convertQualToInteger(int qual_score);
 	int getOccurrences();
-	void erase(string adapter, int mismatchMax, string adapterInvert);
+	void erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight);
 	void trim(int qual_score, int minQuality, int minSequenceLength);
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
@@ -81,7 +81,7 @@ int SingleFASTQ::getOccurrences()
 	return occurrences;
 }
 
-void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
+void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
 {
 
 	// cerr << seq.length() << endl;
@@ -202,9 +202,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert)
 
 		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
 
-		double taxaMismatchAdapter_extrem = 0.5;
-
-		int taxaMismatchAdapter_extrem_int = taxaMismatchAdapter_extrem * adapter.length();
+		int taxaMismatchAdapter_extrem_int = mismatchRight * adapter.length();
 
 		// cerr << taxaMismatchAdapter_extrem_int << endl;
 		if(taxaMismatchAdapter_extrem_int > 0)
