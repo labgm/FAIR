@@ -621,8 +621,10 @@ void Parameters::printHelp()
 	cerr << "|                                in the forward paired-end reads (required with --only-remove)" << endl;
 	cerr << "|--reverse-adapter   <adapter>    adapter sequence that will be removed" << endl;
 	cerr << "|                                in the reverse paired-end reads (required with --only-remove)" << endl;
-	cerr << "|-t/--threads    <int>            number of threads" << endl;
-	cerr << "|                                [default: 1]" << endl;
+	cerr << "|-mm/--mismatch      <int>        mismatch rate global (5'/3')" << endl;
+	cerr << "|                                [default: 2] 2 bases" << endl;
+	cerr << "|-mmr/--mismatch-right            mismatch rate in region 3'" << endl;
+	cerr << "|                                [default: 0.5] 50% incompatibilities" << endl;
 	cerr << "|--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)" << endl;
 	cerr << "|                                [default: auto-detect]" << endl;
 	cerr << "                                " << endl;
@@ -639,6 +641,6 @@ void Parameters::printVersion()
 	cerr << "This is free software: you are free to change and redistribute it." << endl;
 	cerr << "There is NO WARRANTY, to the extent permitted by law." << endl
 		 << endl;
-	cerr << "Written by João V. Canavarro and Sebastião Rodrigues" << endl
+	cerr << "Written by João V. Canavarro and Sebastião R. C. Neto" << endl
 		 << endl;
 }
