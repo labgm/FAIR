@@ -1,5 +1,7 @@
-// MYERS 1999
-//BUSCA O PADRÃO EM TODA A SEQUENCIA
+// Algorithms
+
+	// Myers 1999 
+	// Wu & Manber 1992
 
 #include "include/define.h"
 #include <iostream>
@@ -44,7 +46,6 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 	for (int ii = 1; ii <= m; ii++){
 		long temp = 1 << (ii-1);
 		PM[P[ii-1]+127] = PM[P[ii-1]+127] | temp;
-		// cerr << ii - 1 << ": " << PM[P[ii-1]+127] << endl;
 	}
 	////////////////////////////////////////////////////
 
@@ -122,29 +123,28 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 
 vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
-//	K = NUMERO MAXIMO DE ERROS PERMITIDOS (DELECAO, SUBSTITUICAO, INSERCAO)
+	//	NUMERO MAXIMO DE ERROS PERMITIDOS
 	int k = 0;
 
 	// ARMAZENA INDICES DE POSICOES CORRETAS DE MATCH APROXIMADO
 	vector<int> indexx;
 
 	// ===== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS DE MATCH NO CASAMENTO APROXIMADO
-			int inicializador = 0;
-			int posicaoAnterior = 0;
-			int quantGrupo = 0;
-			int posicaoAtual = 0;
-			int indiceMedio = 0;
+	int inicializador = 0;
+	int posicaoAnterior = 0;
+	int quantGrupo = 0;
+	int posicaoAtual = 0;
+	int indiceMedio = 0;
 	// =======================================================================================================
 
 	int MAXCHAR = 256;
 
 	long Masc[MAXCHAR], i, j, Ri, Rant, Rnovo;
-		// R[2]
 	long R[k];
 
 	for (i = 0; i < MAXCHAR; i++) Masc[i] = 0;
 
-	for (i = 1; i <= m; i++){
+		for (i = 1; i <= m; i++){
 			Masc[P[i-1]+127] |= 1 << (m-i);
 		 } 
 

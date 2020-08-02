@@ -32,7 +32,7 @@ Parameters::Parameters(int argc, char *const argv[])
 
 	mismatchGlobal = 2; // Mismatch's máximo para encontrar os adaptadores nas leituras
 
-	// OnlyInsert
+	// OnlyInsert (Test)
 	onlyInsert = false; // Ativar inserção de adaptadores
 	adapterErrorRate = 0.1; // Taxa de erro máxima no adaptador(mismatch) (Default: 10%)
 	adapterInsertionLeft = true; // Inserção do adaptador à direita ou esquerda
@@ -305,13 +305,11 @@ bool Parameters::parseParameters()
 					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
 					int contador = rateInsertionAdapterInt;
 
-					// int contPosi = 1;
-
 					while (s_fastq.hasNext())
 					{
 						toInsert = false;
 
-						// COMECA INSERINDO NA PRIMEIRA READ
+						// Insert at first read 
 						if((contador % rateInsertionAdapterInt) == 0)
 						{
 							toInsert = true;
@@ -321,12 +319,12 @@ bool Parameters::parseParameters()
 						}
 
 						++contador;
-						// cerr << "cont: " << contador << endl; 
+
 						s_fastq.insertAdapter(singleAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
 						s_fastq.write();
 					}
 
-					cerr << "Adapters Inseridos: " << contAdaptersInseridos << endl;
+					cerr << "Inserted adapters: " << contAdaptersInseridos << endl;
 
 					clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -444,7 +442,7 @@ bool Parameters::parseParameters()
 
 					}
 
-					cerr << "Adapters Inseridos: " << contAdaptersInseridos*2 << endl;
+					cerr << "Inserted adapters: " << contAdaptersInseridos*2 << endl;
 
 					clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -570,7 +568,7 @@ bool Parameters::parseParameters()
 						s_fastq.write();
 					}
 
-					cerr << "Adapters Inseridos: " << contAdaptersInseridos << endl;
+					cerr << "Inserted adapters: " << contAdaptersInseridos << endl;
 
 					clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -628,20 +626,7 @@ void Parameters::printHelp()
 	cerr << "|--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)" << endl;
 	cerr << "|                                [default: auto-detect]" << endl;
 	cerr << "                                " << endl;
-	cerr << "|> Adapter insertion options:" << endl;
-	cerr << "|--insertion-left     <adapter>   adapter sequence that will be removed (unpaired reads)" << endl;
-	cerr << "|                                required with --only-remove" << endl;
-	cerr << "|--forward-adapter   <adapter>    adapter sequence that will be removed" << endl;
-	cerr << "|                                in the forward paired-end reads (required with --only-remove)" << endl;
-	cerr << "|--reverse-adapter   <adapter>    adapter sequence that will be removed" << endl;
-	cerr << "|                                in the reverse paired-end reads (required with --only-remove)" << endl;
-	cerr << "|-ir/--insertion-rate  <double>   insertion rate of the adapters in read" << endl;
-	cerr << "|                                [default: 0.01] (1%)" << endl;
-	cerr << "|--random-position                " << endl;
-	cerr << "|                                 " << endl;
-	cerr << "|--insertion-left                to insert in left read" << endl;
-	cerr << "|or --insertion-right            to insert in right read" << endl;
-	cerr << "|-er/--insertion-rate                                " << endl;
+
 
 }
 void Parameters::printVersion()
@@ -649,11 +634,11 @@ void Parameters::printVersion()
 	cerr << endl
 		 << "FAIR - Fast Adapter Identification & Removal v1.0" << endl
 		 << endl;
-	cerr << "Copyright (C) 2019 Federal University of Pará." << endl;
+	cerr << "Copyright (C) 2020 Federal University of Pará." << endl;
 	cerr << "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>." << endl;
 	cerr << "This is free software: you are free to change and redistribute it." << endl;
 	cerr << "There is NO WARRANTY, to the extent permitted by law." << endl
 		 << endl;
-	cerr << "Written by João V. Canavarro." << endl
+	cerr << "Written by João V. Canavarro and Sebastião Rodrigues" << endl
 		 << endl;
 }
