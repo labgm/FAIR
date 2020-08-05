@@ -138,13 +138,17 @@ Pipeline options:
 --min-quality   <int>   minimal quality value to trim
 
 Advanced options:
---adapter     <adapter>         adapter sequence that will be removed (unpaired reads)
+--adapter     <adapter>          adapter sequence that will be removed (unpaired reads)
                                 required with --only-remove
---forward-adapter   <adapter>   adapter sequence that will be removed
+--forward-adapter   <adapter>    adapter sequence that will be removed
                                 in the forward paired-end reads (required with --only-remove)
---reverse-adapter   <adapter>   adapter sequence that will be removed
+--reverse-adapter   <adapter>    adapter sequence that will be removed
                                 in the reverse paired-end reads (required with --only-remove)
---phred-offset    <33 or 64>    PHRED quality offset in the input reads (33 or 64)
+-mm/--mismatch      <int>        mismatch rate global (5'/3')
+                                [default: 2] 2 bases
+-mmr/--mismatch-right            mismatch rate in region 3'
+                                [default: 0.5] 50% incompatibilities
+--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)
                                 [default: auto-detect]
 ```
 
