@@ -195,8 +195,16 @@ Parameters::Parameters(int argc, char *const argv[])
 		outputDir = outputDir + "/" + ctime(&rawtime);
 		outputDir.erase(outputDir.length() - 1);
 		outputDir2 = outputDir;
-		outputDir.append("_1.fastq");
-		outputDir2.append("_2.fastq");
+
+		if(onlyRemove)
+		{
+			outputDir.append("_1.fastq");
+			outputDir2.append("_2.fastq");
+		}else if(onlyIdentify)
+		{
+			outputDir.append("_1.identified");
+			outputDir2.append("_2.identified");
+		}
 
 		closedir(dir);
 	}
@@ -344,7 +352,7 @@ bool Parameters::parseParameters()
 		else if (forward.length() != 0 && reverse.length() != 0)
 		{
 			cerr << "Paired Files: " << forward << " | " << reverse << endl;
-			PairedFASTQFile p_fastq;
+			PairedFASTQFile p_fastq; 
 			if (p_fastq.openFASTQInputFile(forward, reverse, phredOffset) && p_fastq.openFASTQOutputFile(outputDir, outputDir2))
 			{
 				if (onlyIdentify)
