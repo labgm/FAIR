@@ -1,7 +1,7 @@
 // Algorithms
 
-	// Myers 1999 
-	// Wu & Manber 1992
+	// Myers 1999 if k > 0
+	// Wu & Manber 1992 if k == 0
 
 #include "include/define.h"
 #include <iostream>
