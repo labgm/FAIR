@@ -9,7 +9,7 @@ def getDetails(form):
 
 	details = []
 
-	if form['singleFileName'] != "":
+	if form['singleFileName'] != "" and form['forwardFileName'] == "":
 		details.append("File(single): "+form['singleFileName'])
 
 	if form['forwardFileName'] != "":
