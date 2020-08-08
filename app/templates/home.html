@@ -10,9 +10,13 @@
     {% if data == 'success' %}
 	<script type="text/javascript">
 		$("#myModalSuccess").modal("show");
+		document.getElementById("commandPanelId").innerHTML = ""
+		document.getElementById("commandPanelId").innerHTML = "<span style='color:#e25b5b; font-weight: bold;'>+ Details of Query +</span><br> {% for detail in details %} <p> <i class='fa fa-circle-thin'> {{ detail }} </i></p> {% endfor %}"
+
 	</script> 	
     {% endif %}
 
+    <!-- ERROR -->
     {% if data!='intro' and data != 'success' %}
 	<script type="text/javascript">
 		$("#myModalError").modal("show");
@@ -27,68 +31,99 @@
 		<div class="wrap-contact100">
 			<form method="POST" action="/search">
 			<!-- <form class="formId"> -->
-				<span class="contact100-form-title">
-					FAIR
+				<span class="contact100-form-title" style="color: #4c8464;">
+					<i class="fa fa-pagelines" style="font-size: 1.2em;"></i> FAIR 
 				</span>
 
 				<div class="wrap-input100 input100-select">
-					<span class="label-input100">Layout</span>
+					<span class="label-input100">* Layout</span>
 					<div>
 						<select id="cbLayoutId" class="selection-2" name="layoutName">
-							<option value="single">Single</option>
+							<option value="single" selected="true">Single</option>
 							<option value="paired">Paired</option>
 						</select>
 					</div>
+					{% if form %}
+						{% if form.layoutName=='paired' %}
+						<script type="text/javascript">
+							document.getElementById("cbLayoutId").value = "paired";
+						</script>
+						{% endif %}
+					{% endif %}
 					<span class="focus-input100"></span>
 
-					<div id="panelSingleId" style="display: block;">
-					<span class="label-input100">Single File</span>
+					<div id="panelSingleId" style="display: block;padding: 20px;">
+					<span class="label-input100" style="color: orange !important;">Single File</span>
 					<input type="file" id="singleFileId" name="singleFileName"><br>
 					</div>
 
-					<div id="panelPairedId" style="display: none;">
-					<span class="label-input100">Forward File</span>
-					<input type="file" id="forwardFileId" name="forwardFileName"><br>
+					<div id="panelPairedId" style="display: none; padding: 10px;">
+					<span class="label-input100" style="color: orange !important;">Forward File</span>
+					<input type="file" id="forwardFileId" name="forwardFileName" style="padding: 10px;"><br>
 
-					<span class="label-input100">Reverse File</span>
-					<input type="file" id="reverseFileId" name="reverseFileName"><br>
+					<span class="label-input100" style="color: orange !important;">Reverse File</span>
+					<input type="file" id="reverseFileId" name="reverseFileName" style="padding: 10px;"><br>
 					</div>
 					
 				</div>
 
 					<div class="input100-select">
-					<span class="label-input100">Identify or Remove?</span>
+					<span class="label-input100">* Identify or Remove?</span>
 					<div>
 						<select id="cbIdentifyRemoveId" class="selection-2" name="identifyRemoveName">
-							<option value="onlyRemove">Only Remove</option>
-							<option value="onlyIdentify">Only Identify</option>
+							<option value="onlyRemove" selected="true">Only Remove</option>
+							<option value="onlyIdentify">Only Remove</option>
 						</select>
 					</div>
+					{% if form %}
+						{% if form.identifyRemoveName=='onlyIdentify' %}
+						<script type="text/javascript">
+							document.getElementById("cbIdentifyRemoveId").value = "onlyIdentify";
+						</script>
+						{% endif %}
+					{% endif %}
 
 					<div class="row" id="panelSingleAdaptersId">
 
 						<div class="col-md-12">
 						<div class="wrap-input100 validate-input" data-validate="">
 						<!-- <span class="label-input100">Single Adapter</span> -->
-						<input id="singleAdapterId" style="font-size: 0.85em;" class="input100" type="text" name="singleAdapterName" placeholder="Single Adapter">
-						<span class="focus-input100"></span>
-						</div>
-						</div>
-						<div class="col-md-6" style="margin: auto;">
-						<div class="wrap-input100 validate-input" data-validate="">
-						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="singleMismatchName" placeholder="Mismatch Global (bases)">
+						
+						<input maxlength="64" id="singleAdapterId" style="font-size: 0.85em; margin-top: 15px;" class="input100" type="text" name="singleAdapterName" placeholder="* Single Adapter" value="{% if form %}{{ form['singleAdapterName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
+						<div class="col-md-12">
+
+						<div class="col-md-12"><span class="label-input100">Mismatch Rate</span></div>
+
+						<div class="" style="width:50%; display: inline-block; padding: 10px; ">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<input maxlength="2" style="font-size: 0.8em;" class="input100 text-center" type="text" name="singleMismatchName" placeholder="Mismatch global [default: 2 bases]" value="{% if form %}{{ form['singleMismatchName'] }}{% endif %}">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
+						<div class="" style="width:50%; display: inline-block; margin-right: 0vw; float: right;padding: 10px; ">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="rightMismatchName" placeholder="Region 3' [default: 0.5]" value="{% if form %}{{ form['rightMismatchName'] }}{% endif %}">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
+						</div>
+
+
 					</div>
+ 
 
 					<div class="row" id="panelPairedAdaptersId" style="display: none;">
 
 						<div class="col-md-12">
 						<div class="wrap-input100 validate-input" data-validate="">
 						<!-- <span class="label-input100">Forward Adapter</span> -->
-						<input style="font-size: 0.85em;" class="input100" type="text" name="forwardAdapterName" placeholder="Forward Adapter">
+						<input maxlength="64" style="font-size: 0.85em; margin-top: 15px;" class="input100" type="text" name="forwardAdapterName" placeholder="* Forward Adapter" value="{% if form %}{{ form['forwardAdapterName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
@@ -96,16 +131,29 @@
 						<div class="col-md-12">
 						<div class="wrap-input100 validate-input" data-validate="">
 						<!-- <span class="label-input100">Reverse Adapter</span> -->
-						<input style="font-size: 0.85em;" class="input100" type="text" name="reverseAdapterName" placeholder="Reverse Adapter">
+						<input maxlength="64" style="font-size: 0.85em;" class="input100" type="text" name="reverseAdapterName" placeholder="* Reverse Adapter" value="{% if form %}{{ form['reverseAdapterName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
-						<div class="col-md-6" style="margin: auto;">
+						<div class="col-md-12">
+
+						<div class="col-md-12"><span class="label-input100">Mismatch Rate</span></div>
+
+						<div class="" style="width:50%; display: inline-block; padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input style="font-size: 1.1em;" class="input100 text-center" type="text" name="pairedMismatchName" placeholder="Mismatch's">
+						<input maxlength="2" style="font-size: 0.8em;" class="input100 text-center" type="text" name="pairedMismatchName" placeholder="Mismatch global [default: 2 bases]" value="{% if form %}{{ form['pairedMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
+						</div>
+
+						<div class="" style="width:50%; display: inline-block; margin-right: 0vw; float: right;padding: 10px; ">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="rightPairedMismatchName" placeholder="Region 3' [default: 0.5]" value="{% if form %}{{ form['rightPairedMismatchName'] }}{% endif %}">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
 						</div>
 
 					</div>
@@ -116,24 +164,48 @@
 					<div id="panelQualityId" class="wrap-input100 input100-select">
 						<span class="label-input100">Quality</span>
 							<select class="selection-2" id="cbTrimQualityId" name="trimQualityName">
-								<option value="off">No Trim</option>
+								<option value="off" selected="true">No Trim</option>
 								<option value="n">Trim (N)</option>
 								<option value="quality">Trim per Quality and (N)</option>
 							</select>
+							{% if form %}
+								{% if form.trimQualityName=='n' %}
+								<script type="text/javascript">
+									document.getElementById("cbTrimQualityId").value = "n";
+								</script>
+								{% endif %}
+								{% if form.trimQualityName=='quality' %}
+								<script type="text/javascript">
+									document.getElementById("cbTrimQualityId").value = "quality";
+								</script>
+								{% endif %}
+							{% endif %}
 						<div class="col-md-12">
-							<input name="minQualityName" type="text" id="minQualityId" placeholder="Min Quality" style="display: none;">
+							<input style=" margin-top: 15px;" name="minQualityName" type="text" id="minQualityId" placeholder="* Min Quality" style="display: none;" value="{% if form %}{{ form['minQualityName'] }}{% endif %}">
 						</div>
 					</div>
 
 				<div id="panelPhreadId" class="wrap-input100 input100-select">
 					<span class="label-input100">Phread</span>
 					<div>
-						<select class="selection-2" name="phreadName">
-							<option value="auto">Auto</option>
+						<select id="cbPhreadId" class="selection-2" name="phreadName">
+							<option value="auto" selected="true">Auto</option>
 							<option value="32">32</option>
 							<option value="64">64</option>
 						</select>
 					</div>
+							{% if form %}
+								{% if form.phreadName=='32' %}
+								<script type="text/javascript">
+									document.getElementById("cbPhreadId").value = "32";
+								</script>
+								{% endif %}
+								{% if form.phreadName=='64' %}
+								<script type="text/javascript">
+									document.getElementById("cbPhreadId").value = "64";
+								</script>
+								{% endif %}
+							{% endif %}
 					<span class="focus-input100"></span>
 				</div>
 
@@ -382,6 +454,7 @@ function sendForm(){
 .inputfile + label:hover {
     background-color: #4b8664;
 }
+
 
 </style>
 

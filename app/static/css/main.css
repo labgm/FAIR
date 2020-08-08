@@ -107,15 +107,15 @@ textarea:focus:-moz-placeholder { color:transparent; }
 textarea:focus::-moz-placeholder { color:transparent; }
 textarea:focus:-ms-input-placeholder { color:transparent; }
 
-input::-webkit-input-placeholder { color: #adadad;}
-input:-moz-placeholder { color: #adadad;}
-input::-moz-placeholder { color: #adadad;}
-input:-ms-input-placeholder { color: #adadad;}
+input::-webkit-input-placeholder { color: #345c6f;}
+input:-moz-placeholder { color: #345c6f;}
+input::-moz-placeholder { color: #345c6f;}
+input:-ms-input-placeholder { color: #345c6f;}
 
-textarea::-webkit-input-placeholder { color: #adadad;}
-textarea:-moz-placeholder { color: #adadad;}
-textarea::-moz-placeholder { color: #adadad;}
-textarea:-ms-input-placeholder { color: #adadad;}
+textarea::-webkit-input-placeholder { color: #345c6f;}
+textarea:-moz-placeholder { color: #345c6f;}
+textarea::-moz-placeholder { color: #345c6f;}
+textarea:-ms-input-placeholder { color: #345c6f;}
 
 /*---------------------------------------------*/
 button {
@@ -166,7 +166,7 @@ iframe {
 }
 
 .wrap-contact100 {
-  width: 500px;
+  width: 700px;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -207,7 +207,7 @@ iframe {
 .label-input100 {
   font-family: Poppins-Regular;
   font-size: 13px;
-  color: #17bc60;
+  color: #018c3f;
   line-height: 1.5;
   padding-left: 5px;
 }
@@ -449,7 +449,7 @@ textarea.input100 {
   display: flex;
   align-items: center;
   background-color: transparent;
-  border: none;
+  /*border: none;*/
   height: 40px;
   outline: none;
   position: relative;
@@ -560,8 +560,3 @@ textarea.input100 {
   color: #333333;
   line-height: 1.2;
 }
-
-
-
-
-

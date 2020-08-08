@@ -41,20 +41,20 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 	// =======================================================================================================
 
 	// ComputePM ////////////////////////////////////////
-	long PM[MAXCHAR];
-	for (int ii = 0; ii < MAXCHAR; ii++) PM[ii] = 0;
+	unsigned long long PM[MAXCHAR];
+	for (int ii = 0; ii < MAXCHAR; ii++) PM[ii] = 0L;
 	for (int ii = 1; ii <= m; ii++){
-		long temp = 1 << (ii-1);
+		unsigned long long temp = 1L << (ii-1);
 		PM[P[ii-1]+127] = PM[P[ii-1]+127] | temp;
 	}
 	////////////////////////////////////////////////////
 
-	long VN = 0;
-	long VP = 0xffffffff;
-	long D0, HP, HN;
+	unsigned long long VN = 0x0000000000000000L;
+	unsigned long long VP = 0xffffffffffffffffL;
+	unsigned long long D0, HP, HN;
 
 	long currDist = m;
-	long currDistAnt = 0;
+	long currDistAnt = 0x0000000000000000L;
 	int minorCurr = k;
 	int posiMinorCurr;
 
@@ -66,12 +66,12 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 		D0 = (((PM[T[j]+127] & VP) + VP) ^ VP) | PM[T[j]+127] | VN;
 		HP = VN | ~ (D0 | VP);
 		HN = VP & D0;
-		VP = (HN << 1) | ~ (D0 | (HP << 1));
-		VN = (HP << 1) & D0;
+		VP = (HN << 1L) | ~ (D0 | (HP << 1L));
+		VN = (HP << 1L) & D0;
 		///////////////////////////////////////////////////////////
 
-		if ((HP & 0x80000000) == 0x80000000) currDist += 1;
-		else if((HN & 0x80000000) == 0x80000000) currDist -= 1;
+		if ((HP & 0x8000000000000000L) == 0x8000000000000000L) currDist += 1;
+		else if((HN & 0x8000000000000000L) == 0x8000000000000000L) currDist -= 1;
 
 		if (currDist <= k){
 
@@ -139,29 +139,29 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 	int MAXCHAR = 256;
 
-	long Masc[MAXCHAR], i, j, Ri, Rant, Rnovo;
-	long R[k];
+	unsigned long long Masc[MAXCHAR], i, j, Ri, Rant, Rnovo;
+	unsigned long long R[k];
 
-	for (i = 0; i < MAXCHAR; i++) Masc[i] = 0;
+	for (i = 0; i < MAXCHAR; i++) Masc[i] = 0L;
 
 		for (i = 1; i <= m; i++){
-			Masc[P[i-1]+127] |= 1 << (m-i);
+			Masc[P[i-1]+127] |= 1L << (m-i);
 		 } 
 
-		R[0] = 0;
+		R[0] = 0L;
 		Ri = 1 << (m-1);
-		for (j = 1; j <= k; j++) R[j] = (1 << (m-j)) | R[j-1];
+		for (j = 1; j <= k; j++) R[j] = (1L << (m-j)) | R[j-1];
 
 		for (i = 0; i < n; i++){
 
 			Rant = R[0];
-			Rnovo = ((((unsigned long)Rant) >> 1) | Ri) & Masc[T[i] + 127];
+			Rnovo = ((((unsigned long long)Rant) >> 1L) | Ri) & Masc[T[i] + 127];
 			R[0] = Rnovo;
 
 			for (j = 1; j <= k; j++)
 			{
 
-				Rnovo = ((((unsigned long) R[j]) >> 1) & Masc[T[i] + 127]) | Rant | (((unsigned long)(Rant | Rnovo))  >> 1);
+				Rnovo = ((((unsigned long long) R[j]) >> 1L) & Masc[T[i] + 127]) | Rant | (((unsigned long long)(Rant | Rnovo))  >> 1L);
 				Rant = R[j];
 				R[j] = Rnovo | Ri;
 
@@ -171,7 +171,7 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 				// cerr << posicaoAtual << endl;
 			// SE VERDADEIRO - ACEITOU MATCH COM QUANTIDADE DE ERROS PERMITIDO
-			if((Rnovo & 1) != 0){
+			if((Rnovo & 1L) != 0L){
 
 				indexx.insert(indexx.begin(), k);
 				indexx.insert(indexx.begin(), (posicaoAtual - m));
