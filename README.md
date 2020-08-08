@@ -99,7 +99,7 @@ sudo apt install python3-flask
 pip3 install flask-restful
 ```
 
-### Binary Compile
+### Binary Compile(if you have made changes to the source code)
 
 1. Clone the repo
 ```sh
