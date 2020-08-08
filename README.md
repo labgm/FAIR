@@ -83,19 +83,23 @@ sudo apt-get install gcc
 sudo apt-get install python
 ```
 
-If you want to execute algorithm evaluation located on `utils` some extra Python Frameworks are required, namely: pandas, matplotlib and numpy. Thankfully, you can install them all at once using pip.
+If you want to execute algorithm evaluation located on `utils` some extra Python Frameworks are required, namely: pandas, matplotlib and numpy. Thankfully, you can * * install them all at once using pip.
+* pip
 ```sh
 pip install -r requirements.txt --user
 ```
 
 If graphic web interface is required
+* Python Flask
 ```sh
 sudo apt install python3-flask
+```
+* Python FlaskRestful
 ```sh
 pip3 install flask-restful
+```
 
-
-### Installation
+### Binary Compile
 
 1. Clone the repo
 ```sh
@@ -110,6 +114,8 @@ g++ source/main.cpp -o FAIR
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+
+# CLI (Command Line Interface)
 
 Bellow are listed all FAIR avaiable parameters.
 
@@ -151,6 +157,16 @@ Advanced options:
 --phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)
                                 [default: auto-detect]
 ```
+
+# Web Interface
+
+Do you use to select parameters more easily.
+
+1. Running Server
+```sh
+python3 app/app.py
+```
+2. Access URL in your browser http://0.0.0.0:8080/
 
 _For more examples, please refer to the [Documentation](https://github.com/SRodriguess/FAIR)_
 
