@@ -105,12 +105,13 @@ pip3 install flask-restful
 ```sh
 git clone https://github.com/SRodriguess/FAIR.git
 ```
-2. Build with compiler
+2. Make changes in source code (files in the 'source' folder)
+
+3. Build with compiler
 ```sh
 cd FAIR
 g++ source/main.cpp -o FAIR
 ```
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -164,6 +165,7 @@ Do you use to select parameters more easily.
 
 1. Running Server
 ```sh
+cd FAIR
 python3 app/app.py
 ```
 2. Access URL in your browser http://0.0.0.0:8080/
