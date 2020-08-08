@@ -189,7 +189,7 @@ You can test the program utilizing the samples `sample1.fastq` and `sample2.fast
 ./FAIR --only-identify --forward sample1.fastq --reverse sample2.fastq --output results/
 ```
 
-* Remove Adapters from Single FASTQ File with Trim, Trim-Quality, Min-Quality and Number of Phred-Offset
+* Remove Adapters from Single FASTQ File with Mismatch Global 5'/3' (3 nucleotides), Trim(N), Trim-Quality, Number of Phred-Offset, Mismatch in region 3' (30%)
 ```sh
 ./FAIR --only-remove --single sample1.fastq --adapter AGAGAATAGATAGAT --mismatch 3 --trim --trim-quality 90 --phread-offset 33 --mismatch-right 0.3 --output results/
 ```
