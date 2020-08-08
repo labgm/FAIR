@@ -41,6 +41,13 @@ def getDetails(form):
 		temp = float(form['rightPairedMismatchName']) * 100;
 		details.append("Incompatibilities in region 3': "+str(temp)+"%")
 
+	if form['trimQualityName'] != "":
+		if form['trimQualityName'] == "n":
+			details.append("Trim per quality: Trim (N)")
+		elif form['trimQualityName'] == "quality":
+			if form['minQualityName'] != "":
+				details.append("Trim (Ns) more bases with score <= "+form['minQualityName'])
+
 	return details
 
 @app.route('/')
@@ -86,7 +93,7 @@ def search():
 						command += " --trim";
 					elif(form['trimQualityName'] == 'quality'):
 						if(form['minQualityName'] != ""):
-							command += " --trim-quality --min-quality "+str(form['minQualityName'])
+							command += " --trim-quality "+str(form['minQualityName'])
 						else:
 							out = "Insira o valor mínimo de qualidade!"
 							print("====================================== end log ============================================ ")
@@ -159,7 +166,7 @@ def search():
 						command += " --trim";
 					elif(form['trimQualityName'] == 'quality'):
 						if(form['minQualityName'] != ""):
-							command += " --trim-quality --min-quality "+str(form['minQualityName'])
+							command += " --trim-quality "+str(form['minQualityName'])
 						else:
 							out = "Insira o valor mínimo de qualidade!"
 							print("====================================== end log ============================================ ")
