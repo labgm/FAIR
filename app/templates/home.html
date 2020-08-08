@@ -1,0 +1,389 @@
+{% extends "layout.html" %}
+{% block form %}
+
+	{% if data=='intro' %}
+	<script type="text/javascript">
+		$("#myModalIntro").modal("show");
+	</script> 	
+    {% endif %}
+
+    {% if data == 'success' %}
+	<script type="text/javascript">
+		$("#myModalSuccess").modal("show");
+	</script> 	
+    {% endif %}
+
+    {% if data!='intro' and data != 'success' %}
+	<script type="text/javascript">
+		$("#myModalError").modal("show");
+		document.getElementById("modalBodyErrorId").innerHTML = "";
+		document.getElementById("modalBodyErrorId").innerHTML = "<p>{{ data }}</p>";
+
+	</script> 	
+    {% endif %}
+
+
+	<div class="container-contact100">
+		<div class="wrap-contact100">
+			<form method="POST" action="/search">
+			<!-- <form class="formId"> -->
+				<span class="contact100-form-title">
+					FAIR
+				</span>
+
+				<div class="wrap-input100 input100-select">
+					<span class="label-input100">Layout</span>
+					<div>
+						<select id="cbLayoutId" class="selection-2" name="layoutName">
+							<option value="single">Single</option>
+							<option value="paired">Paired</option>
+						</select>
+					</div>
+					<span class="focus-input100"></span>
+
+					<div id="panelSingleId" style="display: block;">
+					<span class="label-input100">Single File</span>
+					<input type="file" id="singleFileId" name="singleFileName"><br>
+					</div>
+
+					<div id="panelPairedId" style="display: none;">
+					<span class="label-input100">Forward File</span>
+					<input type="file" id="forwardFileId" name="forwardFileName"><br>
+
+					<span class="label-input100">Reverse File</span>
+					<input type="file" id="reverseFileId" name="reverseFileName"><br>
+					</div>
+					
+				</div>
+
+					<div class="input100-select">
+					<span class="label-input100">Identify or Remove?</span>
+					<div>
+						<select id="cbIdentifyRemoveId" class="selection-2" name="identifyRemoveName">
+							<option value="onlyRemove">Only Remove</option>
+							<option value="onlyIdentify">Only Identify</option>
+						</select>
+					</div>
+
+					<div class="row" id="panelSingleAdaptersId">
+
+						<div class="col-md-12">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<!-- <span class="label-input100">Single Adapter</span> -->
+						<input id="singleAdapterId" style="font-size: 0.85em;" class="input100" type="text" name="singleAdapterName" placeholder="Single Adapter">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+						<div class="col-md-6" style="margin: auto;">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="singleMismatchName" placeholder="Mismatch Global (bases)">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
+					</div>
+
+					<div class="row" id="panelPairedAdaptersId" style="display: none;">
+
+						<div class="col-md-12">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<!-- <span class="label-input100">Forward Adapter</span> -->
+						<input style="font-size: 0.85em;" class="input100" type="text" name="forwardAdapterName" placeholder="Forward Adapter">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
+						<div class="col-md-12">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<!-- <span class="label-input100">Reverse Adapter</span> -->
+						<input style="font-size: 0.85em;" class="input100" type="text" name="reverseAdapterName" placeholder="Reverse Adapter">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
+						<div class="col-md-6" style="margin: auto;">
+						<div class="wrap-input100 validate-input" data-validate="">
+						<input style="font-size: 1.1em;" class="input100 text-center" type="text" name="pairedMismatchName" placeholder="Mismatch's">
+						<span class="focus-input100"></span>
+						</div>
+						</div>
+
+					</div>
+
+					<span class="focus-input100"></span>
+					</div>
+
+					<div id="panelQualityId" class="wrap-input100 input100-select">
+						<span class="label-input100">Quality</span>
+							<select class="selection-2" id="cbTrimQualityId" name="trimQualityName">
+								<option value="off">No Trim</option>
+								<option value="n">Trim (N)</option>
+								<option value="quality">Trim per Quality and (N)</option>
+							</select>
+						<div class="col-md-12">
+							<input name="minQualityName" type="text" id="minQualityId" placeholder="Min Quality" style="display: none;">
+						</div>
+					</div>
+
+				<div id="panelPhreadId" class="wrap-input100 input100-select">
+					<span class="label-input100">Phread</span>
+					<div>
+						<select class="selection-2" name="phreadName">
+							<option value="auto">Auto</option>
+							<option value="32">32</option>
+							<option value="64">64</option>
+						</select>
+					</div>
+					<span class="focus-input100"></span>
+				</div>
+
+				
+			<!-- 	<div class="wrap-input100 validate-input" data-validate = "Message is required">
+					<span class="label-input100">Message</span>
+					<textarea class="input100" name="message" placeholder="Your message here..."></textarea>
+					<span class="focus-input100"></span>
+				</div> -->
+
+				<div class="container-contact100-form-btn" style="margin-top: 25px;">
+					<div class="wrap-contact100-form-btn">
+						<div class="contact100-form-bgbtn"></div>
+						<button class="contact100-form-btn" onclick="">
+							<span>
+								<span id="btnTrimIdentifyId">Trim</span>
+								<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
+							</span>
+						</button>
+					</div>
+				</div>
+
+<!-- 				<button class="btn btn-primary" onclick="submit_entry()">
+							<span>
+								<span id="btnTrimIdentifyId">Trim</span>
+								<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
+							</span>
+				</button> -->
+
+				<!-- <input type="submit" name=""> -->
+				
+			<!-- </div> -->
+			</form>
+		</div>
+	</div>
+
+
+
+	<div id="dropDownSelect1"></div>
+
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script> -->
+<script type="text/javascript">
+  // window.dataLayer = window.dataLayer || [];
+  // function gtag(){dataLayer.push(arguments);}
+  // gtag('js', new Date());
+
+  // gtag('config', 'UA-23581568-13');
+
+// VERIFICACAO INICIAL DE PARAMETROS SELECIONADOS
+  var value = document.getElementById("cbTrimQualityId").value;
+  if(value === "quality")
+ 	{
+	  	document.getElementById("minQualityId").style.display = 'block';
+	  	document.getElementById("minQualityId").focus();
+ 	}
+  	else
+  	document.getElementById("minQualityId").style.display = 'none';
+
+  	var value = document.getElementById("cbLayoutId").value;
+ 	if(value === "single")
+ 	{
+ 		value = document.getElementById("cbIdentifyRemoveId").value;
+ 		if(value === "onlyRemove")
+ 		{
+	 		document.getElementById("panelSingleAdaptersId").style.display = 'block';
+	 		document.getElementById("panelPairedAdaptersId").style.display = 'none'; 			
+ 		}
+
+ 		document.getElementById("panelSingleId").style.display = 'block';
+ 		document.getElementById("panelPairedId").style.display = 'none';
+ 	}
+ 	else if(value === "paired")
+ 	{
+ 		value = document.getElementById("cbIdentifyRemoveId").value;
+ 		if(value === "onlyRemove")
+ 		{
+	 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
+	 		document.getElementById("panelPairedAdaptersId").style.display = 'block'; 			
+ 		}
+ 		document.getElementById("panelPairedId").style.display = 'block';
+ 		document.getElementById("panelSingleId").style.display = 'none';
+ 	}
+
+	var value = document.getElementById("cbIdentifyRemoveId").value;
+ 	if(value === "onlyIdentify")
+ 	{
+
+  	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
+
+		document.getElementById("panelQualityId").style.display = 'none';
+ 		document.getElementById("panelPhreadId").style.display = 'none';
+ 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
+ 		document.getElementById("panelPairedAdaptersId").style.display = 'none';
+ 	}
+ 	if(value === "onlyRemove")
+ 	{
+
+  	document.getElementById("btnTrimIdentifyId").innerHTML = "Trim";
+
+ 		var layout = document.getElementById("cbLayoutId").value;
+
+ 		document.getElementById("panelQualityId").style.display = 'block';
+ 		document.getElementById("panelPhreadId").style.display = 'block';
+
+ 		if(layout === "single")
+ 		{
+ 			document.getElementById("panelSingleAdaptersId").style.display = 'block';
+ 			document.getElementById("panelPairedAdaptersId").style.display = 'none';
+ 		}
+ 		if(layout === "paired")
+ 		{
+ 			document.getElementById("panelPairedAdaptersId").style.display = 'block';
+ 			document.getElementById("panelSingleAdaptersId").style.display = 'none';
+		}
+ 	}
+
+ 	// ===================================================================
+
+
+
+  $("#cbTrimQualityId").on('change', function(e){
+
+  	var value = document.getElementById("cbTrimQualityId").value;
+ 	if(value === "quality")
+ 	{
+	  	document.getElementById("minQualityId").style.display = 'block';
+	  	document.getElementById("minQualityId").focus();
+ 	}
+  	else
+  	document.getElementById("minQualityId").style.display = 'none';
+
+      
+  });
+
+  $("#cbLayoutId").on('change', function(e){
+
+  	var value = document.getElementById("cbLayoutId").value;
+ 	if(value === "single")
+ 	{
+ 		value = document.getElementById("cbIdentifyRemoveId").value;
+ 		if(value === "onlyRemove")
+ 		{
+	 		document.getElementById("panelSingleAdaptersId").style.display = 'block';
+	 		document.getElementById("panelPairedAdaptersId").style.display = 'none'; 			
+ 		}
+
+ 		document.getElementById("panelSingleId").style.display = 'block';
+ 		document.getElementById("panelPairedId").style.display = 'none';
+ 	}
+ 	else if(value === "paired")
+ 	{
+ 		value = document.getElementById("cbIdentifyRemoveId").value;
+ 		if(value === "onlyRemove")
+ 		{
+	 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
+	 		document.getElementById("panelPairedAdaptersId").style.display = 'block'; 			
+ 		}
+ 		document.getElementById("panelPairedId").style.display = 'block';
+ 		document.getElementById("panelSingleId").style.display = 'none';
+ 	}
+
+
+	});
+
+   $("#cbIdentifyRemoveId").on('change', function(e){
+
+  	var value = document.getElementById("cbIdentifyRemoveId").value;
+ 	if(value === "onlyIdentify")
+ 	{
+
+  	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
+
+		document.getElementById("panelQualityId").style.display = 'none';
+ 		document.getElementById("panelPhreadId").style.display = 'none';
+ 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
+ 		document.getElementById("panelPairedAdaptersId").style.display = 'none';
+ 	}
+ 	if(value === "onlyRemove")
+ 	{
+
+  	document.getElementById("btnTrimIdentifyId").innerHTML = "Trim";
+
+ 		var layout = document.getElementById("cbLayoutId").value;
+
+ 		document.getElementById("panelQualityId").style.display = 'block';
+ 		document.getElementById("panelPhreadId").style.display = 'block';
+
+ 		if(layout === "single")
+ 		{
+ 			document.getElementById("panelSingleAdaptersId").style.display = 'block';
+ 			document.getElementById("panelPairedAdaptersId").style.display = 'none';
+ 		}
+ 		if(layout === "paired")
+ 		{
+ 			document.getElementById("panelPairedAdaptersId").style.display = 'block';
+ 			document.getElementById("panelSingleAdaptersId").style.display = 'none';
+		}
+ 	}
+
+
+	});
+
+  
+
+function sendForm(){
+
+	var form = document.querySelector(".formId");
+	form.method = 'post';
+	form.action = '/search';
+
+	var out = form.submit();
+
+	console.log(out);
+
+}
+
+</script>
+
+<style type="text/css">
+
+.inputfile + label {
+	cursor: pointer; /* "hand" cursor */
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+	
+	.inputfile + label {
+    font-size: 1em;
+    font-weight: 700;
+    color: white;
+    background-color: black;
+    display: inline-block;
+    padding: 5px;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: #4b8664;
+}
+
+</style>
+
+
+{% endblock %}

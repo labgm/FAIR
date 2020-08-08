@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+  <title>FAIR</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+  <!-- <link rel="icon" type="image/png" href="images/icons/favicon.ico"/> -->
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/vendor/animate/animate.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/vendor/daterangepicker/daterangepicker.css">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="../static/css/util.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/main.css">
+<!--===============================================================================================-->
+
+
+<!--===============================================================================================-->
+  <script src="../static/vendor/jquery/jquery-3.2.1.min.js"></script>
+  <!--===============================================================================================-->
+  <script src="../static/vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+  <script src="../static/vendor/bootstrap/js/popper.js"></script>
+  <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+  <script src="../static/vendor/select2/select2.min.js"></script>
+  <script src="../static/vendor/daterangepicker/moment.min.js"></script>
+  <script src="../static/vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+  <script src="../static/vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+
+  </head>
+  <body>
+ 
+<div class="modal fade" id="myModalIntro" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle">FAIR Intro</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <p>Olá, obrigado por escolher o FAIR para auxiliá-lo</p><br>
+
+    <p>Antes de prosseguir verifique se os arquivos que você utilizará para realizar a análise, esteja no local indicado abaixo:</p>
+    <img src="../static/img/files_intro.png" style="margin: auto;" width="250px">
+
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div class="modal fade" id="myModalError" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle" style="color: orange;">Alert <i class="fa fa-exclamation-triangle" style="font-size: 1.2em;"></i></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body" id="modalBodyErrorId">
+    ...
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div class="modal fade" id="myModalSuccess" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle" style="color: #08c9ce;">Success <i class="fa fa-check-circle-o" style="font-size: 1.2em;"></i></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body">
+    <h4>Seu resultado estará na pasta 'output' </h4><br>
+    <img src="../static/img/my_output.png" width="250px" style="margin: auto;">
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+   </div>
+  </div>
+ </div>
+</div>
+     
+    <div class="" style="padding: 0; width: 100%;">
+      {% block form %}
+      {% endblock %}
+    </div>
+     
+  </body>
+
+  <script>
+    $(".selection-2").select2({
+      minimumResultsForSearch: 20,
+      dropdownParent: $('#dropDownSelect1')
+    });
+  </script>
+
+</html>
