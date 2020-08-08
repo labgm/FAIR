@@ -95,10 +95,6 @@ Parameters::Parameters(int argc, char *const argv[])
 		else if (argument == "--trim-quality")
 		{
 			trimQuality = true;
-			continue;
-		}
-		else if (argument == "--min-quality")
-		{
 			minQuality = atoi(argv[i + 1]);
 			continue;
 		}
@@ -618,10 +614,9 @@ void Parameters::printHelp()
 	cerr << "|--only-remove           runs only adapter removal (without identification)" << endl;
 	cerr << "|                        need to set adapter(s) if this option is set" << endl;
 	cerr << "|--trim                  trim ambiguous bases (N) at 5'/3' termini" << endl;
-	cerr << "|--trim-quality          trim bases at 5'/3' termini with quality scores <= to" << endl;
-	cerr << "|                        --min-quality value" << endl;
-	cerr << "|--min-quality   <int>   minimal quality value to trim" << endl;
-	cerr << "" << endl;
+	cerr << "|--trim-quality          |--trim-quality  <int>   trim bases at 5'/3' termini with" << endl;
+	cerr << "|                       quality scores <= [--trim-quality] value" << endl;
+	cerr << "|" << endl;
 	cerr << "|>Advanced options:" << endl;
 	cerr << "|--adapter     <adapter>          adapter sequence that will be removed (unpaired reads)" << endl;
 	cerr << "|                                required with --only-remove" << endl;
