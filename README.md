@@ -140,9 +140,8 @@ Bellow are listed all FAIR avaiable parameters.
 |--only-remove           runs only adapter removal (without identification)
 |                        need to set adapter(s) if this option is set
 |--trim                  trim ambiguous bases (N) at 5'/3' termini
-|--trim-quality          trim bases at 5'/3' termini with quality scores <= to
-|                        --min-quality value
-|--min-quality   <int>   minimal quality value to trim
+|--trim-quality  <int>   trim bases at 5'/3' termini with
+|                       quality scores <= [--trim-quality] value
 
 |>Advanced options:
 |--adapter     <adapter>          adapter sequence that will be removed (unpaired reads)
@@ -192,7 +191,7 @@ You can test the program utilizing the samples `sample1.fastq` and `sample2.fast
 
 * Remove Adapters from Single FASTQ File with Trim, Trim-Quality, Min-Quality and Number of Phred-Offset
 ```sh
-./FAIR --only-remove --single sample1.fastq --trim --trim-quality 90 --min-quality 90 --phread-offset 33 --output results/
+./FAIR --only-remove --single sample1.fastq --adapter AGAGAATAGATAGAT --mismatch 3 --trim --trim-quality 90 --phread-offset 33 --mismatch-right 0.3 --output results/
 ```
 
 <!-- CONTRIBUTING -->
