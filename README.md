@@ -115,7 +115,7 @@ g++ source/main.cpp -o FAIR
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-# CLI (Command Line Interface)
+### CLI (Command Line Interface)
 
 Bellow are listed all FAIR avaiable parameters.
 
