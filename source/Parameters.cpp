@@ -33,7 +33,7 @@ Parameters::Parameters(int argc, char *const argv[])
 	mismatchGlobal = 2; // Mismatch's máximo para encontrar os adaptadores nas leituras
 
 	// OnlyInsert (Test)
-	onlyInsert = false; // Ativar inserção de adaptadores
+	onlyInsert = false; 
 	adapterErrorRate = 0.1; // Taxa de erro máxima no adaptador(mismatch) (Default: 10%)
 	adapterInsertionLeft = true; // Inserção do adaptador à direita ou esquerda
 	adapterRandomPosition = false; // Posicão aleatória do adaptador (true or false) se for false, ficará na extremidade da read
