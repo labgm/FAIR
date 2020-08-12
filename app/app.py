@@ -6,10 +6,9 @@ app = Flask(__name__)
 
 def getDetails(form):
 
-
 	details = []
 
-	if form['singleFileName'] != "" and form['forwardFileName'] == "":
+	if form['singleFileName'] != "":
 		details.append("File(single): "+form['singleFileName'])
 
 	if form['forwardFileName'] != "":
@@ -28,14 +27,14 @@ def getDetails(form):
 		details.append("Adapter: "+form['singleAdapterName'])
 
 	if form['singleMismatchName'] != "":
-		details.append("Mismatch Global (5'/3'): "+form['singleMismatchName']+" bases")
+		details.append("Mismatch (5'/3'): "+form['singleMismatchName']+" bases")
 
 	if form['rightMismatchName'] != "":
 		temp = float(form['rightMismatchName']) * 100;
 		details.append("Incompatibilities in region 3 ': "+str(temp)+"%")
 
 	if form['pairedMismatchName'] != "":
-		details.append("Mismatch Global (5'/3'): "+form['pairedMismatchName']+" bases")
+		details.append("Mismatch (5'/3'): "+form['pairedMismatchName']+" bases")
 
 	if form['rightPairedMismatchName'] != "":
 		temp = float(form['rightPairedMismatchName']) * 100;
@@ -46,7 +45,7 @@ def getDetails(form):
 			details.append("Trim per quality: Trim (N)")
 		elif form['trimQualityName'] == "quality":
 			if form['minQualityName'] != "":
-				details.append("Trim (Ns) more bases with score <= "+form['minQualityName'])
+				details.append("Trim (Ns) and bases with score <= "+form['minQualityName'])
 
 	return details
 
@@ -58,6 +57,7 @@ def home():
 @app.route('/search', methods=['post'])
 def search():
 	
+	form = ""
 	form = request.form.to_dict()
 	if not form:
 		form = json.loads(request.data.decode())
@@ -95,7 +95,7 @@ def search():
 						if(form['minQualityName'] != ""):
 							command += " --trim-quality "+str(form['minQualityName'])
 						else:
-							out = "Insira o valor mínimo de qualidade!"
+							out = "Insert minimum value of quality!"
 							print("====================================== end log ============================================ ")
 							return render_template('home.html', data=out, form=form)
 
@@ -108,12 +108,12 @@ def search():
 						return render_template('home.html', data="success", details=details)
 
 				else:
-					out = "Insira um Adaptador Single"
+					out = "Insert a Single Adapter!"
 					print("====================================== end log ============================================ ")
 					return render_template('home.html', data=out, form=form)
 
 		else:
-			out = "Anexar arquivo Single"
+			out = "Insert Single File!"
 			print("====================================== end log ============================================ ")
 			# os.system("quit")
 			return render_template('home.html', data=out, form=form)
@@ -148,7 +148,7 @@ def search():
 						reverseAdapter = form['reverseAdapterName']
 						command += " --reverse-adapter "+reverseAdapter
 					else:
-						out = "Insira um Adaptador Reverse"
+						out = "Insert Adapter Reverse"
 						print("====================================== end log ============================================ ")
 						return render_template('home.html', data=out, form=form)
 
@@ -168,7 +168,7 @@ def search():
 						if(form['minQualityName'] != ""):
 							command += " --trim-quality "+str(form['minQualityName'])
 						else:
-							out = "Insira o valor mínimo de qualidade!"
+							out = "Insert the minimum value of quality!"
 							print("====================================== end log ============================================ ")
 							return render_template('home.html', data=out, form=form)
 
@@ -180,12 +180,12 @@ def search():
 						return render_template('home.html', data="success", details=details)
 
 			else:
-				out = "Anexar arquivo reverse"
+				out = "Insert reverse file!"
 				print("====================================== end log ============================================ ")
 				return render_template('home.html', data=out, form=form)
 
 		else:
-			out = "Anexar arquivo forward"
+			out = "Insert forward file"
 			print("====================================== end log ============================================ ")
 			return render_template('home.html', data=out, form=form)
 
