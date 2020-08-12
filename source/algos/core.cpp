@@ -1,8 +1,5 @@
 // Algorithms
 
-	// Myers 1999 if k > 0
-	// Wu & Manber 1992 if k == 0
-
 #include "include/define.h"
 #include <iostream>
 #include <sys/types.h>
@@ -23,6 +20,7 @@
 
 using namespace std;
 
+// Myers (1999)
 vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int indiceStart){
 
 	int k = mismatchMax;
@@ -121,6 +119,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 	}
 
 
+// Wu & Manber (1992)
 vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 	//	NUMERO MAXIMO DE ERROS PERMITIDOS
