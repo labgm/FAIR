@@ -188,24 +188,24 @@
 						</div>
 					</div>
 
-				<div id="panelPhreadId" class="wrap-input100 input100-select">
-					<span class="label-input100">Phread</span>
+				<div id="panelPhredId" class="wrap-input100 input100-select">
+					<span class="label-input100">Phred</span>
 					<div>
-						<select id="cbPhreadId" class="selection-2" name="phreadName">
+						<select id="cbPhredId" class="selection-2" name="phredName">
 							<option value="auto" selected="true">Auto</option>
-							<option value="32">32</option>
+							<option value="33">33</option>
 							<option value="64">64</option>
 						</select>
 					</div>
 							{% if form %}
-								{% if form.phreadName=='32' %}
+								{% if form.phredName=='33' %}
 								<script type="text/javascript">
-									document.getElementById("cbPhreadId").value = "32";
+									document.getElementById("cbPhredId").value = "33";
 								</script>
 								{% endif %}
-								{% if form.phreadName=='64' %}
+								{% if form.phredName=='64' %}
 								<script type="text/javascript">
-									document.getElementById("cbPhreadId").value = "64";
+									document.getElementById("cbPhredId").value = "64";
 								</script>
 								{% endif %}
 							{% endif %}
@@ -301,7 +301,7 @@
   	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
 
 		document.getElementById("panelQualityId").style.display = 'none';
- 		document.getElementById("panelPhreadId").style.display = 'none';
+ 		document.getElementById("panelPhredId").style.display = 'none';
  		document.getElementById("panelSingleAdaptersId").style.display = 'none';
  		document.getElementById("panelPairedAdaptersId").style.display = 'none';
  	}
@@ -313,7 +313,7 @@
  		var layout = document.getElementById("cbLayoutId").value;
 
  		document.getElementById("panelQualityId").style.display = 'block';
- 		document.getElementById("panelPhreadId").style.display = 'block';
+ 		document.getElementById("panelPhredId").style.display = 'block';
 
  		if(layout === "single")
  		{
@@ -384,7 +384,7 @@
   	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
 
 		document.getElementById("panelQualityId").style.display = 'none';
- 		document.getElementById("panelPhreadId").style.display = 'none';
+ 		document.getElementById("panelPhredId").style.display = 'none';
  		document.getElementById("panelSingleAdaptersId").style.display = 'none';
  		document.getElementById("panelPairedAdaptersId").style.display = 'none';
  	}
@@ -396,7 +396,7 @@
  		var layout = document.getElementById("cbLayoutId").value;
 
  		document.getElementById("panelQualityId").style.display = 'block';
- 		document.getElementById("panelPhreadId").style.display = 'block';
+ 		document.getElementById("panelPhredId").style.display = 'block';
 
  		if(layout === "single")
  		{
