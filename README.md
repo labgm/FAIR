@@ -118,7 +118,7 @@ g++ source/main.cpp -o FAIR
 
 ### CLI (Command Line Interface)
 
-Bellow are listed all FAIR avaiable parameters.
+Bellow are listed all FAIR available parameters.
 
 ```FAIR - Fast Adapter Identification and Removal v1.0
 
