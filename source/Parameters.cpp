@@ -4,9 +4,9 @@ class Parameters
 {
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
-	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert, adapterInsertionLeft, adapterRandomPosition;
+	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert, adapterInsertionLeft, adapterRandomPosition, webInterface;
 	int minQuality, threads, phredOffset, mismatchGlobal;
-	double adapterInsertionRate, adapterErrorRate, mismatchRight;			
+	double adapterInsertionRate, adapterErrorRate, mismatchRight;		
 
 public:
 	Parameters(int argc, char *const argv[]);
@@ -38,6 +38,8 @@ Parameters::Parameters(int argc, char *const argv[])
 	adapterInsertionLeft = true; // Inserção do adaptador à direita ou esquerda
 	adapterRandomPosition = false; // Posicão aleatória do adaptador (true or false) se for false, ficará na extremidade da read
 	adapterInsertionRate = 0.01; // taxa de inserção dos adaptadores (Ex: 1% das reads serão infectadas)
+
+	webInterface = false;
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -161,14 +163,26 @@ Parameters::Parameters(int argc, char *const argv[])
 		else if (argument == "--mismatch-right" || argument == "-mmr")
 		{
 			mismatchRight = atof(argv[i + 1]);
+			if (mismatchRight > 0.6) mismatchRight = 0.6;
 			continue;
 		}
+		else if (argument == "--web-interface")
+		{
+			webInterface = true;
+			break;
+		}
 	}
+
 
 	const char *oDir = outputDir.c_str();
 	DIR *dir = opendir(oDir);
 
-	if (help)
+	if(webInterface)
+	{
+		ready = false;
+		system("python3 app/app.py");
+	}
+	else if (help)
 	{
 		printHelp();
 		ready = false;
@@ -594,7 +608,7 @@ bool Parameters::parseParameters()
 }
 void Parameters::printHelp()
 {
-	cerr <<"  FAIIR - Fast Adapter Identification, Insertion and Removal v1.0" << endl;
+	cerr <<"  FAIR - Fast Adapter Identification and Removal v1.0" << endl;
 	cerr << "" << endl;
 	cerr << " Usage: /home/joao/FAIR -o <output_dir> [options]" << endl;
 	cerr << "" << endl;
@@ -602,6 +616,8 @@ void Parameters::printHelp()
 	cerr << "|-o/--output   <output_dir>   directory to store all the resulting files (required)" << endl;
 	cerr << "|-h/--help                    prints this usage message" << endl;
 	cerr << "|-v/--version                 prints version" << endl;
+	cerr << "|--web-interface              enable web interface in your browser for parameters selection " << endl;
+	cerr << "|                            after activation, access url http://0.0.0.0:8080" << endl;
 	cerr << "" << endl;
 	cerr << "|> Input data:" << endl;
 	cerr << "|-s/--single        <filename>    file with unpaired reads" << endl;
@@ -612,9 +628,9 @@ void Parameters::printHelp()
 	cerr << "|> Pipeline options:" << endl;
 	cerr << "|--only-identify         runs only adapter identification (without removal)" << endl;
 	cerr << "|--only-remove           runs only adapter removal (without identification)" << endl;
-	cerr << "|                        need to set adapter(s) if this option is set" << endl;
+	cerr << "|                       need to set adapter(s) if this option is set" << endl;
 	cerr << "|--trim                  trim ambiguous bases (N) at 5'/3' termini" << endl;
-	cerr << "|--trim-quality          |--trim-quality  <int>   trim bases at 5'/3' termini with" << endl;
+	cerr << "|--trim-quality  <int>   trim bases at 5'/3' termini and with" << endl;
 	cerr << "|                       quality scores <= [--trim-quality] value" << endl;
 	cerr << "|" << endl;
 	cerr << "|>Advanced options:" << endl;
@@ -626,7 +642,7 @@ void Parameters::printHelp()
 	cerr << "|                                in the reverse paired-end reads (required with --only-remove)" << endl;
 	cerr << "|-mm/--mismatch      <int>        mismatch rate global (5'/3')" << endl;
 	cerr << "|                                [default: 2] 2 bases" << endl;
-	cerr << "|-mmr/--mismatch-right            mismatch rate in region 3'" << endl;
+	cerr << "|-mmr/--mismatch-right <0 to 0.6> mismatch rate in region 3'" << endl;
 	cerr << "|                                [default: 0.5] 50% incompatibilities" << endl;
 	cerr << "|--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)" << endl;
 	cerr << "|                                [default: auto-detect]" << endl;
