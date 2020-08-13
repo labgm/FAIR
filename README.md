@@ -83,13 +83,7 @@ sudo apt-get install gcc
 sudo apt-get install python
 ```
 
-If you want to execute algorithm evaluation located on `utils` some extra Python Frameworks are required, namely: pandas, matplotlib and numpy. Thankfully, you can * * install them all at once using pip.
-* pip
-```sh
-pip install -r requirements.txt --user
-```
-
-If graphic web interface is required
+If graphic web interface is required (Parameter [--web-interface])
 * Python Flask
 ```sh
 sudo apt install python3-flask
@@ -128,6 +122,8 @@ Bellow are listed all FAIR available parameters.
 |-o/--output   <output_dir>   directory to store all the resulting files (required)
 |-h/--help                    prints this usage message
 |-v/--version                 prints version
+|--web-interface              enable web interface in your browser for parameters selection 
+|                            after activation, access url http://0.0.0.0:8080
 
 |> Input data:
 |-s/--single        <filename>    file with unpaired reads
@@ -140,7 +136,7 @@ Bellow are listed all FAIR available parameters.
 |--only-remove           runs only adapter removal (without identification)
 |                        need to set adapter(s) if this option is set
 |--trim                  trim ambiguous bases (N) at 5'/3' termini
-|--trim-quality  <int>   trim bases at 5'/3' termini with
+|--trim-quality  <int>   trim bases at 5'/3' termini and with
 |                       quality scores <= [--trim-quality] value
 
 |>Advanced options:
@@ -152,7 +148,7 @@ Bellow are listed all FAIR available parameters.
 |                                in the reverse paired-end reads (required with --only-remove)
 |-mm/--mismatch      <int>        mismatch rate global (5'/3')
 |                                [default: 2] 2 bases
-|-mmr/--mismatch-right            mismatch rate in region 3'
+|-mmr/--mismatch-right <0 to 0.6> mismatch rate in region 3''
 |                                [default: 0.5] 50% incompatibilities
 |--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)
 |                                [default: auto-detect]
@@ -165,13 +161,13 @@ Do you use to select parameters more easily.
 1. Running Server
 ```sh
 cd FAIR
-python3 app/app.py
+./FAIR --web-interface
 ```
 2. Access URL in your browser http://0.0.0.0:8080/
 
 _For more examples, please refer to the [Documentation](https://github.com/SRodriguess/FAIR)_
 
-## Examples
+## Examples (CLI)
 You can test the program utilizing the samples `sample1.fastq` and `sample2.fastq` located at `data`. The new files are stored on `results`. Some common usages are listed bellow.
 
 * Remove Adapters from Single FASTQ File with Adapter
