@@ -8,7 +8,7 @@
 <!--===============================================================================================-->
   <!-- <link rel="icon" type="image/png" href="images/icons/favicon.ico"/> -->
 <!--===============================================================================================-->
-  <link rel="stylesheet" type="text/css" href="../static/vendor/bootstrap/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" type="text/css" href="../static/vendor/bootstrap/css/bootstrap.min.css"> -->
 <!--===============================================================================================-->
   <link rel="stylesheet" type="text/css" href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 <!--===============================================================================================-->
@@ -26,14 +26,13 @@
   <link rel="stylesheet" type="text/css" href="../static/css/main.css">
 <!--===============================================================================================-->
 
-
 <!--===============================================================================================-->
   <script src="../static/vendor/jquery/jquery-3.2.1.min.js"></script>
   <!--===============================================================================================-->
   <script src="../static/vendor/animsition/js/animsition.min.js"></script>
 <!--===============================================================================================-->
-  <script src="../static/vendor/bootstrap/js/popper.js"></script>
-  <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <!-- <script src="../static/vendor/bootstrap/js/popper.js"></script> -->
+  <!-- <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script> -->
 <!--===============================================================================================-->
   <script src="../static/vendor/select2/select2.min.js"></script>
   <script src="../static/vendor/daterangepicker/moment.min.js"></script>
@@ -41,6 +40,23 @@
 <!--===============================================================================================-->
   <script src="../static/vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
+
+
+<!-- BOOTSTRAP -->
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- FIM BOOTSTRAP -->
 
   </head>
   <body>
@@ -108,11 +124,53 @@
  </div>
 </div>
 
-<!--  -->
+<!-- INFOs  -->
 
+<!-- Layout -->
+<div class="modal fade" id="layout" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content" style="font-family: serif;">
+   <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle" style="color: #f5ad09;"><i class="fa fa-info" style="font-size: 1.2em;"></i> info</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body" >
+      
+    <h3 style="font-weight: bold;"> Layout </h3>
+    <!-- <hr> -->
+      <h4>Choose below the data type: <br>
+        <span style="font-style: italic;">Single-read</span> or <span style="font-style: italic;">Paired-end</span></h4>
+        For single-read data 
+    </div>
+ </div>
+</div>
+</div>
 
+<!-- IdentifyOrRemove -->
+<div class="modal fade" id="identifyorremove" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content" style="font-family: serif;">
+   <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle" style="color: #f5ad09;"><i class="fa fa-info" style="font-size: 1.2em;"></i> info</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+   </div>
+   <div class="modal-body" >
+      
+    <h3 style="font-weight: bold;"> Identify or Remove </h3>
+    <!-- <hr> -->
+      <h4>Choose below the data type: <br>
+        <span style="font-style: italic;">Single-read</span> or <span style="font-style: italic;">Paired-end</span></h4>
 
-<!--  -->
+    </div>
+ </div>
+</div>
+</div>
+
+<!-- END INFOs  -->
      
     <div class="" style="padding: 0; width: 100%;">
       {% block form %}

@@ -39,7 +39,8 @@
 				</div>
 
 				<div class="wrap-input100 input100-select">
-					<span class="label-input100">* Layout</span>
+					<span class="label-input100">* Layout</span> 
+					<span onclick="openModal('layout')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span>
 					<div>
 						<select id="cbLayoutId" class="selection-2" name="layoutName">
 							<option value="single" selected="true">Single</option>
@@ -72,6 +73,7 @@
 
 					<div class="input100-select">
 					<span class="label-input100">* Identify or Remove?</span>
+					<span onclick="openModal('identifyorremove')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span>
 					<div>
 						<select id="cbIdentifyRemoveId" class="selection-2" name="identifyRemoveName">
 							<option value="onlyRemove" selected="true">Only Remove</option>
@@ -230,6 +232,11 @@
 						</button>
 					</div>
 				</div>
+
+				<button class="btn btn-primary" disabled>
+				  <span class="spinner-grow spinner-grow-sm"></span>
+				  Loading..
+				</button>
 
 <!-- 				<button class="btn btn-primary" onclick="submit_entry()">
 							<span>
@@ -424,6 +431,12 @@ function sendForm(){
 	var out = form.submit();
 
 	console.log(out);
+
+}
+
+function openModal(modal){
+
+	$('#'+modal).modal("show");
 
 }
 
