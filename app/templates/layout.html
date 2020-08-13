@@ -71,7 +71,7 @@
     </button>
    </div>
    <div class="modal-body">
-    <p>Hello, thanks to use FAIR in your data analysis. </p> <br>
+    <p>Hello, thanks to use FAIR in your data analysis. </p>
 
     <p>Before of the go to next, verify if the files will use for realize your analysis, will be in the paste 'data' as indicated below.
     <img src="../static/img/files_intro.png" style="margin: auto;" width="250px">
@@ -142,7 +142,9 @@
     <!-- <hr> -->
       <h4>Choose below the data type: <br>
         <span style="font-style: italic;">Single-read</span> or <span style="font-style: italic;">Paired-end</span></h4>
-        For single-read data 
+        <span style="color: red;">important:</span> For single-read data, enter the single-read path. <br>
+For paired data, enter the local file path: forward and reverse.<br>
+The files must be in the 'data' folder.
     </div>
  </div>
 </div>
@@ -162,8 +164,9 @@
       
     <h3 style="font-weight: bold;"> Identify or Remove </h3>
     <!-- <hr> -->
-      <h4>Choose below the data type: <br>
-        <span style="font-style: italic;">Single-read</span> or <span style="font-style: italic;">Paired-end</span></h4>
+      You have two options: <span style="font-weight: bold; font-size: 1.1em;">Only Remove</span> and <span style="font-weight: bold; font-size: 1.1em;">Only Identify</span>:<br>
+      <span style="font-weight: bold; font-size: 1.1em;">Only Remove:</span> Remove the adapters, but to do so, you must enter the adapter sequence in the fields below. In case of single read, insert only one adapter sequence, but for the paired-end file insert two adapter sequences (forward and reverse).<br>
+      <span style="font-weight: bold; font-size: 1.1em;">Only Identify:</span> Identify the adapters without removing them. The adapters to search for are found in the 'adapters.txt' file, and you can edit it according to your needs, keeping the default structure. The result informs you the adapter found and the amount found (with up to 3 differences).
 
     </div>
  </div>
