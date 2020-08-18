@@ -211,12 +211,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements and References
-* [R. S. Boyer and J. S. Moore. A fast string searching algorithm. Commun. ACM,20(10):762–772, 1977.](https://www.cs.utexas.edu/users/moore/publications/fstrpos.pdf)
-* [Koloud Al-Khamaiseh  and  ShadiALShagarin, “A Survey of  String  Matching  Algorithms”  in  Int.  Journal  of Engineering  Research  and Applications,  IJERA,  ISSN: 2248-9622,  Vol.  4,  Issue  7  (Version  2),  July  2014, pp.144-156](https://core.ac.uk/download/pdf/26834073.pdf)
-* [B. Durian, H. Peltola, L. Salmela, and J. Tarhio. Bit-parallel search algorithms forlong patterns. In P. Festa, editor, Symposium on Experimental Algorithms, LNCS6049, 129–140, Springer-Verlag, Berlin, 2010.](https://helda.helsinki.fi/bitstream/handle/10138/18570/Long.pdf?sequence=2)
-* [G. Navarro, M. Raffinot, “A Bit-Parallel Approach to Suffix Automata: Fast Extended String Matching”, in Proc. of the 9th Annual Symposium on Combinatorial Pattern Matching, No. 1448.](https://users.dcc.uchile.cl/~gnavarro/ps/cpm98.pdf)
-* [SMART (String Matching Algorithm Research Tool)](https://github.com/smart-tool/smart)
+* [Hyyro, H., Fredriksson, K., \& Navarro, G. (2005). Increased bit-parallelism for approximate and multiple string matching. Journal of Experimental Algorithmics (JEA), 10, 2-6.](https://dl.acm.org/doi/pdf/10.1145/1064546.1180617)
+* [Myers, G. (1999). A fast bit-vector algorithm for approximate string matching based on dynamic programming. Journal of the ACM (JACM), 46(3), 395-415.](https://dl.acm.org/doi/10.1145/316542.316550)
+* [Wu, S., \& Manber, U. (1992). Fast text searching: allowing errors. Communications of the ACM, 35(10), 83-91.](https://dl.acm.org/doi/10.1145/135239.135244)
 * [bio-playground by Brent Perdensen](https://github.com/brentp/bio-playground)
+* [Andrews, S. (2010). FastQC: a quality control tool for high throughput sequence data.](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 
 <!-- CONTACT -->
 ## Contact
