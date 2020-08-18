@@ -101,8 +101,7 @@
 
 						<div class="col-md-12">
 
-						<span class="label-input100">Mismatch Rate</span>
-						<span onclick="openModal('mismatchrate')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span><br>
+						<div class="col-md-12"><span class="label-input100">Mismatch Rate</span></div>
 
 						<div class="" style="width:50%; display: inline-block; padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
@@ -234,10 +233,10 @@
 					</div>
 				</div>
 
-				<button class="btn btn-primary" disabled>
+			<!-- 	<button class="btn btn-primary" disabled>
 				  <span class="spinner-grow spinner-grow-sm"></span>
 				  Loading..
-				</button>
+				</button> -->
 
 <!-- 				<button class="btn btn-primary" onclick="submit_entry()">
 							<span>
@@ -257,191 +256,7 @@
 
 	<div id="dropDownSelect1"></div>
 
-
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script> -->
-<script type="text/javascript">
-  // window.dataLayer = window.dataLayer || [];
-  // function gtag(){dataLayer.push(arguments);}
-  // gtag('js', new Date());
-
-  // gtag('config', 'UA-23581568-13');
-
-// VERIFICACAO INICIAL DE PARAMETROS SELECIONADOS
-  var value = document.getElementById("cbTrimQualityId").value;
-  if(value === "quality")
- 	{
-	  	document.getElementById("minQualityId").style.display = 'block';
-	  	document.getElementById("minQualityId").focus();
- 	}
-  	else
-  	document.getElementById("minQualityId").style.display = 'none';
-
-  	var value = document.getElementById("cbLayoutId").value;
- 	if(value === "single")
- 	{
- 		value = document.getElementById("cbIdentifyRemoveId").value;
- 		if(value === "onlyRemove")
- 		{
-	 		document.getElementById("panelSingleAdaptersId").style.display = 'block';
-	 		document.getElementById("panelPairedAdaptersId").style.display = 'none'; 			
- 		}
-
- 		document.getElementById("panelSingleId").style.display = 'block';
- 		document.getElementById("panelPairedId").style.display = 'none';
- 	}
- 	else if(value === "paired")
- 	{
- 		value = document.getElementById("cbIdentifyRemoveId").value;
- 		if(value === "onlyRemove")
- 		{
-	 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
-	 		document.getElementById("panelPairedAdaptersId").style.display = 'block'; 			
- 		}
- 		document.getElementById("panelPairedId").style.display = 'block';
- 		document.getElementById("panelSingleId").style.display = 'none';
- 	}
-
-	var value = document.getElementById("cbIdentifyRemoveId").value;
- 	if(value === "onlyIdentify")
- 	{
-
-  	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
-
-		document.getElementById("panelQualityId").style.display = 'none';
- 		document.getElementById("panelPhredId").style.display = 'none';
- 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
- 		document.getElementById("panelPairedAdaptersId").style.display = 'none';
- 	}
- 	if(value === "onlyRemove")
- 	{
-
-  	document.getElementById("btnTrimIdentifyId").innerHTML = "Trim";
-
- 		var layout = document.getElementById("cbLayoutId").value;
-
- 		document.getElementById("panelQualityId").style.display = 'block';
- 		document.getElementById("panelPhredId").style.display = 'block';
-
- 		if(layout === "single")
- 		{
- 			document.getElementById("panelSingleAdaptersId").style.display = 'block';
- 			document.getElementById("panelPairedAdaptersId").style.display = 'none';
- 		}
- 		if(layout === "paired")
- 		{
- 			document.getElementById("panelPairedAdaptersId").style.display = 'block';
- 			document.getElementById("panelSingleAdaptersId").style.display = 'none';
-		}
- 	}
-
- 	// ===================================================================
-
-
-
-  $("#cbTrimQualityId").on('change', function(e){
-
-  	var value = document.getElementById("cbTrimQualityId").value;
- 	if(value === "quality")
- 	{
-	  	document.getElementById("minQualityId").style.display = 'block';
-	  	document.getElementById("minQualityId").focus();
- 	}
-  	else
-  	document.getElementById("minQualityId").style.display = 'none';
-
-      
-  });
-
-  $("#cbLayoutId").on('change', function(e){
-
-  	var value = document.getElementById("cbLayoutId").value;
- 	if(value === "single")
- 	{
- 		value = document.getElementById("cbIdentifyRemoveId").value;
- 		if(value === "onlyRemove")
- 		{
-	 		document.getElementById("panelSingleAdaptersId").style.display = 'block';
-	 		document.getElementById("panelPairedAdaptersId").style.display = 'none'; 			
- 		}
-
- 		document.getElementById("panelSingleId").style.display = 'block';
- 		document.getElementById("panelPairedId").style.display = 'none';
- 	}
- 	else if(value === "paired")
- 	{
- 		value = document.getElementById("cbIdentifyRemoveId").value;
- 		if(value === "onlyRemove")
- 		{
-	 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
-	 		document.getElementById("panelPairedAdaptersId").style.display = 'block'; 			
- 		}
- 		document.getElementById("panelPairedId").style.display = 'block';
- 		document.getElementById("panelSingleId").style.display = 'none';
- 	}
-
-
-	});
-
-   $("#cbIdentifyRemoveId").on('change', function(e){
-
-  	var value = document.getElementById("cbIdentifyRemoveId").value;
- 	if(value === "onlyIdentify")
- 	{
-
-  	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
-
-		document.getElementById("panelQualityId").style.display = 'none';
- 		document.getElementById("panelPhredId").style.display = 'none';
- 		document.getElementById("panelSingleAdaptersId").style.display = 'none';
- 		document.getElementById("panelPairedAdaptersId").style.display = 'none';
- 	}
- 	if(value === "onlyRemove")
- 	{
-
-  	document.getElementById("btnTrimIdentifyId").innerHTML = "Trim";
-
- 		var layout = document.getElementById("cbLayoutId").value;
-
- 		document.getElementById("panelQualityId").style.display = 'block';
- 		document.getElementById("panelPhredId").style.display = 'block';
-
- 		if(layout === "single")
- 		{
- 			document.getElementById("panelSingleAdaptersId").style.display = 'block';
- 			document.getElementById("panelPairedAdaptersId").style.display = 'none';
- 		}
- 		if(layout === "paired")
- 		{
- 			document.getElementById("panelPairedAdaptersId").style.display = 'block';
- 			document.getElementById("panelSingleAdaptersId").style.display = 'none';
-		}
- 	}
-
-
-	});
-
-  
-
-function sendForm(){
-
-	var form = document.querySelector(".formId");
-	form.method = 'post';
-	form.action = '/search';
-
-	var out = form.submit();
-
-	console.log(out);
-
-}
-
-function openModal(modal){
-
-	$('#'+modal).modal("show");
-
-}
-
-</script>
+	<script src="../static/js/home.js"></script>
 
 <style type="text/css">
 
