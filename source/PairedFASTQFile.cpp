@@ -1,5 +1,5 @@
 #include "SingleFASTQFile.cpp"
-
+ 
 class PairedFASTQFile
 {
 	string file;
@@ -21,7 +21,6 @@ public:
 	void closeOutput(string typeOperation);
 
 	bool hasNextSearchAdapters();
-	void insertAdapters(string adapter1, string adapter2, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition);
 
 };
 
@@ -104,12 +103,6 @@ void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string ad
 {
 	forward.removeAdapter(onlyRemove, adapter1, mismatchMax, adapterInvert_f, mismatchRight);
 	reverse.removeAdapter(onlyRemove, adapter2, mismatchMax, adapterInvert_r, mismatchRight);
-}
-
-void PairedFASTQFile::insertAdapters(string adapter1, string adapter2, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition)
-{
-	forward.insertAdapter(adapter1, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
-	reverse.insertAdapter(adapter2, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
 }
 
 void PairedFASTQFile::write()

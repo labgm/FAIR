@@ -1,5 +1,3 @@
-// Algorithms
-
 #include "include/define.h"
 #include <iostream>
 #include <sys/types.h>
@@ -15,7 +13,6 @@
 #include <dirent.h>
 #include <errno.h>
 #include <ctime>
-#define GRAM4(j) (B[y[j]] << 3) & (B[y[j - 1]] << 2) & (B[y[j - 2]] << 1) & B[y[j - 3]]
 #include <string.h>
 
 using namespace std;
@@ -30,13 +27,11 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 	int MAXCHAR = 256;
 	int posicaoAnterior, quantGrupo, posicaoAtual, indiceMedio;
 
-	// ================== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS =====================
 	int inicializador = 0;
 	posicaoAnterior = 0;
 	quantGrupo = 0;
 	posicaoAtual = 0;
 	indiceMedio = 0;
-	// =======================================================================================================
 
 	// ComputePM ////////////////////////////////////////
 	unsigned long long PM[MAXCHAR];
@@ -122,19 +117,15 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 // Wu & Manber (1992)
 vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
-	//	NUMERO MAXIMO DE ERROS PERMITIDOS
 	int k = 0;
 
-	// ARMAZENA INDICES DE POSICOES CORRETAS DE MATCH APROXIMADO
 	vector<int> indexx;
 
-	// ===== VARIAVEIS RESPONSAVEIS NO PROCESSO DE DEFINIR INDICES CORRETOS DE MATCH NO CASAMENTO APROXIMADO
 	int inicializador = 0;
 	int posicaoAnterior = 0;
 	int quantGrupo = 0;
 	int posicaoAtual = 0;
 	int indiceMedio = 0;
-	// =======================================================================================================
 
 	int MAXCHAR = 256;
 
@@ -168,8 +159,6 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 
 			posicaoAtual = i+1;
 
-				// cerr << posicaoAtual << endl;
-			// SE VERDADEIRO - ACEITOU MATCH COM QUANTIDADE DE ERROS PERMITIDO
 			if((Rnovo & 1L) != 0L){
 
 				indexx.insert(indexx.begin(), k);
@@ -178,8 +167,6 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 			}
 
 		}
-
-	 	// cerr << "--------" << endl;
 
 	 return indexx;
 

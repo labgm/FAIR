@@ -25,8 +25,6 @@ public:
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
 
-	void insert(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition);
-
 };
 
 void SingleFASTQ::setIdentifier(string id)
@@ -84,8 +82,6 @@ int SingleFASTQ::getOccurrences()
 void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
 {
 
-	// cerr << seq.length() << endl;
-
 	vector<int> index;
 	vector<int> index_2;
 	vector<int> index_3;
@@ -101,32 +97,24 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 	else
 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
 
-		// cerr << "-----" << endl;
-	//PEGAR PARTE DE SEQUENCIA E INVERTER
 	if(index.size() > 0)
 	{
 
 		for (int i = 0; i < index.size(); ++i)
 		{
 
-			// cont++;
-
-			//SE MISMATCH MIN ENCONTRADO FOR DIFERENTE DE 0 -> CRIAR REVERSE DE PARTE DA SEQUECIA
-			// PROCESSAR ADAPTADORES NÃO EXATOS A FIM DE ENCONTRAR LIMITE INFERIOR E SUPERIOR DE CORTE
+			// Process adapters for mismatch > 0. To find lower and upper index.
 			if(index[i+1] != 0)
 			{
 				int limitSup = index[i] + adapter.length() - 1;
 				int limitInf = index[i] - mismatchMax;
 				if(limitInf < 0) limitInf = 0;
-				// int limitInf = 0;
 
 				string seq_aux_invert = "";
 				for (int j = limitSup; j >= limitInf; --j)
 				{
 					seq_aux_invert += seq[j];
 				}
-
-				// cerr << "seq_aux_invert: " << seq_aux_invert << endl;
 
 				char seq_invert_c[seq_aux_invert.length() + 1];
 				strcpy(seq_invert_c, seq_aux_invert.c_str());
@@ -170,7 +158,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 					}
 				}
 
-			// PROCESSAR ADAPTADORES EXATOS 
+			// Process adapters without mismatch
 			}else if(index[i+1] == 0){
 
 				int sizeCorte = adapter.length();
@@ -179,7 +167,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 				if(sizeCorte > 0 & limitSup <= seq.length())
 				{
 
-					// SE CORTE ULTRAPASSA SEQUENCIA REDUZIR O CORTE ATÉ O FIM DA LEITURA
+					// If trim out of the sequence, reduce the trim to the end of read.
 					if(index[i] >= (seq.length() - adapter.length()))
 					{
 						sizeCorte = seq.length() - index[i];
@@ -199,17 +187,16 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 
 	}else{
 
-		// SE NÃO ENCONTROU ADAPTADOR, BUSCAR SOMENTE EM EXTREMIDADE 3'
+		// If the adapter is not found, search only at the end of the read (3')
 
 		int taxaMismatchAdapter_extrem_int = mismatchRight * adapter.length();
 
-		// cerr << taxaMismatchAdapter_extrem_int << endl;
 		if(taxaMismatchAdapter_extrem_int > 0)
 		{
 
 			int indiceStart = seq.length() - taxaMismatchAdapter_extrem_int - 1;
 
-			// BUSCA EM EXTREMIDADE 3'
+			// Search in 3'
 			index_3 = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), taxaMismatchAdapter_extrem_int, indiceStart);
 
 			if(index_3.size() > 0)
@@ -231,7 +218,7 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 				char adapter_invert_c[adapterInvert.length() + 1];
 				strcpy(adapter_invert_c, adapterInvert.c_str());
 
-				// BUSCA REVERSA  DA EXTREMIDADE 3'
+				// Search reverse in 3'
 				index_2 = searchMyers(adapter_invert_c, adapterInvert.length(), seq_invert_c, seq_aux_invert.length(), taxaMismatchAdapter_extrem_int, 0);
 
 				if(index_2.size() > 0)
@@ -285,166 +272,6 @@ bool SingleFASTQ::SearchAdapter(string adapter, string seqi)
 
 }
 
-void SingleFASTQ::insert(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition)
-{
-
-	if(toInsert)
-	{
-
-	// bool adapterInsertionLeft = false; // Inserir adaptadores na esquerda ou direta
-	// bool adapterRandomPosition = true; // se será inserido em posicoes aleatorias (seguindo 'adapterInsertionLeft' LEFT or RIGHT da read)
-	// double adapterErrorRate = 0.7; // taxa de erro máxima nos adaptadores (Ex: 70% do adaptador pode sofrer alteração)
-	int ratio = 30; // Distância máxima de bases do adaptador das extremidades da read(LEFT or RIGHT)
-	
-	int maxErrors = adapterErrorRate * (adapter.length());
-		// cerr << "maxErrors: " << maxErrors << endl;
-
-	int quantErrors = rand() % (maxErrors+1) + 0; //Gerando erros de 0 até maxErrors
-		// cerr << "quant errors1: " << quantErrors << endl;
-
-	// CRIANDO NOVO ADAPTADOR COM ERROS - PT1
-	vector<int> vecErrorPositions;
-
-	for (int i = 0; i < quantErrors; ++i)
-	{
-		int posi = rand() % (adapter.length()) + 0; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR
-		// int posi = rand() % (adapter.length() - 5) + 5; //PEGANDO POSICOES ALEATORIAS DO ADAPTADOR P/ teste com marcadores especiais -> XXXXXADAPTERAQUIZZZZZ
-		if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), posi) != vecErrorPositions.end())
-		{
-			// contém
-			i--;
-		}else{
-			// não contém
-			vecErrorPositions.push_back(posi);
-			// cerr << "Posi: " << posi << endl;			
-		}
-	}
-
-	// PT2
-	if(vecErrorPositions.size() > 0)
-	{
-
-	string adapter_aux = "";
-
-		for (int i = 0; i < adapter.length(); ++i)
-		{
-			// SE POSICAO DO VETOR ESTÁ DENTRO DO VETOR DE POSICOES A SER MODIFICADO
-			if (std::find(vecErrorPositions.begin(), vecErrorPositions.end(), i) != vecErrorPositions.end())
-			{
-				int typeError = rand() % 3 + 1;
-				if(typeError == 1) 
-				{
-					// Erro de Substituição
-					string bases = "ACTG";
-					int randomBase = rand() % 4 + 0;
-					adapter_aux += bases[randomBase];
-				}
-				else if(typeError == 2)
-				{
-					//ERRO de inserção
-					string bases = "ACTG";
-					int randomBase = rand() % 4 + 0;
-					adapter_aux += adapter[i]; 
-					adapter_aux += bases[randomBase];
-				}
-
-			}else{
-
-				adapter_aux += adapter[i];
-				
-			}
-		}
-		
-		adapter = adapter_aux;
-	}
-
-	string temp_qual = "F";
-
-	// GERANDO VALOR STRING DE QUALIDADE
-	for (int i = 0; i < (adapter.length()-1); ++i) temp_qual += "F";
-
-
-	// GERANDO STRINGS DE SEQUENCIA E QUALIDADE
-	string aux_seq = "";
-	string aux_qual = "";
-	if(ratio < seq.length())
-	{
-
-	if(adapterRandomPosition)
-	{
-
-		int positionRand = 0;
- 		positionRand = rand() % ratio + 1; // +1 é obrigatorio
-
-		if(adapterInsertionLeft == true)
-		{
-			for (int i = 0; i < seq.length(); ++i)
-			{
-				if(i == positionRand)
-				{
-					aux_seq += adapter;
-					aux_qual += temp_qual;
-				
-				}else{
-
-					aux_seq += seq[i];
-					aux_qual += qual[i];
-				}
-			}
-
-		}else{
-
-			int posiRight = seq.length() - positionRand;
-
-			for (int i = 0; i < seq.length(); ++i)
-			{
-				if(i == posiRight)
-				{
-					aux_seq += adapter;
-					aux_qual += temp_qual;
-					cerr << adapter.length() << endl;
-				
-				}else{
-
-					aux_seq += seq[i];
-					aux_qual += qual[i];
-
-				}
-			}
-		}
-
-		seq = aux_seq;
-		qual = aux_qual;
-
-
-	}else{
-		
-		if(adapterInsertionLeft)
-		{
-			seq = adapter+seq;
-			qual = temp_qual+qual;
-
-			cerr << adapter.length() << endl;
-		
-		}else{
-
-			seq += adapter;
-			qual += temp_qual;
-		
-			cerr << adapter.length() << endl;
-		
-		}
-	}
-
-	}
-
-	}
-
-	// cerr << "seq: " << seq << endl;
-	// cerr << "qua: " << qual << endl;
-
-
-}
 
 void SingleFASTQ::trim(int qual_score, int minQuality, int minSequenceLength)
 {

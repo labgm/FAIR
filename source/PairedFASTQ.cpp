@@ -15,6 +15,6 @@ void PairedFASTQ::setPair(SingleFASTQ forward, SingleFASTQ reverse)
 }
 
 pair<SingleFASTQ, SingleFASTQ> PairedFASTQ::getPair()
-{
+{ 
 	return pairedSequence;
 }

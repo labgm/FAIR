@@ -11,7 +11,6 @@ Use cases: `awk 'NR % 4 == 0' <FASTQ> | %prog [options]`,
            `%prog [options] <quality scores file>`,
            `samtools view <BAM file> | cut -f 11 | %prog [options]`
 """
-
 from __future__ import with_statement, division, print_function
 
 import fileinput

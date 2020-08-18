@@ -1,12 +1,12 @@
 #include "PairedFASTQFile.cpp"
-
+ 
 class Parameters
 {
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
-	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, onlyInsert, adapterInsertionLeft, adapterRandomPosition, webInterface;
-	int minQuality, threads, phredOffset, mismatchGlobal;
-	double adapterInsertionRate, adapterErrorRate, mismatchRight;		
+	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, webInterface;
+	int minQuality, phredOffset, mismatchGlobal;
+	double mismatchRight;		
 
 public:
 	Parameters(int argc, char *const argv[]);
@@ -18,28 +18,17 @@ public:
 Parameters::Parameters(int argc, char *const argv[])
 {
 	version = "1.0";
-	bool help = false, version = false;
+	bool help = false, version = false, webInterface = false;;
 	onlyIdentify = false;
 	onlyRemove = false;
 	trim = false;
 	trimQuality = false;
-	threads = 1;
 	phredOffset = 0;
 
 	mismatchRight = 0.5;
+	mismatchGlobal = 2;
 
 	ready = true;
-
-	mismatchGlobal = 2; // Mismatch's máximo para encontrar os adaptadores nas leituras
-
-	// OnlyInsert (Test)
-	onlyInsert = false; 
-	adapterErrorRate = 0.1; // Taxa de erro máxima no adaptador(mismatch) (Default: 10%)
-	adapterInsertionLeft = true; // Inserção do adaptador à direita ou esquerda
-	adapterRandomPosition = false; // Posicão aleatória do adaptador (true or false) se for false, ficará na extremidade da read
-	adapterInsertionRate = 0.01; // taxa de inserção dos adaptadores (Ex: 1% das reads serão infectadas)
-
-	webInterface = false;
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -84,11 +73,6 @@ Parameters::Parameters(int argc, char *const argv[])
 			onlyRemove = true;
 			continue;
 		}
-		else if (argument == "--only-insert")
-		{
-			onlyInsert = true;
-			continue;
-		}
 		else if (argument == "--trim")
 		{
 			trim = true;
@@ -98,11 +82,6 @@ Parameters::Parameters(int argc, char *const argv[])
 		{
 			trimQuality = true;
 			minQuality = atoi(argv[i + 1]);
-			continue;
-		}
-		else if (argument == "--threads" || argument == "-t")
-		{
-			threads = atoi(argv[i + 1]);
 			continue;
 		}
 		else if (argument == "-phred-offset")
@@ -133,31 +112,6 @@ Parameters::Parameters(int argc, char *const argv[])
 		else if (argument == "--mismatch" || argument == "-mm")
 		{
 			mismatchGlobal = atoi(argv[i + 1]);
-			continue;
-		}
-		else if (argument == "--insertion-rate" || argument == "-ir")
-		{
-			adapterInsertionRate = atof(argv[i + 1]);
-			continue;
-		}
-		else if (argument == "--error-rate" || argument == "-er")
-		{
-			adapterErrorRate = atof(argv[i + 1]);
-			continue;
-		}
-		else if (argument == "--insertion-left")
-		{
-			adapterInsertionLeft = true;
-			continue;
-		}
-		else if (argument == "--insertion-right")
-		{
-			adapterInsertionLeft = false;
-			continue;
-		}
-		else if (argument == "--random-position")
-		{
-			adapterRandomPosition = true;
 			continue;
 		}
 		else if (argument == "--mismatch-right" || argument == "-mmr")
@@ -231,12 +185,6 @@ bool Parameters::parseParameters()
 	{
 		struct timespec start, finish;
 		double elapsed;
-
-		// Threads
-		if (threads != 1)
-		{
-			;
-		}
 
 		if (single.length() != 0)
 		{
@@ -312,46 +260,6 @@ bool Parameters::parseParameters()
 						 << "Elapsed Time: " << elapsed << endl;
 				
 					s_fastq.closeOutput("onlyRemove");		
-
-				}else if(onlyInsert){
-
-					clock_gettime(CLOCK_MONOTONIC, &start);
-
-					bool toInsert = false;
-					int contAdaptersInseridos = 0;
-
-					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
-					int contador = rateInsertionAdapterInt;
-
-					while (s_fastq.hasNext())
-					{
-						toInsert = false;
-
-						// Insert at first read 
-						if((contador % rateInsertionAdapterInt) == 0)
-						{
-							toInsert = true;
-							++contAdaptersInseridos;
-						}else{
-							// cerr << "0" << endl;
-						}
-
-						++contador;
-
-						s_fastq.insertAdapter(singleAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
-						s_fastq.write();
-					}
-
-					cerr << "Inserted adapters: " << contAdaptersInseridos << endl;
-
-					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-					elapsed = (finish.tv_sec - start.tv_sec);
-					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-					cerr << endl
-						 << "Elapsed Time: " << elapsed << endl;
-				
-					s_fastq.closeOutput("onlyInsert");	
 
 				}
 
@@ -429,47 +337,6 @@ bool Parameters::parseParameters()
 						 << "Elapsed Time: " << elapsed << endl;				
 
 					p_fastq.closeOutput("onlyRemove");
-
-				}else if(onlyInsert){
-
-					cerr << "Only Insert" << endl;
-
-					clock_gettime(CLOCK_MONOTONIC, &start);
-
-					bool toInsert = false;
-					int contAdaptersInseridos = 0;
-
-					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
-					int contador = rateInsertionAdapterInt;
-
-					while (p_fastq.hasNext())
-					{
-						
-						toInsert = false;
-
-						if((contador % rateInsertionAdapterInt) == 0)
-						{
-							toInsert = true;
-							++contAdaptersInseridos;
-						}
-
-						++contador;
-
-						p_fastq.insertAdapters(forwardAdapter, reverseAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
-						p_fastq.write();
-
-					}
-
-					cerr << "Inserted adapters: " << contAdaptersInseridos*2 << endl;
-
-					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-					elapsed = (finish.tv_sec - start.tv_sec);
-					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-					cerr << endl
-						 << "Elapsed Time: " << elapsed << endl;
-				
-					p_fastq.closeOutput("onlyInsert");	
 
 				}
 			}
@@ -560,43 +427,6 @@ bool Parameters::parseParameters()
 
 					s_fastq.closeOutput("onlyRemove");
 					
-					}else if(onlyInsert){
-
-					clock_gettime(CLOCK_MONOTONIC, &start);
-
-					bool toInsert = false;
-					int contAdaptersInseridos = 0;
-
-					int rateInsertionAdapterInt = 1 / adapterInsertionRate;// convertendo taxa de inserção do adaptador
-					int contador = rateInsertionAdapterInt;
-
-					while (s_fastq.hasNext())
-					{
-						toInsert = false;
-
-						if((contador % rateInsertionAdapterInt) == 0)
-						{
-							toInsert = true;
-							++contAdaptersInseridos;
-						}
-
-						++contador;
-						// cerr << "cont: " << contador << endl; 
-						s_fastq.insertAdapter(singleAdapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
-						s_fastq.write();
-					}
-
-					cerr << "Inserted adapters: " << contAdaptersInseridos << endl;
-
-					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-					elapsed = (finish.tv_sec - start.tv_sec);
-					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-					cerr << endl
-						 << "Elapsed Time: " << elapsed << endl;
-				
-					s_fastq.closeOutput("onlyInsert");	
-
 					}
 
 				}
@@ -660,6 +490,6 @@ void Parameters::printVersion()
 	cerr << "This is free software: you are free to change and redistribute it." << endl;
 	cerr << "There is NO WARRANTY, to the extent permitted by law." << endl
 		 << endl;
-	cerr << "Written by João V. Canavarro and Sebastião R. C. Neto" << endl
+	cerr << "Written by João V. Canavarro, Sebastião R. C. Neto" << endl
 		 << endl;
 }

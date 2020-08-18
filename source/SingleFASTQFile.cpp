@@ -33,8 +33,6 @@ public:
 	void writeOnlyIdentifyHeader(string type);
 	void writeOnlyIdentify(string text);
 
-	void insertAdapter(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition);
-
 };
 
 bool SingleFASTQFile::openFASTQInput(string file, int quality)
@@ -284,14 +282,6 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatc
 	// 	i++;
 
 	// }
-}
-
-void SingleFASTQFile::insertAdapter(string adapter, bool toInsert, double adapterErrorRate, bool adapterInsertionLeft, bool adapterRandomPosition)
-{
-
-	this->adapter = adapter;
-	sequence.insert(adapter, toInsert, adapterErrorRate, adapterInsertionLeft, adapterRandomPosition);
-
 }
 
 void SingleFASTQFile::write()
