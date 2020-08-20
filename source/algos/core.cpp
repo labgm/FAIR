@@ -47,7 +47,6 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 	unsigned long long D0, HP, HN;
 
 	long currDist = m;
-	long currDistAnt = 0x0000000000000000L;
 	int minorCurr = k;
 	int posiMinorCurr;
 
@@ -83,21 +82,21 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 						minorCurr = currDist;
 						posiMinorCurr = posicaoAtual;
 					}
+					if(minorCurr == 0)
+					{
+						indexx.insert(indexx.begin(), minorCurr);
+						indexx.insert(indexx.begin(), posiMinorCurr - m);
+						break;
+					}
 				}
 				
 		}else{
-
 			if(quantGrupo > 0)
 			{
 				indexx.insert(indexx.begin(), minorCurr);
 				indexx.insert(indexx.begin(), posiMinorCurr - m);
-
-				inicializador = 0;
-				quantGrupo = 0;
-				minorCurr = k;
-
+				break;
 			}
-
 		}
 
 		if (posicaoAtual == n){
