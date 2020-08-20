@@ -40,7 +40,7 @@
   	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
 
 		document.getElementById("panelQualityId").style.display = 'none';
- 		document.getElementById("panelPhredId").style.display = 'none';
+ 		// document.getElementById("panelPhredId").style.display = 'none';
  		document.getElementById("panelSingleAdaptersId").style.display = 'none';
  		document.getElementById("panelPairedAdaptersId").style.display = 'none';
  	}
@@ -52,7 +52,7 @@
  		var layout = document.getElementById("cbLayoutId").value;
 
  		document.getElementById("panelQualityId").style.display = 'block';
- 		document.getElementById("panelPhredId").style.display = 'block';
+ 		// document.getElementById("panelPhredId").style.display = 'block';
 
  		if(layout === "single")
  		{
@@ -123,7 +123,7 @@
   	document.getElementById("btnTrimIdentifyId").innerHTML = "Identify";
 
 		document.getElementById("panelQualityId").style.display = 'none';
- 		document.getElementById("panelPhredId").style.display = 'none';
+ 		// document.getElementById("panelPhredId").style.display = 'none';
  		document.getElementById("panelSingleAdaptersId").style.display = 'none';
  		document.getElementById("panelPairedAdaptersId").style.display = 'none';
  	}
@@ -135,7 +135,7 @@
  		var layout = document.getElementById("cbLayoutId").value;
 
  		document.getElementById("panelQualityId").style.display = 'block';
- 		document.getElementById("panelPhredId").style.display = 'block';
+ 		// document.getElementById("panelPhredId").style.display = 'block';
 
  		if(layout === "single")
  		{

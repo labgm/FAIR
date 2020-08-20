@@ -105,14 +105,14 @@
 
 						<div class="" style="width:50%; display: inline-block; padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input maxlength="2" style="font-size: 0.8em;" class="input100 text-center" type="text" name="singleMismatchName" placeholder="Mismatch Max. 5'/3' [default: 2 bases]" value="{% if form %}{{ form['singleMismatchName'] }}{% endif %}">
+						<input maxlength="2" style="font-size: 0.8em;" class="input100 text-center" type="text" name="singleMismatchName" placeholder="Mismatch 5'/3' [default: 2]" value="{% if form %}{{ form['singleMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
 						<div class="" style="width:50%; display: inline-block; margin-right: 0vw; float: right;padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="rightMismatchName" placeholder="Mismatch Max. in Region 3' [default: 0.5]" value="{% if form %}{{ form['rightMismatchName'] }}{% endif %}">
+						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="rightMismatchName" placeholder="Mismatch in Region 3' [default: 0.5] 50%" value="{% if form %}{{ form['rightMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
@@ -190,7 +190,7 @@
 							<input style=" margin-top: 15px;" name="minQualityName" type="text" id="minQualityId" placeholder="* Min Quality" style="display: none;" value="{% if form %}{{ form['minQualityName'] }}{% endif %}">
 						</div>
 					</div>
-
+<!-- 
 				<div id="panelPhredId" class="wrap-input100 input100-select">
 					<span class="label-input100">Phred</span>
 					<div>
@@ -213,7 +213,7 @@
 								{% endif %}
 							{% endif %}
 					<span class="focus-input100"></span>
-				</div>
+				</div> -->
 
 				
 			<!-- 	<div class="wrap-input100 validate-input" data-validate = "Message is required">

@@ -72,8 +72,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 
 				if(inicializador == 1)
 				{
-
-					quantGrupo++;
+					++ quantGrupo;
 					minorCurr = currDist;
 					posiMinorCurr = posicaoAtual;
 
@@ -88,7 +87,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 				
 		}else{
 
-			if(quantGrupo >= 1)
+			if(quantGrupo > 0)
 			{
 				indexx.insert(indexx.begin(), minorCurr);
 				indexx.insert(indexx.begin(), posiMinorCurr - m);
@@ -102,7 +101,7 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 		}
 
 		if (posicaoAtual == n){
-			if(quantGrupo >= 1){
+			if(quantGrupo > 0){
 					indexx.insert(indexx.begin(), minorCurr);
 					indexx.insert(indexx.begin(), posiMinorCurr - m);
 			}
@@ -148,14 +147,13 @@ vector<int> searchShiftAnd(char *P, long m, char *T, long n){
 			Rnovo = ((((unsigned long long)Rant) >> 1L) | Ri) & Masc[T[i] + 127];
 			R[0] = Rnovo;
 
-			for (j = 1; j <= k; j++)
-			{
-
-				Rnovo = ((((unsigned long long) R[j]) >> 1L) & Masc[T[i] + 127]) | Rant | (((unsigned long long)(Rant | Rnovo))  >> 1L);
-				Rant = R[j];
-				R[j] = Rnovo | Ri;
-
-			}
+			// For Approximate Matching
+			// for (j = 1; j <= k; j++)
+			// {
+				// 	Rnovo = ((((unsigned long long) R[j]) >> 1L) & Masc[T[i] + 127]) | Rant | (((unsigned long long)(Rant | Rnovo))  >> 1L);
+				// 	Rant = R[j];
+				// 	R[j] = Rnovo | Ri;
+			// }
 
 			posicaoAtual = i+1;
 
