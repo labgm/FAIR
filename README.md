@@ -17,7 +17,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/SRodriguess/fair">
-    <img src="logo.png" alt="Logo" width="250">
+    <img src="app/static/images/icons/logo.png" alt="Logo" width="250">
   </a>
 
   <h3 align="center">Fast Adapter Identification & Removal</h3>
