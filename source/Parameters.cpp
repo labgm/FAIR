@@ -171,6 +171,7 @@ Parameters::Parameters(int argc, char *const argv[])
 		}
 
 		closedir(dir);
+
 	}
 	else if (ENOENT == errno)
 	{
@@ -181,8 +182,12 @@ Parameters::Parameters(int argc, char *const argv[])
 
 bool Parameters::parseParameters()
 {
+
+	system("mkdir output");
+
 	if (ready)
 	{
+
 		struct timespec start, finish;
 		double elapsed;
 
