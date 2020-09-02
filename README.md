@@ -156,7 +156,7 @@ Bellow are listed all FAIR available parameters.
 
 ### Web Interface
 
-Do you use to select parameters more easily.
+Do you use to select parameters.
 
 1. Running Server
 ```sh
