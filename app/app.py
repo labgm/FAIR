@@ -115,13 +115,11 @@ def search():
 		else:
 			out = "Insert Single File!"
 			print("====================================== end log ============================================ ")
-			# os.system("quit")
 			return render_template('home.html', data=out, form=form)
 
 
 	if(form['layoutName'] == "paired"):
 		print("================================== Info Log ================================================ ")
-		# print("Arquivo Paired")
 		if(form['forwardFileName'] != ""):
 			dataForward = "data/"+form['forwardFileName']
 			dataForward = dataForward.replace(" ", "\ ")
@@ -189,7 +187,7 @@ def search():
 			print("====================================== end log ============================================ ")
 			return render_template('home.html', data=out, form=form)
 
-		# retorna '0' caso tenha sucesso
+		# return '0' case sucess
 	print("====================================== end log ============================================ ")
 	details = getDetails(form)
 	return render_template('home.html', data="success", details=details)
