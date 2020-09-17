@@ -60,7 +60,7 @@
 FAIR is an adapter cutting tool that uses the algorithms of Wu & Manber (1992) and Myers (1999) that take advantage of efficient chain matching techniques, providing a tool that runs in O (n+m) time for removal of adapters.
 
 ### Built With
-The project was built mainly with C++, but some funcionalities are based on python scripts
+The project was built mainly with C++, but some funcionalities are based on python scripts. JS, CSS and HTML are used for web interface, for parameter selecion.
 * [C++](http://www.cplusplus.org)
 * [Python](https://www.python.org)
 
@@ -69,11 +69,11 @@ The project was built mainly with C++, but some funcionalities are based on pyth
 ## Getting Started
 
 FAIR works with single fastq files, forward / reverse and interlaced, to identify, trim and remove low quality N / adapters and bases from the strings. In addition to the command interface (CLI), FAIR can be used through a graphical web interface, developed in Flask Python for parameter selection.
-At the end of the execution, a new fastq file is created in the directory chosen by the user with the adapter segments removed and an additional file with the excluded bases. FAIR does not yet work with tar.gz files.
+At the end of the execution, when selecting the option to remove the adapters a new fastq file is created in the directory chosen by the user with the adapter segments removed. FAIR does not yet work with tar.gz files.
 
 ### Prerequisites
 
-This repository can be built with any C++ compiler. During the conception of the project we used gcc with any major problem. Additionally, Python is necessary for some extra funcionalities.
+This repository can be built with any C++ compiler. During the conception of the project we used gcc with any major problem. Additionally, Python is necessary for some extra functionalities.
 * gcc
 ```sh
 sudo apt-get install gcc
