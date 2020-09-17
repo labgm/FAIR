@@ -148,7 +148,7 @@ Bellow are listed all FAIR available parameters.
 |                                in the reverse paired-end reads (required with --only-remove)
 |-mm/--mismatch      <int>        mismatch rate global (5'/3')
 |                                [default: 2] 2 bases
-|-mmr/--mismatch-right <0 to 0.6> mismatch rate in region 3''
+|-mmr/--mismatch-right <0 to 0.6> mismatch rate in region 3'
 |                                [default: 0.5] 50% incompatibilities
 |--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)
 |                                [default: auto-detect]
