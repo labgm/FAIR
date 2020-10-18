@@ -1,7 +1,10 @@
 #include "PairedFASTQFile.cpp"
+#include "bin/testeThread.cpp"
 #include <thread>
 #include <mutex>
 #include <atomic>
+
+using namespace std;
 
 class Parameters
 {
@@ -17,7 +20,7 @@ public:
 	void printHelp();
 	void printVersion();
 	bool executeInThreads();
-	void RemoveAdapters(SingleFASTQFile &s_fastq, bool onlyRemove, string singleAdapter, int mismatchGlobal, string adapterInvert, double mismatchRight);
+	void RemoveAdapters(SingleFASTQFile s_fastq);
 };
 
 Parameters::Parameters(int argc, char *const argv[])
@@ -236,7 +239,7 @@ bool Parameters::executeInThreads()
 		{
 
 			SingleFASTQFile s_fastq;
-			mutex mtx;
+			// mutex mtx;
 
 			cerr << "Single File: " << single << endl;
 			if (s_fastq.openFASTQInput(single, phredOffset) && s_fastq.openFASTQOutput(outputDir))
@@ -251,48 +254,55 @@ bool Parameters::executeInThreads()
 						adapterInvert += singleAdapter[j];
 					}
 
+					ThreadPool pool{5};
 					//  vector<thread> threadss;
 					// while (s_fastq.hasNext())
 					// {
-					// cerr << "AQUI" << endl;
-					// s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-
-					// threadss.push_back(std::thread(s_fastq.removeAdapter, onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight));
-					// s_fastq.write();
+						int a=0;
+						for (size_t i = 0; i < 6; i++)
+						{
+							SingleFASTQ sfq = s_fastq.hasNext();
+							pool.enqueue([&]() {
+								RemoveAdapters(sfq);
+							});
+						}
+						
 					// }
 
-					auto funcy = [&](){
-						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-						s_fastq.write();
-					};
+					// auto funcy = [&](){
+					// 	s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
+					// 	s_fastq.write();
+					// };
 
 					// cerr << type(funcy) << endl;
 
-					pthread_t threads[5];
-					int rc;
+					// pthread_t threads[5];
+					// int rc;
 
-					for (int i = 0; i < 6; i++)
-					{
-						if (s_fastq.hasNext())
-						{
-							rc = pthread_create(&threads[i], NULL, funcy);							
-						}
-					}
+					// for (int i = 0; i < 6; i++)
+					// {
+					// 	if (s_fastq.hasNext())
+					// 	{
+					// 		// rc = pthread_create(&threads[i], NULL, funcy);
 
-					pthread_exit(NULL);
+					// 	}
+					// }
+
+					// pthread_exit(NULL);
 				}
+				s_fastq.closeOutput("onlyRemove");
 			}
 		}
 	}
 
 	return true;
 }
-
-void Parameters::RemoveAdapters(SingleFASTQFile &s_fastq, bool onlyRemove, string singleAdapter, int mismatchGlobal, string adapterInvert, double mismatchRight)
+// , bool onlyRemove, std::string singleAdapter, int mismatchGlobal, std::string adapterInvert, double mismatchRight
+void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 {
 	cerr << "CRIOU" << endl;
-	s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-	s_fastq.write();
+	s_fastq_aux.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
+	// s_fastq.write();
 }
 
 

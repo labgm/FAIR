@@ -15,7 +15,7 @@ class SingleFASTQFile
 public:
 	bool openFASTQInput(string file, int quality);
 	bool openFASTQOutput(string file);
-	bool hasNext();
+	SingleFASTQ hasNext();
 	SingleFASTQ getNext();
 	string identifyAdapter();
 	void identifyQuality();
@@ -70,20 +70,20 @@ bool SingleFASTQFile::openFASTQOutput(string file)
 	return false;
 }
 
-bool SingleFASTQFile::hasNext()
+SingleFASTQ SingleFASTQFile::hasNext()
 {
 	string lines[4];
-
+	
 	for (int i = 0; i < 4; i++)
 		if (!getline(fin, lines[i]))
-			return false;
+			return sequence;
 
 	sequence.setIdentifier(lines[0]);
 	sequence.setSequence(lines[1]);
 	sequence.setPlaceHolder(lines[2]);
 	sequence.setQuality(lines[3]);
 
-	return true;
+	return sequence;
 }
 
 bool SingleFASTQFile::hasNextSearchAdapters(string typeRead)

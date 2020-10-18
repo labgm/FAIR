@@ -24,7 +24,7 @@ public:
 	void trim(int qual_score, int minQuality, int minSequenceLength);
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
-
+	void removeAdapter(bool onlyRemove, string singleAdapter, int mismatchGlobal, string adapterInvert, double mismatchRight);
 };
 
 void SingleFASTQ::setIdentifier(string id)
@@ -77,6 +77,11 @@ void SingleFASTQ::convertQualToInteger(int qual_score)
 int SingleFASTQ::getOccurrences()
 {
 	return occurrences;
+}
+
+void SingleFASTQ::removeAdapter(bool onlyRemove, string singleAdapter, int mismatchGlobal, string adapterInvert, double mismatchRight)
+{
+
 }
 
 void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
