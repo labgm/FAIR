@@ -101,8 +101,9 @@ void PairedFASTQFile::trim(int minQuality, int minSequenceLength)
 
 void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax, string adapterInvert_f, string adapterInvert_r, double mismatchRight)
 {
-	forward.removeAdapter(onlyRemove, adapter1, mismatchMax, adapterInvert_f, mismatchRight);
-	reverse.removeAdapter(onlyRemove, adapter2, mismatchMax, adapterInvert_r, mismatchRight);
+	SingleFASTQ sfq;
+	forward.removeAdapter(sfq, onlyRemove, adapter1, mismatchMax, adapterInvert_f, mismatchRight);
+	reverse.removeAdapter(sfq, onlyRemove, adapter2, mismatchMax, adapterInvert_r, mismatchRight);
 }
 
 void PairedFASTQFile::write()

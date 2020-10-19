@@ -12,7 +12,7 @@ class ThreadPool
 {
 public:
     using Task = std::function<void()>;
-    
+
     explicit ThreadPool(std::size_t numThreads)
     {
         start(numThreads);
@@ -25,7 +25,6 @@ public:
 
     void teste(bool onlyRemove)
     {
-
     }
 
     template <class T>
@@ -42,7 +41,7 @@ public:
 
         mEventVar.notify_one();
         return wrapper->get_future();
-        }
+    }
 
 private:
     std::vector<std::thread> mThreads;

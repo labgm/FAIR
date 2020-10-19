@@ -1,5 +1,5 @@
+#include "ThreadPool.cpp"
 #include "PairedFASTQFile.cpp"
-#include "bin/testeThread.cpp"
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -14,13 +14,26 @@ private:
 	int minQuality, phredOffset, mismatchGlobal;
 	double mismatchRight;
 
+	struct Obj{
+		// SingleFASTQFile sfqf;
+		SingleFASTQ sequence;
+	};
+	typedef struct Obj obj;
+
+	void RemoveAdapters(Obj obj1)
+	{
+		cerr << "CRIOU" << endl;
+		// obj1.sfqf.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
+		// obj1.sfqf.write();
+	}
+
 public:
 	Parameters(int argc, char *const argv[]);
 	bool parseParameters();
 	void printHelp();
 	void printVersion();
 	bool executeInThreads();
-	void RemoveAdapters(SingleFASTQFile s_fastq);
+	// void RemoveAdapters(Obj obj);
 };
 
 Parameters::Parameters(int argc, char *const argv[])
@@ -193,53 +206,11 @@ bool Parameters::executeInThreads()
 {
 	system("mkdir output");
 
-	// auto func = [&]() {
-	// 	if (onlyIdentify)
-	// 	{
-	// 		cerr << "Adapters Found (Single File): " << endl;
-
-	// 		while (s_fastq.hasNextSearchAdapters("forward"))
-	// 		{
-	// 		}
-
-	// 		s_fastq.writeOnlyIdentifyHeader("single");
-
-	// 		for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
-	// 		{
-	// 			cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
-	// 			string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
-	// 			s_fastq.writeOnlyIdentify(textOutputIdentify);
-	// 		}
-
-	// 		s_fastq.closeOutput("onlyIdentify");
-	// 	}
-	// 	else if (onlyRemove)
-	// 	{
-	// 		// mtx.lock();
-	// 		//INVERTER PADRAO
-	// 		string adapterInvert = "";
-	// 		for (int j = (singleAdapter.length() - 1); j >= 0; --j)
-	// 		{
-	// 			adapterInvert += singleAdapter[j];
-	// 		}
-
-	// 		while (s_fastq.hasNext(mtx))
-	// 		{
-	// 			cerr << "AQUI" << endl;
-	// 			s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight, mtx);
-	// 			s_fastq.write(mtx);
-	// 		}
-	// 		s_fastq.closeOutput("onlyRemove");
-	// 	}
-	// };
-
-	if (ready)
+		if (ready)
 	{
 		if (single.length() != 0)
 		{
-
 			SingleFASTQFile s_fastq;
-			// mutex mtx;
 
 			cerr << "Single File: " << single << endl;
 			if (s_fastq.openFASTQInput(single, phredOffset) && s_fastq.openFASTQOutput(outputDir))
@@ -254,20 +225,26 @@ bool Parameters::executeInThreads()
 						adapterInvert += singleAdapter[j];
 					}
 
-					ThreadPool pool{5};
-					//  vector<thread> threadss;
-					// while (s_fastq.hasNext())
-					// {
-						int a=0;
-						for (size_t i = 0; i < 6; i++)
+					// ThreadPool pool{5};
+					vector<Obj> objs_sfqf(5);
+					
+					bool onlyRemov = onlyRemove;
+					string singleAdapte =singleAdapter;
+					int mismatchGloba = mismatchGlobal;
+					string adapterInver = adapterInvert;
+					double mismatchRigh = mismatchRight;
+
+					// SingleFASTQ sfq = s_fastq.getNext();
+
+					for (int i = 0; i < 5; i++)
+					{
+						if (s_fastq.hasNext())
 						{
-							SingleFASTQ sfq = s_fastq.hasNext();
-							pool.enqueue([&]() {
-								RemoveAdapters(sfq);
-							});
+								cerr << "X: "<< i << endl;
+								s_fastq.removeAdapter(onlyRemov, singleAdapte, mismatchGloba, adapterInver, mismatchRigh);
+								s_fastq.write();
 						}
-						
-					// }
+					}
 
 					// auto funcy = [&](){
 					// 	s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
@@ -289,8 +266,13 @@ bool Parameters::executeInThreads()
 					// }
 
 					// pthread_exit(NULL);
+					for (size_t i = 0; i < 5; i++)
+					{
+						// s_fastq[i].closeOutput("onlyRemove");		
+					}
+					
 				}
-				s_fastq.closeOutput("onlyRemove");
+				s_fastq.closeOutput("onlyRemove");		
 			}
 		}
 	}
@@ -298,13 +280,6 @@ bool Parameters::executeInThreads()
 	return true;
 }
 // , bool onlyRemove, std::string singleAdapter, int mismatchGlobal, std::string adapterInvert, double mismatchRight
-void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
-{
-	cerr << "CRIOU" << endl;
-	s_fastq_aux.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-	// s_fastq.write();
-}
-
 
 // bool Parameters::parseParameters()
 // {
@@ -350,7 +325,7 @@ void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 // 					cerr << endl
 // 						 << "Elapsed Time: " << elapsed << endl;
 
-// 						 s_fastq.closeOutput("onlyIdentify");	
+// 						 s_fastq.closeOutput("onlyIdentify");
 
 // 				}
 // 				else if(onlyRemove)
@@ -389,8 +364,8 @@ void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 // 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 // 					cerr << endl
 // 						 << "Elapsed Time: " << elapsed << endl;
-				
-// 					s_fastq.closeOutput("onlyRemove");		
+
+// 					s_fastq.closeOutput("onlyRemove");
 
 // 				}
 
@@ -401,7 +376,7 @@ void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 // 		else if (forward.length() != 0 && reverse.length() != 0)
 // 		{
 // 			cerr << "Paired Files: " << forward << " | " << reverse << endl;
-// 			PairedFASTQFile p_fastq; 
+// 			PairedFASTQFile p_fastq;
 // 			if (p_fastq.openFASTQInputFile(forward, reverse, phredOffset) && p_fastq.openFASTQOutputFile(outputDir, outputDir2))
 // 			{
 // 				if (onlyIdentify)
@@ -424,7 +399,7 @@ void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 // 					p_fastq.closeOutput("onlyIdentify");
 
 // 				}else if(onlyRemove){
-					
+
 // 					clock_gettime(CLOCK_MONOTONIC, &start);
 
 // 					//INVERTER PADRAO FORWARD
@@ -465,7 +440,7 @@ void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 // 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
 // 					cerr << endl
-// 						 << "Elapsed Time: " << elapsed << endl;				
+// 						 << "Elapsed Time: " << elapsed << endl;
 
 // 					p_fastq.closeOutput("onlyRemove");
 
@@ -555,14 +530,13 @@ void Parameters::RemoveAdapters(SingleFASTQFile s_fastq_aux)
 // 						cerr << endl
 // 							 << "Elapsed Time: " << elapsed << endl;
 
-
 // 					s_fastq.closeOutput("onlyRemove");
-					
+
 // 					}
 
 // 				}
 
-// 			return true;	
+// 			return true;
 // 		}
 // 	}
 // 	return false;

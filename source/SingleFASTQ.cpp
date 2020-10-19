@@ -78,12 +78,6 @@ int SingleFASTQ::getOccurrences()
 {
 	return occurrences;
 }
-
-void SingleFASTQ::removeAdapter(bool onlyRemove, string singleAdapter, int mismatchGlobal, string adapterInvert, double mismatchRight)
-{
-
-}
-
 void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
 {
 

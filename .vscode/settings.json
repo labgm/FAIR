@@ -1,5 +1,15 @@
 {
     "files.associations": {
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "future": "cpp",
+        "optional": "cpp",
+        "limits": "cpp",
+        "new": "cpp",
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp"
     }
 }
