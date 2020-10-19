@@ -14,7 +14,8 @@ private:
 	int minQuality, phredOffset, mismatchGlobal;
 	double mismatchRight;
 
-	struct Obj{
+	struct Obj
+	{
 		// SingleFASTQFile sfqf;
 		SingleFASTQ sequence;
 	};
@@ -206,7 +207,7 @@ bool Parameters::executeInThreads()
 {
 	system("mkdir output");
 
-		if (ready)
+	if (ready)
 	{
 		if (single.length() != 0)
 		{
@@ -225,24 +226,26 @@ bool Parameters::executeInThreads()
 						adapterInvert += singleAdapter[j];
 					}
 
-					// ThreadPool pool{5};
 					vector<Obj> objs_sfqf(5);
-					
+
 					bool onlyRemov = onlyRemove;
-					string singleAdapte =singleAdapter;
+					string singleAdapte = singleAdapter;
 					int mismatchGloba = mismatchGlobal;
 					string adapterInver = adapterInvert;
 					double mismatchRigh = mismatchRight;
 
 					// SingleFASTQ sfq = s_fastq.getNext();
 
+					ThreadPool pool{5};
 					for (int i = 0; i < 5; i++)
 					{
 						if (s_fastq.hasNext())
 						{
-								cerr << "X: "<< i << endl;
-								s_fastq.removeAdapter(onlyRemov, singleAdapte, mismatchGloba, adapterInver, mismatchRigh);
-								s_fastq.write();
+							pool.enqueue([i]() {
+								cerr << "X: " << i << endl;
+								// s_fastq.removeAdapter(onlyRemov, singleAdapte, mismatchGloba, adapterInver, mismatchRigh);
+								// s_fastq.write();
+							});
 						}
 					}
 
@@ -268,11 +271,10 @@ bool Parameters::executeInThreads()
 					// pthread_exit(NULL);
 					for (size_t i = 0; i < 5; i++)
 					{
-						// s_fastq[i].closeOutput("onlyRemove");		
+						// s_fastq[i].closeOutput("onlyRemove");
 					}
-					
 				}
-				s_fastq.closeOutput("onlyRemove");		
+				s_fastq.closeOutput("onlyRemove");
 			}
 		}
 	}
