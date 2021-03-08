@@ -11,7 +11,7 @@
 	<script type="text/javascript">
 		$("#myModalSuccess").modal("show");
 		document.getElementById("commandPanelId").innerHTML = ""
-		document.getElementById("commandPanelId").innerHTML = "<span style='color:#e25b5b; font-weight: bold;'>+ Details of Query +</span><br> {% for detail in details %} <p> <i class='fa fa-circle-thin'> {{ detail }} </i></p> {% endfor %}"
+		document.getElementById("commandPanelId").innerHTML = "<span style='color:#e25b5b; font-weight: bold;'>+ Details of Query +</span><br> {% for detail in details %} <p style='margin-bottom: 0;'> <i class='fa fa-circle-thin'> {{ detail }} </i></p> {% endfor %}"
 
 	</script> 	
     {% endif %}
@@ -28,7 +28,7 @@
 
 
 	<div class="container-contact100">
-		<div class="wrap-contact100">
+		<div class="wrap-contact100" style="height: 550px; overflow: auto;">
 			<form method="POST" action="/search">
 			<!-- <form class="formId"> -->
 				<span class="contact100-form-title" style="color: #4c8464; padding-bottom: 15px;">
@@ -43,7 +43,7 @@
 					<span onclick="openModal('layout')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span>
 					<div>
 						<select id="cbLayoutId" class="selection-2" name="layoutName">
-							<option value="single" selected="true">Single-read</option>
+							<option value="single" selected="true">Single-end</option>
 							<option value="paired">Paired-end</option>
 						</select>
 					</div>
@@ -94,25 +94,27 @@
 						<div class="wrap-input100 validate-input" data-validate="">
 						<!-- <span class="label-input100">Single Adapter</span> -->
 						
-						<input maxlength="64" id="singleAdapterId" style="font-size: 0.85em; margin-top: 15px;" class="input100" type="text" name="singleAdapterName" placeholder="* Single Adapter" value="{% if form %}{{ form['singleAdapterName'] }}{% endif %}">
+						<input title="Single Adapter" maxlength="64" id="singleAdapterId" style="font-size: 0.85em; margin-top: 15px;" class="input100" type="text" name="singleAdapterName" placeholder="* Single Adapter" value="{% if form %}{{ form['singleAdapterName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
 						<div class="col-md-12">
 
-						<div class="col-md-12"><span class="label-input100">Mismatch Rate</span></div>
+						<div class="col-md-12"><span class="label-input100">Mismatch</span>
+							<span onclick="openModal('mismatch')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span>
+						</div>
 
 						<div class="" style="width:50%; display: inline-block; padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input maxlength="2" style="font-size: 0.8em;" class="input100 text-center" type="text" name="singleMismatchName" placeholder="Mismatch 5'/3' [default: 2]" value="{% if form %}{{ form['singleMismatchName'] }}{% endif %}">
+						<input title="Max Mismatch 5'-> 3'" maxlength="64" style="font-size: 0.8em;" class="input100 text-center" type="text" id="singleMismatchNameId" name="singleMismatchName" placeholder="Mismatch 5'/3' [default: 2]" value="{% if form %}{{ form['singleMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
 						<div class="" style="width:50%; display: inline-block; margin-right: 0vw; float: right;padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="rightMismatchName" placeholder="Mismatch in Region 3' [default: 0.5] 50%" value="{% if form %}{{ form['rightMismatchName'] }}{% endif %}">
+						<input title="Max Mismatch in Region 3'" style="font-size: 0.8em;" class="input100 text-center" type="text" id="rightMismatchNameId" name="rightMismatchName" placeholder="Mismatch in Region 3' [default: 0.5] 50%" value="{% if form %}{{ form['rightMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
@@ -128,7 +130,7 @@
 						<div class="col-md-12">
 						<div class="wrap-input100 validate-input" data-validate="">
 						<!-- <span class="label-input100">Forward Adapter</span> -->
-						<input maxlength="64" style="font-size: 0.85em; margin-top: 15px;" class="input100" type="text" name="forwardAdapterName" placeholder="* Forward Adapter" value="{% if form %}{{ form['forwardAdapterName'] }}{% endif %}">
+						<input title="Forward Adapter" maxlength="64" style="font-size: 0.8em; margin-top: 15px;" class="input100" type="text" id="forwardAdapterNameId" name="forwardAdapterName" placeholder="* Forward Adapter" value="{% if form %}{{ form['forwardAdapterName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
@@ -136,25 +138,27 @@
 						<div class="col-md-12">
 						<div class="wrap-input100 validate-input" data-validate="">
 						<!-- <span class="label-input100">Reverse Adapter</span> -->
-						<input maxlength="64" style="font-size: 0.85em;" class="input100" type="text" name="reverseAdapterName" placeholder="* Reverse Adapter" value="{% if form %}{{ form['reverseAdapterName'] }}{% endif %}">
+						<input title="Reverse Adapter" maxlength="64" style="font-size: 0.8em;" class="input100" type="text" id="reverseAdapterNameId" name="reverseAdapterName" placeholder="* Reverse Adapter" value="{% if form %}{{ form['reverseAdapterName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
 						<div class="col-md-12">
 
-						<div class="col-md-12"><span class="label-input100">Mismatch</span></div>
+						<div class="col-md-12"><span class="label-input100">Mismatch</span>
+							<span onclick="openModal('mismatch')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span>
+						</div>
 
 						<div class="" style="width:50%; display: inline-block; padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input maxlength="2" style="font-size: 0.8em;" class="input100 text-center" type="text" name="pairedMismatchName" placeholder="Mismatch Max. 5'/3' [default: 2 bases]" value="{% if form %}{{ form['pairedMismatchName'] }}{% endif %}">
+						<input title="Max Mismatch 5'-> 3'" maxlength="64" style="font-size: 0.8em;" class="input100 text-center" type="text" id="pairedMismatchNameId" name="pairedMismatchName" placeholder="Mismatch Max. 5'/3' [default: 2 bases]" value="{% if form %}{{ form['pairedMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
 
 						<div class="" style="width:50%; display: inline-block; margin-right: 0vw; float: right;padding: 10px; ">
 						<div class="wrap-input100 validate-input" data-validate="">
-						<input style="font-size: 0.8em;" class="input100 text-center" type="text" name="rightPairedMismatchName" placeholder="Mismatch Max. in Region 3' [default: 0.5]" value="{% if form %}{{ form['rightPairedMismatchName'] }}{% endif %}">
+						<input title="Max Mismatch in Region 3'" style="font-size: 0.8em;" class="input100 text-center" type="text" id="rightPairedMismatchNameId" name="rightPairedMismatchName" placeholder="Mismatch Max. in Region 3' [default: 0.5]" value="{% if form %}{{ form['rightPairedMismatchName'] }}{% endif %}">
 						<span class="focus-input100"></span>
 						</div>
 						</div>
@@ -166,13 +170,15 @@
 					<span class="focus-input100"></span>
 					</div>
 
-					<div id="panelQualityId" class="wrap-input100 input100-select">
-						<span class="label-input100">Quality</span>
+					<div id="panelQualityTrimId">
+					<input type="checkbox" id="activeQualityTrimId" name="activeQualityTrim"> 
+					<span class="label-input100">Quality Trim</span>
 					<span onclick="openModal('quality')" style="height: 20px; padding-top: 0px;" class="btn btn-warning btn-sm"><i class="fa fa-info"></i></span>
-							<select class="selection-2" id="cbTrimQualityId" name="trimQualityName">
+					<div id="panelQualityId" class="wrap-input100 input100-select" style="display: none;">
+						<!--	<select class="selection-2" id="cbTrimQualityId" name="trimQualityName">
 								<option value="off" selected="true">No Trim</option>
 								<option value="n">Trim (N)</option>
-								<option value="quality">Trim per Quality and (N)</option>
+								<option value="quality">Trim per Quality</option>
 							</select>
 							{% if form %}
 								{% if form.trimQualityName=='n' %}
@@ -185,11 +191,57 @@
 									document.getElementById("cbTrimQualityId").value = "quality";
 								</script>
 								{% endif %}
-							{% endif %}
-						<div class="col-md-12">
-							<input style=" margin-top: 15px;" name="minQualityName" type="text" id="minQualityId" placeholder="* Min Quality" style="display: none;" value="{% if form %}{{ form['minQualityName'] }}{% endif %}">
+							{% endif %} -->
+						<div class="row">
+
+							<div class="col-md-6">
+								<div class="" style="display: inline-block; margin-right: 0vw; float: right;">
+									<div class="wrap-input100 validate-input" data-validate="">
+										<input title="Minimum Quality" class="input100 text-left" style="font-size:0.8em; margin-top: 15px;" name="minQualityName" type="text" id="minQualityId" placeholder="Min Quality [default: 10]" style="display: none;" value="{% if form %}{{ form['minQualityName'] }}{% endif %}">
+									<span class="focus-input100"></span>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="" style="display: inline-block; margin-right: 0vw; float: right;">
+									<div class="wrap-input100 validate-input" data-validate="">
+										<input title="Quality Window Size" class="input100 text-left" style="font-size:0.8em; margin-top: 15px;" name="qualityWindowSizeName" type="text" id="qualityWindowSizeId" placeholder="Quality Window Size [default: 4]" style="display: none;" value="{% if form %}{{ form['qualityWindowSizeName'] }}{% endif %}">
+									<span class="focus-input100"></span>
+									</div>
+								</div>								
+							</div>
+
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<div class="" style="display: inline-block; margin-right: 0vw; float: right;">
+									<div class="wrap-input100 validate-input" data-validate="">
+										<input title="Max-N" class="input100 text-left" style="font-size:0.8em; margin-top: 15px;" name="maxNName" type="text" id="maxNId" placeholder="Maximum N [default: 10]" style="display: none;" value="{% if form %}{{ form['maxNName'] }}{% endif %}">
+									<span class="focus-input100"></span>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="" style="display: inline-block; margin-right: 0vw; float: right;">
+									<div class="wrap-input100 validate-input" data-validate="">
+										<input title="Min Read Length" class="input100 text-left" style="font-size:0.8em; margin-top: 15px;" name="minReadLengthName" type="text" id="minReadLengthId" placeholder="Minimum Read Length [default: 0]" style="display: none;" value="{% if form %}{{ form['minReadLengthName'] }}{% endif %}">
+									<span class="focus-input100"></span>
+									</div>
+								</div>
+								
+							</div>
+
+						</div>
+
+						<div class="col-md-12" style="margin-top: 15px;">
+							<input type = "checkbox" id="trimNFlankId" name="trimNFlankName" value="{% if form %}{{ form['trimNFlankName'] }}{% endif %}"> 
+							<label for="trimNFlank"> Trim flanking N bases</label>
 						</div>
 					</div>
+				</div>
 <!-- 
 				<div id="panelPhredId" class="wrap-input100 input100-select">
 					<span class="label-input100">Phred</span>
@@ -215,14 +267,7 @@
 					<span class="focus-input100"></span>
 				</div> -->
 
-				
-			<!-- 	<div class="wrap-input100 validate-input" data-validate = "Message is required">
-					<span class="label-input100">Message</span>
-					<textarea class="input100" name="message" placeholder="Your message here..."></textarea>
-					<span class="focus-input100"></span>
-				</div> -->
-
-				<div class="container-contact100-form-btn" style="margin-top: 25px;">
+				<div class="container-contact100-form-btn" style="margin-top: 25px; margin-bottom: 35px;">
 					<div class="wrap-contact100-form-btn" style="width: 250px;">
 						<div class="contact100-form-bgbtn"></div>
 						<button class="contact100-form-btn" onclick="">

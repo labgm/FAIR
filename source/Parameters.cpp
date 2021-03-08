@@ -1,57 +1,49 @@
-#include "ThreadPool.cpp"
 #include "PairedFASTQFile.cpp"
-#include <thread>
-#include <mutex>
-#include <atomic>
-
-using namespace std;
 
 class Parameters
 {
 private:
-	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2, adapterInvert;
-	bool onlyIdentify, onlyRemove, trim, trimQuality, ready, webInterface;
-	int minQuality, phredOffset, mismatchGlobal;
+	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
+	bool onlyIdentify, onlyRemove, trimQuality, ready, webInterface, trimNFlank;
+	int minQuality, phredOffset, mismatchGlobal, maxN;
 	double mismatchRight;
 
-	struct Obj
-	{
-		// SingleFASTQFile sfqf;
-		SingleFASTQ sequence;
-	};
-	typedef struct Obj obj;
-
-	void RemoveAdapters(Obj obj1)
-	{
-		cerr << "CRIOU" << endl;
-		// obj1.sfqf.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-		// obj1.sfqf.write();
-	}
+	int sizeQualityWindow, minLengthSeq;
+	string arguments_panel;
 
 public:
 	Parameters(int argc, char *const argv[]);
 	bool parseParameters();
 	void printHelp();
 	void printVersion();
-	bool executeInThreads();
-	// void RemoveAdapters(Obj obj);
+	void printSummary();
 };
 
 Parameters::Parameters(int argc, char *const argv[])
 {
 	version = "1.0";
 	bool help = false, version = false, webInterface = false;
-
+	;
 	onlyIdentify = false;
 	onlyRemove = false;
-	trim = false;
-	trimQuality = false;
 	phredOffset = 0;
 
 	mismatchRight = 0.5;
 	mismatchGlobal = 2;
 
 	ready = true;
+
+	// Remoção de Ns
+	trimNFlank = false;
+	maxN = -1; // Inicialização 'false' da variável
+
+	// Remoção por qualidade
+	trimQuality = false;
+	minQuality = 5; 	   // Valor padrão
+	sizeQualityWindow = 5; // Valor padrão
+
+	//
+	minLengthSeq = 5;      // Valor padrão
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -96,12 +88,7 @@ Parameters::Parameters(int argc, char *const argv[])
 			onlyRemove = true;
 			continue;
 		}
-		else if (argument == "--trim")
-		{
-			trim = true;
-			continue;
-		}
-		else if (argument == "--trim-quality")
+		else if (argument == "--min-quality")
 		{
 			trimQuality = true;
 			minQuality = atoi(argv[i + 1]);
@@ -142,6 +129,28 @@ Parameters::Parameters(int argc, char *const argv[])
 			mismatchRight = atof(argv[i + 1]);
 			if (mismatchRight > 0.6)
 				mismatchRight = 0.6;
+			
+			continue;
+		}
+		else if (argument == "--quality-window-size" || argument == "-qws")
+		{
+			sizeQualityWindow = atoi(argv[i + 1]);
+			trimQuality = true;
+			continue;
+		}
+		else if (argument == "--min-read-length" || argument == "-minlen")
+		{
+			minLengthSeq = atoi(argv[i + 1]);
+			continue;
+		}
+		else if (argument == "--max-n")
+		{
+			maxN = atoi(argv[i + 1]);
+			continue;
+		}
+		else if (argument == "--trim-n-flank")
+		{
+			trimNFlank = true;
 			continue;
 		}
 		else if (argument == "--web-interface")
@@ -183,6 +192,10 @@ Parameters::Parameters(int argc, char *const argv[])
 		outputDir.erase(outputDir.length() - 1);
 		outputDir2 = outputDir;
 
+		// outputDir = outputDir + "/fair_output";
+		// outputDir.erase(outputDir.length() - 1);
+		// outputDir2 = outputDir;
+
 		if (onlyRemove)
 		{
 			outputDir.append("_1.fastq");
@@ -201,348 +214,449 @@ Parameters::Parameters(int argc, char *const argv[])
 		cerr << "Directory Does Not Exist." << endl;
 		ready = false;
 	}
+
+
 }
 
-bool Parameters::executeInThreads()
+bool Parameters::parseParameters()
 {
-	system("mkdir output");
+
+	// system("mkdir output");
 
 	if (ready)
 	{
+
+
+		printSummary();
+
+		struct timespec start, finish;
+		double elapsed;
+
 		if (single.length() != 0)
 		{
-			SingleFASTQFile s_fastq;
-
 			cerr << "Single File: " << single << endl;
+			SingleFASTQFile s_fastq;
 			if (s_fastq.openFASTQInput(single, phredOffset) && s_fastq.openFASTQOutput(outputDir))
 			{
-				if (onlyRemove)
+				if (onlyIdentify)
 				{
-					// mtx.lock();
+					cerr << "Adapters Found (Single File): " << endl;
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					while (s_fastq.hasNextSearchAdapters("forward"))
+					{
+					}
+
+					s_fastq.writeOnlyIdentifyHeader("single");
+
+					for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
+					{
+						cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
+						string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
+						s_fastq.writeOnlyIdentify(textOutputIdentify);
+					}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+
+					s_fastq.closeOutput("onlyIdentify");
+				}
+				else if (onlyRemove)
+				{
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
 					//INVERTER PADRAO
-					adapterInvert = "";
+					string adapterInvert = "";
 					for (int j = (singleAdapter.length() - 1); j >= 0; --j)
 					{
 						adapterInvert += singleAdapter[j];
 					}
 
-					vector<Obj> objs_sfqf(5);
+					int n_reads = 0;
+					unsigned long long n_nucleotides_before = 0;
+					unsigned long long n_nucleotides_after = 0;
 
-					bool onlyRemov = onlyRemove;
-					string singleAdapte = singleAdapter;
-					int mismatchGloba = mismatchGlobal;
-					string adapterInver = adapterInvert;
-					double mismatchRigh = mismatchRight;
+					// Affecteds per quality cutting
+					// Account reads that have been removed
+					int count_affected_reads = 0;
+					// Account bases that have been removed
+					int count_n_bases_affecteds = 0;
 
-					// SingleFASTQ sfq = s_fastq.getNext();
+					//
+					int menor_quantitativo_bases = 0;
+					int maior_quantitativo_bases = 0;
+					int inic_aux = 1;
 
-					ThreadPool pool{5};
-					for (int i = 0; i < 5; i++)
+					while (s_fastq.hasNext())
 					{
-						if (s_fastq.hasNext())
+						if (inic_aux == 1)
 						{
-							pool.enqueue([i]() {
-								cerr << "X: " << i << endl;
-								// s_fastq.removeAdapter(onlyRemov, singleAdapte, mismatchGloba, adapterInver, mismatchRigh);
-								// s_fastq.write();
-							});
+							menor_quantitativo_bases = s_fastq.getSequenceN();
+							maior_quantitativo_bases = s_fastq.getSequenceN();
+							inic_aux++;
 						}
+
+						bool read_affected = false;
+						// Conta quantidade de reads e bases
+						++n_reads;
+						n_nucleotides_before += s_fastq.getSequenceN();
+
+						// Registrar quantidade de bases de menor e maior leitura
+						if (s_fastq.getSequenceN() < menor_quantitativo_bases)
+							menor_quantitativo_bases = s_fastq.getSequenceN();
+						if (s_fastq.getSequenceN() > maior_quantitativo_bases)
+							maior_quantitativo_bases = s_fastq.getSequenceN();
+
+						// +++ Removing Adapters +++
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
+
+						// +++ Quality,Ns +++ Verifica parâmetros relacionados à qualidade (remoção de Ns e remoção por Qualidade)
+						if (trimQuality || trimNFlank || maxN != -1)
+						{
+							s_fastq.trim(minQuality, sizeQualityWindow, trimNFlank, maxN);
+
+							read_affected = s_fastq.getReadAffected();
+							// If it was affected, count.
+							if (read_affected)
+								++count_affected_reads;
+							// Count quantitie bases trimming
+							count_n_bases_affecteds += s_fastq.returnNAffectedBases();
+						}
+
+						// Verificando se a read possui tamanho mínimo 'minLengthSeq', para ser considerada 
+						// se sim, escreve read
+						if((s_fastq.getSequenceN()) >= minLengthSeq){
+							n_nucleotides_after += s_fastq.getSequenceN();
+							s_fastq.write();
+						}
+
 					}
 
-					// auto funcy = [&](){
-					// 	s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-					// 	s_fastq.write();
-					// };
+					clock_gettime(CLOCK_MONOTONIC, &finish);
 
-					// cerr << type(funcy) << endl;
+					cerr << "+ Adapter Trimming +" << endl;
+					s_fastq.closeOutput("onlyRemove");
+					cerr << endl;
 
-					// pthread_t threads[5];
-					// int rc;
-
-					// for (int i = 0; i < 6; i++)
-					// {
-					// 	if (s_fastq.hasNext())
-					// 	{
-					// 		// rc = pthread_create(&threads[i], NULL, funcy);
-
-					// 	}
-					// }
-
-					// pthread_exit(NULL);
-					for (size_t i = 0; i < 5; i++)
+					// Se tiveram leituras afetadas pelo filtro de qualidade, exibir dados
+					if (count_affected_reads > 0)
 					{
-						// s_fastq[i].closeOutput("onlyRemove");
+						cerr << "+ Quality Trimming +" << endl;
+						cerr << "No. reads affecteds: " << count_affected_reads << endl;
+						cerr << "No. bases trimming: " << count_n_bases_affecteds << endl;
 					}
+
+					cerr << endl
+						 << " ---- " << endl;
+
+					cerr << "No. total reads: " << n_reads << endl;
+					cerr << "No. total bases: " << n_nucleotides_before << endl;
+					cerr << "No. bases remaining: " << n_nucleotides_after << endl;
+					cerr << "-- No. bases trimming: " << (n_nucleotides_before-n_nucleotides_after) << endl;
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
 				}
-				s_fastq.closeOutput("onlyRemove");
 			}
+
+			return true;
+		}
+		else if (forward.length() != 0 && reverse.length() != 0)
+		{
+			cerr << "Paired Files: " << forward << " | " << reverse << endl;
+			PairedFASTQFile p_fastq;
+			if (p_fastq.openFASTQInputFile(forward, reverse, phredOffset) && p_fastq.openFASTQOutputFile(outputDir, outputDir2))
+			{
+				if (onlyIdentify)
+				{
+					cerr << "Adapters Found (Paired File): " << endl;
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					while (p_fastq.hasNextSearchAdapters())
+					{
+					}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+
+					p_fastq.closeOutput("onlyIdentify");
+				}
+				else if (onlyRemove)
+				{
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					//INVERTER PADRAO FORWARD
+					string adapterInvert_f = "";
+					for (int j = (forwardAdapter.length() - 1); j >= 0; --j)
+					{
+						adapterInvert_f += forwardAdapter[j];
+					}
+					//INVERTER PADRAO REVERSE
+					string adapterInvert_r = "";
+					for (int j = (reverseAdapter.length() - 1); j >= 0; --j)
+					{
+						adapterInvert_r += reverseAdapter[j];
+					}
+
+					int n_reads = 0;
+					unsigned long long n_nucleotides_before = 0;
+					unsigned long long n_nucleotides_after = 0;
+
+					// Affecteds per quality cutting
+					// Account reads that have been removed
+					int count_affected_reads_forward = 0;
+					int count_affected_reads_reverse = 0;
+					// Account bases that have been removed
+					unsigned long long count_n_bases_affecteds_forward = 0;
+					unsigned long long count_n_bases_affecteds_reverse = 0;
+
+					while (p_fastq.hasNext())
+					{
+						++n_reads;
+						n_nucleotides_before += p_fastq.getSequenceN();
+						
+						// +++ Removing Adapters +++
+						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchGlobal, adapterInvert_f, adapterInvert_r, mismatchRight);
+
+						// +++ Quality,Ns +++ Verifica parâmetros relacionados à qualidade (remoção de Ns e remoção por Qualidade)
+						if (trimQuality || trimNFlank || maxN != -1)
+						{
+							p_fastq.trim(minQuality, sizeQualityWindow, trimNFlank, maxN);
+
+							int read_affected = p_fastq.getReadAffected();
+
+							// Verifica quais reads foram afetadas pelo corte de qualidade e registra
+							// a quantidade de bases cortadas
+							if (read_affected == 1)
+							{
+								++count_affected_reads_forward;
+								count_n_bases_affecteds_forward += p_fastq.returnNAffectedBases_f();
+							}
+							else if (read_affected == 2)
+							{
+								++count_affected_reads_reverse;
+								count_n_bases_affecteds_reverse += p_fastq.returnNAffectedBases_r();
+							}
+							else if (read_affected == 3)
+							{
+								++count_affected_reads_forward;
+								++count_affected_reads_reverse;
+								count_n_bases_affecteds_forward += p_fastq.returnNAffectedBases_f();
+								count_n_bases_affecteds_reverse += p_fastq.returnNAffectedBases_r();
+							}
+						}
+
+						// Verificando se tamanho de qualquer uma das reads, é maior que 'minLengthSeq', 
+						// se sim, escreve read
+						if(((p_fastq.getSequenceN_f()) >= minLengthSeq) || ((p_fastq.getSequenceN_r()) >= minLengthSeq)){
+							n_nucleotides_after += p_fastq.getSequenceN();
+							p_fastq.write();
+						}						
+
+					}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					cerr << "+ Adapter Trimming +" << endl;
+					p_fastq.closeOutput("onlyRemove");
+					cerr << endl;
+
+					// Se tiveram leituras afetadas pelo filtro de qualidade, exibir dados
+					if (count_affected_reads_forward > 0 || count_affected_reads_reverse > 0)
+					{
+						cerr << "+ Quality Trimming +" << endl;
+						cerr << " - Forward:" << endl;
+						cerr << "No. reads affecteds: " << count_affected_reads_forward << endl;
+						cerr << "No. bases trimming: " << count_n_bases_affecteds_forward << endl;
+
+						cerr << " - Reverse:" << endl;
+						cerr << "No. reads affecteds: " << count_affected_reads_reverse << endl;
+						cerr << "No. bases trimming: " << count_n_bases_affecteds_reverse << endl;
+					}
+
+					cerr << endl
+						 << " ---- " << endl;
+
+					cerr << "No. total reads: " << (n_reads * 2) << endl;
+					cerr << "No. total bases: " << n_nucleotides_before << endl;
+					cerr << "No. bases remaining: " << n_nucleotides_after << endl;
+					cerr << "-- No. bases trimming: " << (n_nucleotides_before-n_nucleotides_after) << endl;
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+				}
+			}
+
+			return true;
+		}
+		else if (interlaced.length() != 0)
+		{
+			cerr << "Interlaced File: " << interlaced << endl;
+			SingleFASTQFile s_fastq;
+			if (s_fastq.openFASTQInput(interlaced, phredOffset) && s_fastq.openFASTQOutput(outputDir))
+			{
+				if (onlyIdentify)
+				{
+					cerr << "Adapters Found (Interlaced File)" << s_fastq.identifyAdapter() << endl;
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					string type = "interlaced,forward";
+
+					int cont = 1;
+					while (s_fastq.hasNextSearchAdapters(type))
+					{
+						if (cont % 2 == 0)
+							type = "interlaced,reverse";
+						else
+							type = "interlaced,forward";
+
+						++cont;
+					}
+
+					s_fastq.writeOnlyIdentifyHeader("interlaced");
+
+					for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
+					{
+						cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
+						string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
+						s_fastq.writeOnlyIdentify(textOutputIdentify);
+					}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+
+					s_fastq.closeOutput("onlyIdentify");
+				}
+				else if (onlyRemove)
+				{
+
+					clock_gettime(CLOCK_MONOTONIC, &start);
+
+					//INVERTER PADRAO Single
+					string adapterInvert_s = "";
+					for (int j = (singleAdapter.length() - 1); j >= 0; --j)
+					{
+						adapterInvert_s += singleAdapter[j];
+					}
+
+					while (s_fastq.hasNext())
+					{
+						// +++ Removing Adapters +++
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert_s, mismatchRight);
+
+						// +++ Quality,Ns +++ Verifica parâmetros relacionados à qualidade (remoção de Ns e remoção por Qualidade)
+						if (trimQuality || trimNFlank || maxN != -1)
+						{
+							s_fastq.trim(minQuality, trimQuality, trimNFlank, maxN);
+						}
+
+						s_fastq.write();
+					}
+
+					clock_gettime(CLOCK_MONOTONIC, &finish);
+
+					elapsed = (finish.tv_sec - start.tv_sec);
+					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+					cerr << endl
+						 << "Elapsed Time: " << elapsed << endl;
+
+					s_fastq.closeOutput("onlyRemove");
+				}
+			}
+
+			return true;
 		}
 	}
-
-	return true;
+	return false;
 }
-// , bool onlyRemove, std::string singleAdapter, int mismatchGlobal, std::string adapterInvert, double mismatchRight
 
-// bool Parameters::parseParameters()
-// {
-
-// 	system("mkdir output");
-
-// 	if (ready)
-// 	{
-
-// 		struct timespec start, finish;
-// 		double elapsed;
-
-// 		if (single.length() != 0)
-// 		{
-// 			cerr << "Single File: " << single << endl;
-// 			SingleFASTQFile s_fastq;
-// 			if (s_fastq.openFASTQInput(single, phredOffset) && s_fastq.openFASTQOutput(outputDir))
-// 			{
-// 				if (onlyIdentify)
-// 				{
-// 					cerr << "Adapters Found (Single File): " << endl;
-
-// 					clock_gettime(CLOCK_MONOTONIC, &start);
-
-// 						while(s_fastq.hasNextSearchAdapters("forward"))
-// 						{}
-
-// 						s_fastq.writeOnlyIdentifyHeader("single");
-
-// 						for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
-// 						{
-// 							cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
-// 							string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
-// 							s_fastq.writeOnlyIdentify(textOutputIdentify);
-
-// 						}
-
-// 					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-// 					elapsed = (finish.tv_sec - start.tv_sec);
-// 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-
-// 					cerr << endl
-// 						 << "Elapsed Time: " << elapsed << endl;
-
-// 						 s_fastq.closeOutput("onlyIdentify");
-
-// 				}
-// 				else if(onlyRemove)
-// 				{
-// 					clock_gettime(CLOCK_MONOTONIC, &start);
-
-// 					//INVERTER PADRAO
-// 					string adapterInvert = "";
-// 					for (int j = (singleAdapter.length() - 1); j >= 0; --j)
-// 					{
-// 						adapterInvert += singleAdapter[j];
-// 					}
-
-// 					while (s_fastq.hasNext())
-// 					{
-
-// 						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
-
-// 						if (trim)
-// 						{
-// 							if (trimQuality)
-// 							{
-// 								s_fastq.trim(minQuality, 3);
-// 							}
-// 							else
-// 							{
-// 								s_fastq.trim(-1, 1);
-// 							}
-// 						}
-
-// 						s_fastq.write();
-// 					}
-// 					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-// 					elapsed = (finish.tv_sec - start.tv_sec);
-// 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-// 					cerr << endl
-// 						 << "Elapsed Time: " << elapsed << endl;
-
-// 					s_fastq.closeOutput("onlyRemove");
-
-// 				}
-
-// 			}
-
-// 			return true;
-// 		}
-// 		else if (forward.length() != 0 && reverse.length() != 0)
-// 		{
-// 			cerr << "Paired Files: " << forward << " | " << reverse << endl;
-// 			PairedFASTQFile p_fastq;
-// 			if (p_fastq.openFASTQInputFile(forward, reverse, phredOffset) && p_fastq.openFASTQOutputFile(outputDir, outputDir2))
-// 			{
-// 				if (onlyIdentify)
-// 				{
-// 					cerr << "Adapters Found (Paired File): " << endl;
-
-// 					clock_gettime(CLOCK_MONOTONIC, &start);
-
-// 						while(p_fastq.hasNextSearchAdapters())
-// 						{}
-
-// 					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-// 					elapsed = (finish.tv_sec - start.tv_sec);
-// 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-
-// 					cerr << endl
-// 						 << "Elapsed Time: " << elapsed << endl;
-
-// 					p_fastq.closeOutput("onlyIdentify");
-
-// 				}else if(onlyRemove){
-
-// 					clock_gettime(CLOCK_MONOTONIC, &start);
-
-// 					//INVERTER PADRAO FORWARD
-// 					string adapterInvert_f = "";
-// 					for (int j = (forwardAdapter.length() - 1); j >= 0; --j)
-// 					{
-// 						adapterInvert_f += forwardAdapter[j];
-// 					}
-// 					//INVERTER PADRAO REVERSE
-// 					string adapterInvert_r = "";
-// 					for (int j = (reverseAdapter.length() - 1); j >= 0; --j)
-// 					{
-// 						adapterInvert_r += reverseAdapter[j];
-// 					}
-
-// 					while (p_fastq.hasNext())
-// 					{
-// 						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchGlobal, adapterInvert_f, adapterInvert_r, mismatchRight);
-
-// 						if (trim)
-// 						{
-// 							if (trimQuality)
-// 							{
-// 								p_fastq.trim(minQuality, 3);
-// 							}
-// 							else
-// 							{
-// 								p_fastq.trim(-1, 3);
-// 							}
-// 						}
-
-// 						p_fastq.write();
-
-// 					}
-// 					clock_gettime(CLOCK_MONOTONIC, &finish);
-
-// 					elapsed = (finish.tv_sec - start.tv_sec);
-// 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-
-// 					cerr << endl
-// 						 << "Elapsed Time: " << elapsed << endl;
-
-// 					p_fastq.closeOutput("onlyRemove");
-
-// 				}
-// 			}
-
-// 			return true;
-// 		}
-// 		else if (interlaced.length() != 0)
-// 		{
-// 			cerr << "Interlaced File: " << interlaced << endl;
-// 				SingleFASTQFile s_fastq;
-// 				if (s_fastq.openFASTQInput(interlaced, phredOffset) && s_fastq.openFASTQOutput(outputDir))
-// 				{
-// 					if (onlyIdentify)
-// 					{
-// 						cerr << "Adapters Found (Interlaced File)" << s_fastq.identifyAdapter() << endl;
-// 							clock_gettime(CLOCK_MONOTONIC, &start);
-
-// 							string type = "interlaced,forward";
-
-// 							int cont = 1;
-// 							while(s_fastq.hasNextSearchAdapters(type))
-// 							{
-// 									if(cont % 2 == 0)
-// 									type = "interlaced,reverse";
-// 									else
-// 									type = "interlaced,forward";
-
-// 								++cont;
-// 							}
-
-// 							s_fastq.writeOnlyIdentifyHeader("interlaced");
-
-// 							for (int i = 0; i < s_fastq.getAdaptersVec().size(); ++i)
-// 							{
-// 								cerr << s_fastq.getAdaptersVec()[i] << "\t" << s_fastq.getAdaptersVecQuant()[i] << endl;
-// 								string textOutputIdentify = s_fastq.getAdaptersVec()[i] + "\t" + std::to_string(s_fastq.getAdaptersVecQuant()[i]);
-// 								s_fastq.writeOnlyIdentify(textOutputIdentify);
-// 							}
-
-// 						clock_gettime(CLOCK_MONOTONIC, &finish);
-
-// 						elapsed = (finish.tv_sec - start.tv_sec);
-// 						elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-
-// 						cerr << endl
-// 							 << "Elapsed Time: " << elapsed << endl;
-
-// 					s_fastq.closeOutput("onlyIdentify");
-
-// 					}else if(onlyRemove){
-
-// 						clock_gettime(CLOCK_MONOTONIC, &start);
-
-// 						//INVERTER PADRAO Single
-// 						string adapterInvert_s = "";
-// 						for (int j = (singleAdapter.length() - 1); j >= 0; --j)
-// 						{
-// 							adapterInvert_s += singleAdapter[j];
-// 						}
-
-// 						while (s_fastq.hasNext())
-// 						{
-
-// 							s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert_s, mismatchRight);
-
-// 						if (trim)
-// 						{
-// 							if (trimQuality)
-// 							{
-// 								s_fastq.trim(minQuality, 3);
-// 							}
-// 							else
-// 							{
-// 								s_fastq.trim(-1, 3);
-// 							}
-// 						}
-
-// 							s_fastq.write();
-// 						}
-
-// 						clock_gettime(CLOCK_MONOTONIC, &finish);
-
-// 						elapsed = (finish.tv_sec - start.tv_sec);
-// 						elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-// 						cerr << endl
-// 							 << "Elapsed Time: " << elapsed << endl;
-
-// 					s_fastq.closeOutput("onlyRemove");
-
-// 					}
-
-// 				}
-
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
+void Parameters::printSummary()
+{
+
+	arguments_panel = "Parameters used:\n";
+
+	arguments_panel += "+ Mode + \n";
+	if(onlyIdentify)
+	{
+		arguments_panel += "-- Only Identify (--only-identify)\n";
+
+		if(forward != ""){
+			arguments_panel += "+ Paired Mode +\n";
+			arguments_panel += "-- Forward File: "+forward+"\n";
+			arguments_panel += "-- Reverse File: "+reverse+"\n";
+			arguments_panel += "-- output1 (auto) : "+outputDir+"\n";
+			arguments_panel += "-- output2 (auto) : "+outputDir2+"\n";
+		}else if(single != ""){
+			arguments_panel += "+ Single Mode +\n";
+			arguments_panel += "-- Single File: "+single+"\n";
+			arguments_panel += "-- output (--output) : "+outputDir+"\n";
+		}
+
+	}else if(onlyRemove){
+
+		arguments_panel += "-- Only Remove (--only-remove)\n";
+
+		if(forward != ""){
+			arguments_panel += "+ Paired Mode +\n";
+			arguments_panel += "-- Forward File: "+forward+"\n";
+			arguments_panel += "-- Reverse File: "+reverse+"\n";
+			arguments_panel += "-- output1 (auto) : "+outputDir+"\n";
+			arguments_panel += "-- output2 (auto) : "+outputDir2+"\n";
+		}else if(single != ""){
+			arguments_panel += "+ Single Mode +\n";
+			arguments_panel += "-- Single File: "+single+"\n";
+			arguments_panel += "-- output (--output) : "+outputDir+"\n";
+		}
+
+		if(trimQuality){
+			arguments_panel += "+ Trim Quality +\n";
+			arguments_panel += "-- quality window size (-qws) : "+std::to_string(sizeQualityWindow)+"\n";
+			arguments_panel += "-- minimum quality in window (--min-quality) : "+std::to_string(minQuality)+"\n";
+			arguments_panel += "-- phred offset (-phred-offset) : "+std::to_string(phredOffset)+"\n";
+			string tnf = ""; if(trimNFlank) tnf = "True"; else tnf = "False";
+			arguments_panel += "-- trimming flanking N bases (--trim-n-flank) : "+tnf+"\n";
+			arguments_panel += "-- maximum N to not discard read (--max-n) : "+std::to_string(maxN)+"\n";
+			arguments_panel += "-- reads shorter than this length are discarded (-minlen) : "+std::to_string(minLengthSeq)+"\n";
+			
+		}
+
+		arguments_panel += "+ INFO Search Adapter +\n";
+
+		if(forward != ""){
+			arguments_panel += "-- forward adapter (--forward-adapter) : "+forwardAdapter+"\n";
+			arguments_panel += "-- reverse adapter (--reverse-adapter) : "+reverseAdapter+"\n";
+		}else if(single != ""){
+			arguments_panel += "-- single adapter (--adapter) : "+singleAdapter+"\n";
+		}
+		arguments_panel += "-- maximum mismatch (-mm) : "+std::to_string(mismatchGlobal)+"\n";
+		arguments_panel += "-- mismatch rate in region 3' (-mmr) : "+std::to_string(mismatchRight)+"\n";
+	}
+
+	cerr<< (arguments_panel) << endl;	
+
+}
 
 void Parameters::printHelp()
 {
@@ -564,16 +678,27 @@ void Parameters::printHelp()
 	cerr << "|-i/--interlaced    <filename>    file with interlaced forward and reverse paired-end reads" << endl;
 	cerr << "" << endl;
 	cerr << "|> Pipeline options:" << endl;
-	cerr << "|--only-identify         runs only adapter identification (without removal)" << endl;
-	cerr << "|--only-remove           runs only adapter removal (without identification)" << endl;
-	cerr << "|                       need to set adapter(s) if this option is set" << endl;
-	cerr << "|--trim                  trim ambiguous bases (N) at 5'/3' termini" << endl;
-	cerr << "|--trim-quality  <int>   trim bases at 5'/3' termini and with" << endl;
-	cerr << "|                       quality scores <= [--trim-quality] value" << endl;
+	cerr << "|--only-identify                  runs only adapter identification (without removal)" << endl;
+	cerr << "|--only-remove                    runs only adapter removal (without identification)" << endl;
+	cerr << "|                                need to set adapter(s) if this option is set" << endl;
+	cerr << "|-qws/--quality-window-size <int> specify the size sliding window to remove per quality" << endl;
+	cerr << "|                                [default: 4] (see parameter '--min-quality')" << endl;
+	cerr << "|--min-quality     <int>          trim low quality bases using a sliding window based " << endl;
+	cerr << "|                                approach inspired by Sickle/AdapterRemoval with the given window size." << endl;
+	cerr << "|                                [default: 10]" << endl;
+	cerr << "|-minlen/--min-read-length <int>  reads shorter than this length are discarded following" << endl;
+	cerr << "|                                trimming. [default: 0]" << endl;
 	cerr << "|" << endl;
-	cerr << "|>Advanced options:" << endl;
+	cerr << "|> Trimming with N bases" << endl;	
+	cerr << "|--trim-n-flank                   remove flanking N bases from each read. Ex: NNTGATGNNN -> TGATG " << endl;
+	cerr << "|                                [default: off]" << endl;
+	cerr << "|--max-n         <int>            discard reads containing more than 'max-n' ambiguous bases ('N') after " << endl;
+	cerr << "|                                trimming and '--trim-n-flank'. " << endl;
+	cerr << "|                                [default: off]" << endl;
+	cerr << "|" << endl;
+	cerr << "|> Advanced options:" << endl;
 	cerr << "|--adapter     <adapter>          adapter sequence that will be removed (unpaired reads)" << endl;
-	cerr << "|                                required with --only-remove" << endl;
+	cerr << "|                                required with '--only-remove'" << endl;
 	cerr << "|--forward-adapter   <adapter>    adapter sequence that will be removed" << endl;
 	cerr << "|                                in the forward paired-end reads (required with --only-remove)" << endl;
 	cerr << "|--reverse-adapter   <adapter>    adapter sequence that will be removed" << endl;
@@ -585,7 +710,9 @@ void Parameters::printHelp()
 	cerr << "|--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)" << endl;
 	cerr << "|                                [default: auto-detect]" << endl;
 	cerr << "                                " << endl;
+
 }
+
 void Parameters::printVersion()
 {
 	cerr << endl

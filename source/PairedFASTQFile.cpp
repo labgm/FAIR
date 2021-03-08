@@ -15,12 +15,20 @@ public:
 	bool hasNext();
 	PairedFASTQ getNext();
 	pair<string, string> identifyAdapters();
-	void trim(int minQuality, int minSequenceLength);
+	void trim(int minQuality, int sizeQualityWindow, bool trimNFlank, int maxN);
 	void removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax, string adapterInvert_f, string adapterInvert_r, double mismatchRight);
 	void write();
 	void closeOutput(string typeOperation);
 
 	bool hasNextSearchAdapters();
+
+	int getReadAffected();
+
+	int returnNAffectedBases_f();
+	int returnNAffectedBases_r();
+	int getSequenceN();
+	int getSequenceN_f();
+	int getSequenceN_r();
 
 };
 
@@ -93,10 +101,10 @@ pair<string, string> PairedFASTQFile::identifyAdapters()
 	return adapters;
 }
 
-void PairedFASTQFile::trim(int minQuality, int minSequenceLength)
+void PairedFASTQFile::trim(int minQuality, int sizeQualityWindow, bool trimNFlank, int maxN)
 {
-	forward.trim(minQuality, minSequenceLength);
-	reverse.trim(minQuality, minSequenceLength);
+	forward.trim(minQuality, sizeQualityWindow, trimNFlank, maxN);
+	reverse.trim(minQuality, sizeQualityWindow, trimNFlank, maxN);
 }
 
 void PairedFASTQFile::removeAdapters(bool onlyRemove, string adapter1, string adapter2, int mismatchMax, string adapterInvert_f, string adapterInvert_r, double mismatchRight)
@@ -117,4 +125,49 @@ void PairedFASTQFile::closeOutput(string typeOperation)
 	reverse.closeOutput(typeOperation);
 }
 
+// Retorna 0 se o corte de qualidade não afetou nenhuma read,
+// 1 caso afetou apenas forward,
+// 2 caso afetou apenas reverse,
+// e 3 caso afetou as duas leituras
+int PairedFASTQFile::getReadAffected()
+{
+	bool f = forward.getReadAffected();
+	bool r = reverse.getReadAffected();
+	int sum = 0;
+	if (f == true) sum += 1;
+	if (r == true) sum += 2;
+	return sum;
+}
 
+// Retorna quantidade de bases cortadas por qualidade
+int PairedFASTQFile::returnNAffectedBases_f()
+{
+	int f = forward.returnNAffectedBases();
+	return f;
+}
+
+int PairedFASTQFile::returnNAffectedBases_r()
+{
+	int r = reverse.returnNAffectedBases();
+	return r;
+}
+
+// Retorna somatorio de bases das duas sequencias (forward + reverse)
+int PairedFASTQFile::getSequenceN()
+{
+	int n_seq_f = forward.getSequenceN();
+	int n_seq_r = reverse.getSequenceN();
+	return (n_seq_f+n_seq_r);
+}
+
+// Retorna somatorio de bases das duas sequencias (forward e reverse)
+int PairedFASTQFile::getSequenceN_f()
+{
+	int n_seq_f = forward.getSequenceN();
+	return (n_seq_f);
+}
+int PairedFASTQFile::getSequenceN_r()
+{
+	int n_seq_r = reverse.getSequenceN();
+	return (n_seq_r);
+}
