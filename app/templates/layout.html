@@ -191,17 +191,74 @@ The files must be in the 'data' folder.
    </div>
    <div class="modal-body" >
       
-    <h3 style="font-weight: bold;"> Quality </h3>
+    <h3 style="font-weight: bold;"> Quality Trim </h3>
     <!-- <hr> -->
-      You have three options: <span style="font-weight: bold; font-size: 1.1em;">No Trim</span>, <span style="font-weight: bold; font-size: 1.1em;">Trim (N)</span> and <span style="font-weight: bold; font-size: 1.1em;">Trim per Quality and N's</span> <br>
+    Quality trimming allows you to remove regions with poor sequencing quality.<br>
       <hr>
-      <span style="font-weight: bold; font-size: 1.1em;">No Trim:</span> No remove bases per quality.<br>
-      <span style="font-weight: bold; font-size: 1.1em;">Trim(N):</span> Removes unknown bases (N's).<br>
-      <span style="font-weight: bold; font-size: 1.1em;">Trim per Quality and N's:</span> Removes unknown bases and bases that are below the Min Quality value.
+      <span style="font-weight: bold; font-size: 1.2em;">Window based quality trimming</span><br><br>
+      Trim low quality regions using a sliding window based approach with the window size provided. 
+      The method is inspired from AdapterRemoval and Sickle.
+      Two parameters (<span style="font-weight: bold; font-size: 1em;">Min Quality</span> and <span style="font-weight: bold; font-size: 1em;">Quality Window Size</span>).
+      must be set for this.  
+      <br>
+        <span style="font-weight: bold; font-size: 1em;">> Min Quality: </span> Defines the minimum average quality value of the window.<br>
+        <span style="font-weight: bold; font-size: 1em;">> Quality Window Size: </span>  Size of the sliding window. <br>
+      <br>
+      The idea is to determine new start (5') and end (3') positions for the read. 
+      For this, in the direction 5' -> 3' marks as the new position 5' the first window with an average 
+      greater than minQuality the first base of the kmer must also be greater than minQuality. 
+      From the previous position, the window slides towards 3' and marks as new position 3' first window with minQuality 
+      average less than or equal. The new 3 'is placed at the bottom of that window where the quality is 
+      greater than or equal to minQuality. 
+      If no 5 'position can be determined, the reading is discarded.
+        <br><br>
+
+        <span style="font-weight: bold; font-size: 1.2em;">Dealing with n bases</span><br><br>
+        To deal with N-base removal, you have two options:
+        <br>
+        <span style="font-weight: bold; font-size: 1em;">> Maximum N: </span> Discard readings containing more than "Maximum N" bases.<br>
+        <span style="font-weight: bold; font-size: 1em;">> Trim flanking N bases: </span> Removes Ns found at the edges of the read.
+                                                          Ex: NNNATAGATNNN -> ATAGAT
+
+        <br>
+
+        <hr>
+
+        In addition, the minimum size of the reads can also be determined, after the previous checks. 
+        Using the parameter 'Minimum Read Length:<br>
+        <span style="font-weight: bold; font-size: 1em;">> Minimum Read Length: </span> Discard reads smaller than the reported size.<br>
+        <br>         
+
     </div>
  </div>
 </div>
 </div>
+
+
+<!-- Mismatch -->
+<div class="modal fade" id="mismatch" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+   <div class="modal-content" style="font-family: serif;">
+    <div class="modal-header">
+     <h5 class="modal-title" id="exampleModalLongTitle" style="color: #f5ad09;"><i class="fa fa-info" style="font-size: 1.2em;"></i> info</h5>
+     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+     </button>
+    </div>
+    <div class="modal-body" >
+       
+     <h3 style="font-weight: bold;"> Mismatch </h3>
+     <!-- <hr> -->
+     <span style="font-weight: bold; font-size: 1em;">> Max Mismatch 5'-> 3':</span> Amount of errors allowed 
+     between the adapter and the sequence fetched in the entire sequence.<br>
+
+     <span style="font-weight: bold; font-size: 1em;">> Max Mismatch in Region 3':</span> If the adapter with up to Max Mismatch errors is not found, 
+     it is checked if there is an adapter in the 3' end with up to "Max Mismatch in Region 3' " 
+     in order to detect interrupted adapters in the sequencing. 
+     </div>
+  </div>
+ </div>
+ </div>
 
 <!-- END INFOs  -->
      

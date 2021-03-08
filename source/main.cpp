@@ -4,7 +4,7 @@ int main(int argc, char *const argv[])
 {
 	Parameters parameters(argc, argv);
 
-	if (parameters.executeInThreads())
+	if (parameters.parseParameters())
 	{
 		cerr << "End of Execution" << endl;
 	}

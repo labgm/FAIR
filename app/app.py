@@ -8,44 +8,55 @@ def getDetails(form):
 
 	details = []
 
-	if form['singleFileName'] != "":
-		details.append("File(single): "+form['singleFileName'])
+	ir = form["identifyRemoveName"]
+	if ir == "onlyRemove":
+		details.append(" ONLY REMOVE")
+	elif ir == "onlyIdentify":
+		details.append(" ONLY IDENTIFY")
 
-	if form['forwardFileName'] != "":
-		details.append("Forward File: "+form['forwardFileName'])
+	for key, value in form.items():
 
-	if form['reverseFileName'] != "":
-		details.append("Reverse File: "+form['reverseFileName'])
+		if key == "singleFileName":
+			details.append(f"File(single): {value}")
 
-	if form['forwardAdapterName'] != "":
-		details.append("Adapter(forward): "+form['forwardAdapterName'])
+		elif key == "forwardFileName":
+			details.append(f"Forward File: {value}")
 
-	if form['reverseAdapterName'] != "":
-		details.append("Adapter(reverse): "+form['reverseAdapterName'])
+		elif key == "reverseFileName":
+			details.append(f"Reverse File: {value}")
 
-	if form['singleAdapterName'] != "":
-		details.append("Adapter: "+form['singleAdapterName'])
+		elif key == "forwardAdapterName":
+			details.append(f"Adapter(forward): {value}")
 
-	if form['singleMismatchName'] != "":
-		details.append("Mismatch (5'/3'): "+form['singleMismatchName']+" bases")
+		elif key == "reverseAdapterName":
+			details.append(f"Adapter(reverse): {value}")
 
-	if form['rightMismatchName'] != "":
-		temp = float(form['rightMismatchName']) * 100;
-		details.append("Incompatibilities in region 3 ': "+str(temp)+"%")
+		elif key == "singleMismatchName":
+			details.append(f"Max. Mismatch (5'/3'): {value}")
 
-	if form['pairedMismatchName'] != "":
-		details.append("Mismatch (5'/3'): "+form['pairedMismatchName']+" bases")
+		elif key == "rightMismatchName":
+			details.append(f"Incompatibilities in region 3': {float(value)*100}%")
 
-	if form['rightPairedMismatchName'] != "":
-		temp = float(form['rightPairedMismatchName']) * 100;
-		details.append("Incompatibilities in region 3': "+str(temp)+"%")
+		elif key == "pairedMismatchName":
+			details.append(f"Max. Mismatch (5'/3'): {value} nt")
 
-	if form['trimQualityName'] != "":
-		if form['trimQualityName'] == "n":
-			details.append("Trim per quality: Trim (N)")
-		elif form['trimQualityName'] == "quality":
-			if form['minQualityName'] != "":
-				details.append("Trim (Ns) and bases with score <= "+form['minQualityName'])
+		elif key == "rightPairedMismatchName":
+			details.append(f"Incompatibilities in region 3': {float(value)*100}%")
+
+		elif key == "minQualityName":
+			details.append(f"Minimum quality: {value}")
+
+		elif key == "qualityWindowSizeName":
+			details.append(f"Size quality window: {value}")
+
+		elif key == "maxNName":
+			details.append(f"Discard reads containing more than {value} N bases.")
+
+		elif key == "minReadLengthName":
+			details.append(f"Minimum size to consider read: {value}")
+
+		elif key == "trimNFlankName":
+			details.append("Remove flanking N bases from each read!")
 
 	return details
 
@@ -64,7 +75,7 @@ def search():
 	
 	out = ""
 	if(form['layoutName'] == "single"):
-		print("================================== Info Log ================================================ ")
+		print("================================== info log ================================================ ")
 		# print("Arquivo Single")
 		if(form['singleFileName'] != ""):
 			dataSingle = "data/"+form['singleFileName']
@@ -77,28 +88,54 @@ def search():
 				return render_template('home.html', data="success", details=details)
 			else:
 				if(form['singleAdapterName'] != ""):
-					command = "./FAIR -s "+dataSingle+" --adapter "+form['singleAdapterName']+" --only-remove -o output"
+					command = f"./FAIR -s {dataSingle} --adapter {form['singleAdapterName']} --only-remove -o output"
 
-					if(form['singleMismatchName'] != ""):
-						command += " -mm "+str(form['singleMismatchName'])
-					else:
-						form['singleMismatchName'] = "2"
+					for it in form.items():
+						key, value = it
 
-					if(form['rightMismatchName'] != ""):
-						command += " -mmr "+str(form['rightMismatchName'])
-					else:
-						form['rightMismatchName'] = "0.5"
+						if key == 'singleMismatchName':
+							if(form['singleMismatchName'] != ""):
+								command += f" -mm {form['singleMismatchName']}"
+							else:
+								form['singleMismatchName'] = "2"
 
-					if(form['trimQualityName'] == "n"):
-						command += " --trim";
-					elif(form['trimQualityName'] == 'quality'):
-						if(form['minQualityName'] != ""):
-							command += " --trim-quality "+str(form['minQualityName'])
-						else:
-							out = "Insert minimum value of quality!"
-							print("====================================== end log ============================================ ")
-							return render_template('home.html', data=out, form=form)
+						if key == 'rightMismatchName':
+							if(form['rightMismatchName'] != ""):
+								command += f" -mmr {form['rightMismatchName']}"
+							else:
+								form['rightMismatchName'] = "0.5"
+								command += f" -mmr {form['rightMismatchName']}"
 
+						if key == 'minQualityName':
+							if form['minQualityName'] != "":
+								command += f" --min-quality {form['minQualityName']}"
+							else:
+								form['minQualityName'] = "10"
+								command += f" --min-quality {form['minQualityName']}"
+
+						if key == 'qualityWindowSizeName':
+							if form['qualityWindowSizeName'] != "":
+								command += f" --quality-window-size {form['qualityWindowSizeName']}"
+							else:
+								form['qualityWindowSizeName'] = "4"
+								command += f" --quality-window-size {form['qualityWindowSizeName']}"
+
+						if key == 'maxNName':
+							if form['maxNName'] != "":
+								command += f" --max-n {form['maxNName']}"
+							else:
+								form['maxNName'] = "10"
+								command += f" --max-n {form['maxNName']}"
+
+						if key == 'minReadLengthName':
+							if form['minReadLengthName'] != "":
+								command += f" --min-read-length {form['minReadLengthName']}"
+							else:
+								form['minReadLengthName'] = "0"
+								command += f" --min-read-length {form['minReadLengthName']}"
+
+						if key == 'trimNFlankName':
+							command += " --trim-n-flank "
 					
 					print("Query: "+command)
 					out = os.system(command)
@@ -134,43 +171,73 @@ def search():
 					details = getDetails(form)
 					return render_template('home.html', data="success", details=details)
 				else:
-					if(form['forwardAdapterName'] != ""):
-						forwardAdapter = form['forwardAdapterName']
-						command = "./FAIR --only-remove -o output -f "+dataForward+" -r "+dataReverse+" --forward-adapter "+forwardAdapter
-					else:
-						out = "Insira um Adaptador Forward"
-						print("====================================== end log ============================================ ")
-						return render_template('home.html', data=out, form=form)
 
-					if(form['reverseAdapterName'] != ""):
-						reverseAdapter = form['reverseAdapterName']
-						command += " --reverse-adapter "+reverseAdapter
-					else:
-						out = "Insert Adapter Reverse"
-						print("====================================== end log ============================================ ")
-						return render_template('home.html', data=out, form=form)
+					for it in form.items():
+						key, value = it
+						if key == "forwardAdapterName":
+							if(form['forwardAdapterName'] != ""):
+								forwardAdapter = form['forwardAdapterName']
+								command = "./FAIR --only-remove -o output -f "+dataForward+" -r "+dataReverse+" --forward-adapter "+forwardAdapter
+							else:
+								out = "Insert a Forward Adapter"
+								print("====================================== end log ============================================ ")
+								return render_template('home.html', data=out, form=form)
 
-					if(form['pairedMismatchName'] != ""):
-						command += " -mm "+str(form['pairedMismatchName'])
-					else:
-						form['pairedMismatchName'] = "2"
+						if key == "forwardAdapterName":
+							if(form['reverseAdapterName'] != ""):
+								reverseAdapter = form['reverseAdapterName']
+								command += " --reverse-adapter "+reverseAdapter
+							else:
+								out = "Insert a Reverse Adapter"
+								print("====================================== end log ============================================ ")
+								return render_template('home.html', data=out, form=form)
 
-					if(form['rightPairedMismatchName'] != ""):
-						command += " -mmr "+str(form['rightPairedMismatchName'])
-					else:
-						form['rightPairedMismatchName'] = "0.5"
+						elif key == "pairedMismatchName":
+							if(form['pairedMismatchName'] != ""):
+								command += " -mm "+str(form['pairedMismatchName'])
+							else:
+								form['pairedMismatchName'] = "2"
+								command += " -mm "+str(form['pairedMismatchName'])
 
-					if(form['trimQualityName'] == "n"):
-						command += " --trim";
-					elif(form['trimQualityName'] == 'quality'):
-						if(form['minQualityName'] != ""):
-							command += " --trim-quality "+str(form['minQualityName'])
-						else:
-							out = "Insert the minimum value of quality!"
-							print("====================================== end log ============================================ ")
-							return render_template('home.html', data=out, form=form)
+						elif key == "rightPairedMismatchName":
+							if(form['rightPairedMismatchName'] != ""):
+								command += " -mmr "+str(form['rightPairedMismatchName'])
+							else:
+								form['rightPairedMismatchName'] = "0.5"
+								command += " -mmr "+str(form['rightPairedMismatchName'])
 
-					# print(command)
+						elif key == "minQualityName":
+							if(form['minQualityName'] != ""): 
+								command += f" --min-quality {form['minQualityName']}"
+							else:
+								form['minQualityName'] = "5"
+								command += f" --min-quality {form['minQualityName']}"
+
+						elif key == "qualityWindowSizeName":
+							if(form['qualityWindowSizeName'] != ""):
+								command += f" --quality-window-size {form['qualityWindowSizeName']}"
+							else:
+								form['qualityWindowSizeName'] = "5"
+								command += f" --quality-window-size {form['qualityWindowSizeName']}"
+
+						elif key == "maxNName":
+							if(form['maxNName'] != ""):
+								command += f" --max-n {form['maxNName']}"
+							else:
+								form['maxNName'] = "0"
+								command += f" --max-n {form['maxNName']}"
+
+						elif key == "minReadLengthName":
+							if(form['minReadLengthName'] != ""):
+								command += f" --min-read-length {form['minReadLengthName']}"
+							else:
+								form['minReadLengthName'] = "0"
+								command += f" --min-read-length {form['minReadLengthName']}"
+
+						elif key == "trimNFlankName":
+							command += " --trim-n-flank "
+
+					print(f"Query: {command}")
 					out = os.system(command)
 					if(out == 0):
 						print("====================================== end log ============================================ ")
