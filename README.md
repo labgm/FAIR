@@ -116,7 +116,7 @@ Bellow are listed all FAIR available parameters.
 
 ```FAIR - Fast Adapter Identification and Removal v1.0
 
- Usage: /home/joao/FAIR -o <output_dir> [options]
+  Usage: /home/joao/FAIR -o <output_dir> [options]
 
 |> Basic options:
 |-o/--output   <output_dir>   directory to store all the resulting files (required)
@@ -132,16 +132,27 @@ Bellow are listed all FAIR available parameters.
 |-i/--interlaced    <filename>    file with interlaced forward and reverse paired-end reads
 
 |> Pipeline options:
-|--only-identify         runs only adapter identification (without removal)
-|--only-remove           runs only adapter removal (without identification)
-|                        need to set adapter(s) if this option is set
-|--trim                  trim ambiguous bases (N) at 5'/3' termini
-|--trim-quality  <int>   trim bases at 5'/3' termini and with
-|                       quality scores <= [--trim-quality] value
-
-|>Advanced options:
+|--only-identify                  runs only adapter identification (without removal)
+|--only-remove                    runs only adapter removal (without identification)
+|                                need to set adapter(s) if this option is set
+|-qws/--quality-window-size <int> specify the size sliding window to remove per quality
+|                                [default: 4] (see parameter '--min-quality')
+|--min-quality     <int>          trim low quality bases using a sliding window based 
+|                                approach inspired by Sickle/AdapterRemoval with the given window size.
+|                                [default: 10]
+|-minlen/--min-read-length <int>  reads shorter than this length are discarded following
+|                                trimming. [default: 0]
+|
+|> Trimming with N bases  
+|--trim-n-flank                   remove flanking N bases from each read. Ex: NNTGATGNNN -> TGATG 
+|                                [default: off]
+|--max-n         <int>            discard reads containing more than 'max-n' ambiguous bases ('N') after 
+|                                trimming and '--trim-n-flank'. 
+|                                [default: off]
+|
+|> Advanced options:
 |--adapter     <adapter>          adapter sequence that will be removed (unpaired reads)
-|                                required with --only-remove
+|                                required with '--only-remove'
 |--forward-adapter   <adapter>    adapter sequence that will be removed
 |                                in the forward paired-end reads (required with --only-remove)
 |--reverse-adapter   <adapter>    adapter sequence that will be removed
@@ -150,6 +161,10 @@ Bellow are listed all FAIR available parameters.
 |                                [default: 2] 2 bases
 |-mmr/--mismatch-right <0 to 0.6> mismatch rate in region 3'
 |                                [default: 0.5] 50% incompatibilities
+|-5dr/--5-dist-rate <0 to 1>      5' distance rate. Means that 0.5 the search will always start 
+|                                from half the read [default: 0] 
+|-rre/--rem-remaining-end         removes any base after the identified adapter [default: disabled]
+|                                 
 |--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)
 |                                [default: auto-detect]
 ```
