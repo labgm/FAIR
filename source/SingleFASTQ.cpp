@@ -1,5 +1,4 @@
 #include "algos/core.cpp"
-// #include "algos/myers_otimized.cpp"
 #include <algorithm>
 
 class SingleFASTQ
@@ -26,7 +25,7 @@ public:
 	string getQuality();
 	void convertQualToInteger(int qual_score);
 	int getOccurrences();
-	void erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight);
+	void erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight, double five_dr, double rre);
 	void trim(int qual_score, int minQuality, int sizeQualityWindow, bool trimNFlank, int maxN);
 	void identify(string adapt);
 	void setIdentifierAdapter(string idAdapter);
@@ -86,7 +85,7 @@ int SingleFASTQ::getOccurrences()
 	return occurrences;
 }
 
-void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
+void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, double mismatchRight, double five_dr, double rre)
 {
 
 	vector<int> index;
@@ -99,10 +98,9 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 	strcpy(seq_c, seq.c_str());
 	strcpy(adapter_c, adapter.c_str());
 
-	if (mismatchMax >= 0)
-		index = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax, 0);
-	// else
-	// 	index = searchShiftAnd(adapter_c, adapter.length(), seq_c, seq.length());
+	int posi_inicial_baseado_in_ration = five_dr * (seq.length());
+
+	index = searchMyers(adapter_c, adapter.length(), seq_c, seq.length(), mismatchMax, posi_inicial_baseado_in_ration);
 
 	if (index.size() > 0)
 	{
@@ -146,8 +144,15 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 							if (limitInf < 0)
 								limitInf = 0;
 
-							int sizeCorte = index[i] + adapter.length() - limitInf;
-							int limitSup = limitInf + sizeCorte;
+							int sizeCorte, limitSup;
+
+							if(rre == false){
+								sizeCorte = index[i] + adapter.length() - limitInf - 1;
+								limitSup = limitInf + sizeCorte;
+							}else{
+								sizeCorte = seq.length() - limitInf + 1;
+								limitSup = seq.length() - 1;
+							}
 
 							if (sizeCorte > 0 & limitSup <= seq.length())
 							{
@@ -173,8 +178,20 @@ void SingleFASTQ::erase(string adapter, int mismatchMax, string adapterInvert, d
 			else if (index[i + 1] == 0)
 			{
 
-				int sizeCorte = adapter.length();
-				int limitSup = index[i] + sizeCorte;
+				int limitInf;
+				int sizeCorte;
+				int limitSup;
+				
+				if(rre == false){
+				// Corte somente do adaptador
+					sizeCorte = adapter.length();
+					limitSup = index[i] + sizeCorte;
+				}else{
+					// Corte toda extremidade restante
+					limitInf = index[i];
+					sizeCorte = seq.length() - (limitInf+1) + 1;
+					limitSup = limitInf + sizeCorte;
+				}
 
 				if (sizeCorte > 0 & limitSup <= seq.length())
 				{
@@ -294,10 +311,10 @@ void SingleFASTQ::trim(int qual_score, int minQuality, int sizeQualityWindow, bo
 	int posicaoInicial = -1;
 	
 	/*
-	- Quality removal
+	- Quality removal -
 	Method similar to AdapterRemoval (https://adapterremoval.readthedocs.io/en/latest/manpage.html)
 	The idea is to determine new start (5') and end (3') positions for the read. 
-	For this, in the direction 5' -> 3' marks as the new position 5' the first window with an 
+	For this, in forward direction 5' -> 3' marks as the new position 5' the first window with an 
 	average greater than minQuality the first base of the kmer must also be greater than minQuality. 
 	From the previous position, the window slides towards 3' and marks as new position 3' first window with 
 	minQuality average less than or equal. The new 3 'is placed at the bottom of that window where the quality 
@@ -382,14 +399,12 @@ void SingleFASTQ::trim(int qual_score, int minQuality, int sizeQualityWindow, bo
 			// Marca que a read foi afetada pelo corte de qualidade	e quantas bases foram cortadas
 			readAffected = true;
 			count_affected_bases += novo_5;
-			// cerr << "OK 0" << endl;
 		}
 		// Se foram definidos novos 3' e 5', remover os fragmentos
 		else if (novo_3 != -1)
 		{
 			// Cortando extremidade 3'
 			int quant_corte_3 = (seq.length() - novo_3);
-			// cerr << "Novo 3': " << novo_3 << " | quant_corte 3': " << quant_corte << endl;
 			seq.erase(novo_3, quant_corte_3);
 			qual.erase(novo_3, quant_corte_3);
 
@@ -400,9 +415,6 @@ void SingleFASTQ::trim(int qual_score, int minQuality, int sizeQualityWindow, bo
 			// Cortando extremidade 5'
 			seq.erase(0, (novo_5));
 			qual.erase(0, (novo_5));
-			// cerr << "OK 1" << endl;
-			// cerr << "Novo 5': " << novo_5 << " | quant_corte 5': " << (novo_5) << endl;
-			// cerr << "Tipo 2" << endl;
 
 			count_affected_bases += novo_5;
 		}
@@ -414,7 +426,6 @@ void SingleFASTQ::trim(int qual_score, int minQuality, int sizeQualityWindow, bo
 
 			seq = "";
 			qual = "";
-			// cerr << "Tipo 3" << endl;
 		}
 	}
 

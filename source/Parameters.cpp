@@ -5,8 +5,8 @@ class Parameters
 private:
 	string version, single, forward, reverse, interlaced, singleAdapter, forwardAdapter, reverseAdapter, outputDir, outputDir2;
 	bool onlyIdentify, onlyRemove, trimQuality, ready, webInterface, trimNFlank;
-	int minQuality, phredOffset, mismatchGlobal, maxN;
-	double mismatchRight;
+	int minQuality, phredOffset, mismatchGlobal, maxN, rre;
+	double mismatchRight, five_dr;
 
 	int sizeQualityWindow, minLengthSeq;
 	string arguments_panel;
@@ -40,10 +40,13 @@ Parameters::Parameters(int argc, char *const argv[])
 	// Remoção por qualidade
 	trimQuality = false;
 	minQuality = 5; 	   // Valor padrão
-	sizeQualityWindow = 5; // Valor padrão
+	sizeQualityWindow = 4; // Valor padrão
 
 	//
-	minLengthSeq = 5;      // Valor padrão
+	minLengthSeq = 10;      // Valor padrão
+
+	five_dr = 0.0;
+	rre = false;
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -151,6 +154,16 @@ Parameters::Parameters(int argc, char *const argv[])
 		else if (argument == "--trim-n-flank")
 		{
 			trimNFlank = true;
+			continue;
+		}
+		else if (argument == "--rem-remaining-end" || argument == "-rre")
+		{
+			rre = true;
+			continue;
+		}
+		else if (argument == "--5-dist-rate" || argument == "-5dr")
+		{
+			five_dr = atof(argv[i + 1]);
 			continue;
 		}
 		else if (argument == "--web-interface")
@@ -314,7 +327,7 @@ bool Parameters::parseParameters()
 							maior_quantitativo_bases = s_fastq.getSequenceN();
 
 						// +++ Removing Adapters +++
-						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight);
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert, mismatchRight, five_dr, rre);
 
 						// +++ Quality,Ns +++ Verifica parâmetros relacionados à qualidade (remoção de Ns e remoção por Qualidade)
 						if (trimQuality || trimNFlank || maxN != -1)
@@ -355,10 +368,15 @@ bool Parameters::parseParameters()
 					cerr << endl
 						 << " ---- " << endl;
 
+
 					cerr << "No. total reads: " << n_reads << endl;
 					cerr << "No. total bases: " << n_nucleotides_before << endl;
 					cerr << "No. bases remaining: " << n_nucleotides_after << endl;
 					cerr << "-- No. bases trimming: " << (n_nucleotides_before-n_nucleotides_after) << endl;
+
+					double t1 = (n_nucleotides_before-n_nucleotides_after);
+					double percent_removal =  t1 / (n_nucleotides_before) * 100;
+					cerr << "Removal rate (%): " << percent_removal << endl;
 
 					elapsed = (finish.tv_sec - start.tv_sec);
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
@@ -431,7 +449,7 @@ bool Parameters::parseParameters()
 						n_nucleotides_before += p_fastq.getSequenceN();
 						
 						// +++ Removing Adapters +++
-						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchGlobal, adapterInvert_f, adapterInvert_r, mismatchRight);
+						p_fastq.removeAdapters(onlyRemove, forwardAdapter, reverseAdapter, mismatchGlobal, adapterInvert_f, adapterInvert_r, mismatchRight, five_dr, rre);
 
 						// +++ Quality,Ns +++ Verifica parâmetros relacionados à qualidade (remoção de Ns e remoção por Qualidade)
 						if (trimQuality || trimNFlank || maxN != -1)
@@ -496,6 +514,10 @@ bool Parameters::parseParameters()
 					cerr << "No. total bases: " << n_nucleotides_before << endl;
 					cerr << "No. bases remaining: " << n_nucleotides_after << endl;
 					cerr << "-- No. bases trimming: " << (n_nucleotides_before-n_nucleotides_after) << endl;
+
+					double t1 = (n_nucleotides_before-n_nucleotides_after);
+					double percent_removal =  t1 / (n_nucleotides_before) * 100;
+					cerr << "Removal rate (%): " << percent_removal << endl;
 
 					elapsed = (finish.tv_sec - start.tv_sec);
 					elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
@@ -564,7 +586,7 @@ bool Parameters::parseParameters()
 					while (s_fastq.hasNext())
 					{
 						// +++ Removing Adapters +++
-						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert_s, mismatchRight);
+						s_fastq.removeAdapter(onlyRemove, singleAdapter, mismatchGlobal, adapterInvert_s, mismatchRight, five_dr, rre);
 
 						// +++ Quality,Ns +++ Verifica parâmetros relacionados à qualidade (remoção de Ns e remoção por Qualidade)
 						if (trimQuality || trimNFlank || maxN != -1)
@@ -652,6 +674,10 @@ void Parameters::printSummary()
 		}
 		arguments_panel += "-- maximum mismatch (-mm) : "+std::to_string(mismatchGlobal)+"\n";
 		arguments_panel += "-- mismatch rate in region 3' (-mmr) : "+std::to_string(mismatchRight)+"\n";
+		arguments_panel += "-- 5' distance rate' (-5dr) : "+std::to_string(five_dr)+"\n";
+		string tnf = ""; if(rre) tnf = "True"; else tnf = "False";
+		arguments_panel += "-- removal remaining end' (-rre) : "+(tnf)+"\n";
+
 	}
 
 	cerr<< (arguments_panel) << endl;	
@@ -685,7 +711,7 @@ void Parameters::printHelp()
 	cerr << "|                                [default: 4] (see parameter '--min-quality')" << endl;
 	cerr << "|--min-quality     <int>          trim low quality bases using a sliding window based " << endl;
 	cerr << "|                                approach inspired by Sickle/AdapterRemoval with the given window size." << endl;
-	cerr << "|                                [default: 10]" << endl;
+	cerr << "|                                [default: off]" << endl;
 	cerr << "|-minlen/--min-read-length <int>  reads shorter than this length are discarded following" << endl;
 	cerr << "|                                trimming. [default: 0]" << endl;
 	cerr << "|" << endl;
@@ -707,6 +733,10 @@ void Parameters::printHelp()
 	cerr << "|                                [default: 2] 2 bases" << endl;
 	cerr << "|-mmr/--mismatch-right <0 to 0.6> mismatch rate in region 3'" << endl;
 	cerr << "|                                [default: 0.5] 50% incompatibilities" << endl;
+	cerr << "|-5dr/--5-dist-rate <0 to 1>      5' distance rate. Means that 0.5 the search will always start " << endl;
+	cerr << "|                                from half the read [default: 0] " << endl;
+	cerr << "|-rre/--rem-remaining-end         removes any base after the identified adapter [default: disabled]" << endl;
+	cerr << "|                                 " << endl;
 	cerr << "|--phred-offset    <33 or 64>     PHRED quality offset in the input reads (33 or 64)" << endl;
 	cerr << "|                                [default: auto-detect]" << endl;
 	cerr << "                                " << endl;

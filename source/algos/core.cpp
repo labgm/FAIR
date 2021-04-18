@@ -118,66 +118,6 @@ vector<int> searchMyers(char *P, long m, char *T, long n, int mismatchMax, int i
 		}
 	}
 
+
 	return indexx;
 }
-
-// Wu & Manber (1992)
-// vector<int> searchShiftAnd(char *P, long m, char *T, long n)
-// {
-
-// 	int k = 0;
-
-// 	vector<int> indexx;
-
-// 	int inicializador = 0;
-// 	int posicaoAnterior = 0;
-// 	int quantGrupo = 0;
-// 	int posicaoAtual = 0;
-// 	int indiceMedio = 0;
-
-// 	int MAXCHAR = 256;
-
-// 	unsigned long long Masc[MAXCHAR], i, j, Ri, Rant, Rnovo;
-// 	unsigned long long R[k];
-
-// 	for (i = 0; i < MAXCHAR; i++)
-// 		Masc[i] = 0L;
-
-// 	for (i = 1; i <= m; i++)
-// 	{
-// 		Masc[P[i - 1] + 127] |= 1L << (m - i);
-// 	}
-
-// 	R[0] = 0L;
-// 	Ri = 1 << (m - 1);
-// 	for (j = 1; j <= k; j++)
-// 		R[j] = (1L << (m - j)) | R[j - 1];
-
-// 	for (i = 0; i < n; i++)
-// 	{
-
-// 		Rant = R[0];
-// 		Rnovo = ((((unsigned long long)Rant) >> 1L) | Ri) & Masc[T[i] + 127];
-// 		R[0] = Rnovo;
-
-// 		// For Approximate Matching
-// 		// for (j = 1; j <= k; j++)
-// 		// {
-// 		// 	Rnovo = ((((unsigned long long) R[j]) >> 1L) & Masc[T[i] + 127]) | Rant | (((unsigned long long)(Rant | Rnovo))  >> 1L);
-// 		// 	Rant = R[j];
-// 		// 	R[j] = Rnovo | Ri;
-// 		// }
-
-// 		posicaoAtual = i + 1;
-
-// 		if ((Rnovo & 1L) != 0L)
-// 		{
-
-// 			indexx.insert(indexx.begin(), k);
-// 			indexx.insert(indexx.begin(), (posicaoAtual - m));
-// 			// cerr << "Posicao Atual: " << (posicaoAtual-m) << endl;
-// 		}
-// 	}
-
-// 	return indexx;
-// }

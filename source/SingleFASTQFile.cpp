@@ -20,7 +20,7 @@ public:
 	string identifyAdapter();
 	void identifyQuality();
 	void trim(int minQuality, int sizeQualityWindow, bool trimNFlank, int maxN);
-	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert, double mismatchRight);
+	void removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert, double mismatchRight, double five_dr, bool rre);
 	void write();
 	void closeOutput(string typeOperation);
 
@@ -205,8 +205,6 @@ bool SingleFASTQFile::SearchAdapters(string seq, string typeRead)
 		  			}
 
 	  			}
-	  			// STOP SEARCH (PARA CONSIDERAR PRIMEIRO ADAPTADOR ENCONTRADO)
-	  			// return false;
 	  		}
 
       }
@@ -264,7 +262,7 @@ void SingleFASTQFile::trim(int minQuality, int sizeQualityWindow, bool trimNFlan
 	sequence.trim(quality, minQuality, sizeQualityWindow, trimNFlank, maxN);
 }
 
-void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert, double mismatchRight)
+void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatchMax, string adapterInvert, double mismatchRight, double five_dr, bool rre)
 {
 
 	if (onlyRemove) // Adapter as Parameter
@@ -276,17 +274,8 @@ void SingleFASTQFile::removeAdapter(bool onlyRemove, string adapter, int mismatc
 		adapter = identifyAdapter();
 	}
 
-	sequence.erase(adapter, mismatchMax, adapterInvert, mismatchRight);
+	sequence.erase(adapter, mismatchMax, adapterInvert, mismatchRight, five_dr, rre);
 
-	// int number_of_ocurrences = 0;
-
-	// for (int i = newSequence.find(adapter, 0); i != string::npos; i = newSequence.find(adapter, i)) {
-	// 	cerr <<"i: " << i << endl << "Number Occ: " << number_of_ocurrences << endl;
-	// 	index.push_back(i);
-	// 	number_of_ocurrences++;
-	// 	i++;
-
-	// }
 }
 
 void SingleFASTQFile::write()
