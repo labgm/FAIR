@@ -217,7 +217,7 @@ def search():
 							if(form['qualityWindowSizeName'] != ""):
 								command += f" --quality-window-size {form['qualityWindowSizeName']}"
 							else:
-								form['qualityWindowSizeName'] = "5"
+								form['qualityWindowSizeName'] = "4"
 								command += f" --quality-window-size {form['qualityWindowSizeName']}"
 
 						elif key == "maxNName":
