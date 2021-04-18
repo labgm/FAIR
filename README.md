@@ -16,7 +16,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/SRodriguess/fair">
+  <a href="https://github.com/engbiopct/FAIR">
     <img src="app/static/images/icons/logo.png" alt="Logo" width="150">
   </a>
 
@@ -24,14 +24,14 @@
 
   <p align="center">
     <br />
-    <a href="https://github.com/SRodriguess/FAIR"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/engbiopct/FAIR"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/SRodriguess/FAIR">View Demo</a>
+    <a href="https://github.com/engbiopct/FAIR">View Demo</a>
     ·
-    <a href="https://github.com/SRodriguess/FAIR/issues">Report Bug</a>
+    <a href="https://github.com/engbiopct/FAIR/issues">Report Bug</a>
     ·
-    <a href="https://github.com/SRodriguess/FAIR/issues">Request Feature</a>
+    <a href="https://github.com/engbiopct/FAIR/issues">Request Feature</a>
   </p>
 </p>
 
@@ -97,7 +97,7 @@ pip3 install flask-restful
 
 1. Clone the repo
 ```sh
-git clone https://github.com/SRodriguess/FAIR.git
+git clone https://github.com/engbiopct/FAIR.git
 ```
 2. Make changes in source code (files in the 'source' folder)
 
@@ -180,7 +180,7 @@ cd FAIR
 ```
 2. Access URL in your browser http://0.0.0.0:8080/
 
-_For more examples, please refer to the [Documentation](https://github.com/SRodriguess/FAIR)_
+_For more examples, please refer to the [Documentation](https://github.com/engbiopct/FAIR)_
 
 ## Examples (CLI)
 You can test the program utilizing the samples `sample1.fastq` and `sample2.fastq` located at `data`. The new files are stored on `results`. Some common usages are listed bellow.
@@ -237,7 +237,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Sebastião R. C. Neto - s.rodriguescn@gmail.com
 
-Project Link: [https://github.com/SRodriguess/FAIR](https://github.com/SRodriguess/FAIR)
+Project Link: [https://github.com/engbiopct/FAIR](https://github.com/engbiopct/FAIR)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [build-shield]: https://img.shields.io/badge/build-passing-brightgreen.svg?style=flat-square
