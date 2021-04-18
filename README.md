@@ -49,7 +49,7 @@
 * [Examples](#examples)
 * [Contributing](#contributing)
 * [License](#license)
-* [Acknowledgements and References](#acknowledgements-and-references)
+* [Acknowledgements and References](#acknowledgements)
 * [Contact](#contact)
 
 
