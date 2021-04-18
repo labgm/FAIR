@@ -200,9 +200,9 @@ You can test the program utilizing the samples `sample1.fastq` and `sample2.fast
 ./FAIR --only-identify --forward sample1.fastq --reverse sample2.fastq --output results/
 ```
 
-* Remove Adapters from Single FASTQ File with Mismatch Global 5'/3' (3 nucleotides), Trim(N), Trim-Quality, Number of Phred-Offset, Mismatch in region 3' (30%)
+* Remove Adapters from Single FASTQ File with Mismatch Global 5'/3' (3 nucleotides); discard reads with more than 10 Ns; Minimum window quality 30, Number of Phred-Offset; maximum differences in region 3' (30%).
 ```sh
-./FAIR --only-remove --single sample1.fastq --adapter AGAGAATAGATAGAT --mismatch 3 --trim --trim-quality 90 --phread-offset 33 --mismatch-right 0.3 --output results/
+./FAIR --only-remove --single sample1.fastq --adapter AGAGAATAGATAGAT --mismatch 3 --max-n 10 --min-quality 30 --phread-offset 33 --mismatch-right 0.3 --output results/
 ```
 
 <!-- CONTRIBUTING -->
@@ -225,7 +225,10 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 <!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements and References
+## Acknowledgements
+We thank the research group EngBio PCT-Guamá. This work was supported by Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES).
+
+## References
 * [Hyyro, H., Fredriksson, K., \& Navarro, G. (2005). Increased bit-parallelism for approximate and multiple string matching. Journal of Experimental Algorithmics (JEA), 10, 2-6.](https://dl.acm.org/doi/pdf/10.1145/1064546.1180617)
 * [Myers, G. (1999). A fast bit-vector algorithm for approximate string matching based on dynamic programming. Journal of the ACM (JACM), 46(3), 395-415.](https://dl.acm.org/doi/10.1145/316542.316550)
 * [Wu, S., \& Manber, U. (1992). Fast text searching: allowing errors. Communications of the ACM, 35(10), 83-91.](https://dl.acm.org/doi/10.1145/135239.135244)
@@ -245,5 +248,3 @@ Project Link: [https://github.com/engbiopct/FAIR](https://github.com/engbiopct/F
 [license-shield]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
 [license-url]: https://choosealicense.com/licenses/mit
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/jvcanavarro/
-[product-screenshot]:https://github.com/jvcanavarro/FAIR-Fast-Adapter-Identification-and-Removal/blob/master/utils/best5.png
